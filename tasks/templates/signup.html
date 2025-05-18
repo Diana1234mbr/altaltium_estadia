@@ -1,13 +1,73 @@
-{% extends 'base.html' %} {% block content %}
+{% extends 'base.html' %}
 
-<div class="container">
-  <h1>Signup</h1>
+{% block content %}
+<div class="container mt-5">
+  <div class="row justify-content-center">
+    <div class="col-md-6 col-lg-5">
+      <div class="card shadow-sm border-0">
+        <div class="card-body p-4">
+          <h2 class="text-center mb-4">Crear cuenta</h2>
 
-  {{error}}
+          {% if error %}
+            <div class="alert alert-danger" role="alert">
+              {{ error }}
+            </div>
+          {% endif %}
 
-  <form action="/signup/" method="POST">
-    {% csrf_token %} {{form.as_p}}
-    <button class="btn btn-primary">Signup</button>
-  </form>
+          <form action="{% url 'signup' %}" method="POST">
+            {% csrf_token %}
+
+            <div class="mb-3">
+              <label for="nombre" class="form-label">Nombre completo</label>
+              <div class="input-group">
+                <span class="input-group-text"><i class="bi bi-person-vcard"></i></span>
+                <input type="text" class="form-control" id="nombre" name="nombre" placeholder="Nombre" required>
+              </div>
+            </div>
+
+            <div class="mb-3">
+              <label for="username" class="form-label">Nombre de usuario</label>
+              <div class="input-group">
+                <span class="input-group-text"><i class="bi bi-person-fill"></i></span>
+                <input type="text" class="form-control" id="username" name="username" placeholder="Usuario" required>
+              </div>
+            </div>
+
+            <div class="mb-3">
+              <label for="email" class="form-label">Correo electrónico</label>
+              <div class="input-group">
+                <span class="input-group-text"><i class="bi bi-envelope-fill"></i></span>
+                <input type="email" class="form-control" id="email" name="email" placeholder="ejemplo@correo.com" required>
+              </div>
+            </div>
+
+            <div class="mb-3">
+              <label for="password1" class="form-label">Contraseña</label>
+              <div class="input-group">
+                <span class="input-group-text"><i class="bi bi-lock-fill"></i></span>
+                <input type="password" class="form-control" id="password1" name="password1" placeholder="********" required>
+              </div>
+            </div>
+
+            <div class="mb-3">
+              <label for="password2" class="form-label">Confirmar contraseña</label>
+              <div class="input-group">
+                <span class="input-group-text"><i class="bi bi-lock"></i></span>
+                <input type="password" class="form-control" id="password2" name="password2" placeholder="********" required>
+              </div>
+            </div>
+
+            <div class="d-grid">
+              <button type="submit" class="btn btn-dark">Crear cuenta</button>
+            </div>
+          </form>
+
+          <div class="text-center mt-3">
+            <a href="{% url 'signin' %}">¿Ya tienes cuenta? Inicia sesión</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
 {% endblock %}
