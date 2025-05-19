@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+  <div class="row justify-content-center">
+    <div class="col-md-8 text-center">
+      <div class="card shadow-sm border-0">
+        <div class="card-body p-5">
+          <h1 class="display-5 fw-bold">Bienvenido a Inmovalor</h1>
+          <p class="lead mt-3">
+            Plataforma de gestión y organización de tareas pensada para aumentar tu productividad y controlar tus proyectos con eficiencia.
+          </p>
+
+          {% if not user.is_authenticated %}
+          <div class="mt-4">
+            <a href="{% url 'signup' %}" class="btn btn-success me-2">Crear cuenta</a>
+            <a href="{% url 'signin' %}" class="btn btn-outline-primary">Iniciar sesión</a>
+          </div>
+          {% else %}
+          <div class="mt-4">
+            <a href="{% url 'estimaciones' %}" class="btn btn-dark">Ir a estimacion de propiedad.</a>
+          </div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

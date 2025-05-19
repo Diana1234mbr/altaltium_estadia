@@ -1,0 +1,134 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+  <div class="row justify-content-center">
+    <div class="col-md-8 text-center">
+      <h1 class="display-5 fw-bold">Estimación de propiedad</h1>
+    </div>
+  </div>
+
+  <div class="row justify-content-justify">
+    <p class="lead ms-auto">
+
+    <form class="row g-32 needs-validation" novalidate>
+
+      <div class="col-md-4">
+        <label for="validationCustom04" class="form-label">Tipo de propiedad</label>
+        <select class="form-select" id="validationCustom04" required>
+          <option selected disabled value="">Elige una opción...</option>
+          <option>...</option>
+        </select>
+        <div class="invalid-feedback">
+          Please select a valid state.
+        </div>
+      </div>
+
+      <div class="col-md-4">
+        <label for="validationCustom03" class="form-label">Calle</label>
+        <input type="text" class="form-control" id="validationCustom03" required>
+        <div class="invalid-feedback">
+          Please provide a valid city.
+        </div>
+      </div>
+
+      <div class="col-md-4">
+        <label for="validationCustom04" class="form-label">Delegacíon o municipio</label>
+        <select class="form-select" id="validationCustom04" required>
+          <option selected disabled value="">Elige una opción...</option>
+          <option>...</option>
+        </select>
+        <div class="invalid-feedback">
+          Please select a valid state.
+        </div>
+      </div>
+
+      <div class="col-md-4">
+        <label for="validationCustom04" class="form-label">Estado</label>
+        <select class="form-select" id="validationCustom04" required>
+          <option selected disabled value="">Elige una opción...</option>
+          <option>...</option>
+        </select>
+        <div class="invalid-feedback">
+          Please select a valid state.
+        </div>
+      </div>
+
+      <div class="col-md-4">
+        <label for="validationCustom04" class="form-label">Colonia</label>
+        <select class="form-select" id="validationCustom04" required>
+          <option selected disabled value="">Elige una opción...</option>
+          <option>...</option>
+        </select>
+        <div class="invalid-feedback">
+          Please select a valid state.
+        </div>
+      </div>
+
+      <div class="col-md-1">
+        <label for="validationCustom05" class="form-label">Sanitarios</label>
+        <input type="text" class="form-control" id="validationCustom05" required>
+        <div class="invalid-feedback">
+          Please provide a valid zip.
+        </div>
+      </div>
+
+      <div class="col-md-1">
+        <label for="validationCustom05" class="form-label">Recamaras</label>
+        <input type="text" class="form-control" id="validationCustom05" required>
+        <div class="invalid-feedback">
+          Please provide a valid zip.
+        </div>
+      </div>
+
+      <div class="col-md-2">
+        <label for="validationCustom05" class="form-label">Estacionamiento</label>
+        <input type="text" class="form-control" id="validationCustom05" required>
+        <div class="invalid-feedback">
+          Please provide a valid zip.
+        </div>
+      </div>
+
+
+      <div class="col-md-1">
+        <label for="validationCustom05" class="form-label">Pisos</label>
+        <input type="text" class="form-control" id="validationCustom05" required>
+        <div class="invalid-feedback">
+          Please provide a valid zip.
+        </div>
+      </div>
+
+    </form>
+    </p>
+    
+      <div class="row justify-content-start">
+        <div class="col-md-8 text-start">
+          <h3 style="font: size 1.5em; color: red;">Metraje</h3>
+        </div>
+      </div>
+
+
+      <div class="col-md-2">
+        <label for="validationCustom05" class="form-label">Terreno</label>
+        <input type="text" class="form-control" id="validationCustom05" required>
+        <div class="invalid-feedback">
+          Please provide a valid zip.
+        </div>
+      </div>
+
+      <div class="col-md-2">
+        <label for="validationCustom05" class="form-label">Construcción</label>
+        <input type="text" class="form-control" id="validationCustom05" required>
+        <div class="invalid-feedback">
+          Please provide a valid zip.
+        </div>
+      </div>
+
+      <div class="col-12 text-end">
+        <button class="btn btn-dark" type="submit">Calcular</button>
+      </div>
+            
+
+  </div>
+</div>
+{% endblock %}
