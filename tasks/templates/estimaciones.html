@@ -1,134 +1,158 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<div class="container mt-5">
+<style>
+  body {
+    background: linear-gradient(-45deg, #fefcef, #bfc6c7, #52b3c0, #00cccc);
+    background-size: 400% 400%;
+    animation: gradientBG 15s ease infinite;
+  }
+
+  @keyframes gradientBG {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+
+  .form-container {
+    background-color: #ffffffdd;
+    backdrop-filter: blur(10px);
+    padding: 2.5rem;
+    border-radius: 12px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+    border-left: 6px solid #00cccc;
+  }
+
+  .form-title {
+    color: #003035;
+  }
+
+  .form-label {
+    font-weight: 600;
+    color: #003035;
+  }
+
+  .section-title {
+    color: #cc0000;
+    font-weight: bold;
+    font-size: 1.4rem;
+    margin-top: 2rem;
+  }
+
+  .btn-calculate {
+    background-color: #00cccc;
+    border: none;
+    color: white;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+  }
+
+  .btn-calculate:hover {
+    background-color: #52b3c0;
+    color: #003035;
+  }
+</style>
+
+<div class="container mt-5 animate__animated animate__fadeIn">
   <div class="row justify-content-center">
-    <div class="col-md-8 text-center">
-      <h1 class="display-5 fw-bold">Estimación de propiedad</h1>
+    <div class="col-md-10">
+      <div class="form-container animate__animated animate__zoomIn">
+        <h1 class="text-center form-title mb-4">Estimación de Propiedad</h1>
+
+        <form class="row g-3 needs-validation" novalidate>
+
+          <div class="col-md-4">
+            <label class="form-label">Tipo de propiedad</label>
+            <select class="form-select" required>
+              <option selected disabled value="">Elige una opción...</option>
+              <option>Casa</option>
+              <option>Departamento</option>
+              <option>Terreno</option>
+            </select>
+            <div class="invalid-feedback">Selecciona una opción válida.</div>
+          </div>
+
+          <div class="col-md-4">
+            <label class="form-label">Calle</label>
+            <input type="text" class="form-control" required>
+            <div class="invalid-feedback">Introduce una calle válida.</div>
+          </div>
+
+          <div class="col-md-4">
+            <label class="form-label">Delegación o municipio</label>
+            <select class="form-select" required>
+              <option selected disabled value="">Elige una opción...</option>
+              <option>...</option>
+            </select>
+            <div class="invalid-feedback">Selecciona una opción válida.</div>
+          </div>
+
+          <div class="col-md-4">
+            <label class="form-label">Estado</label>
+            <select class="form-select" required>
+              <option selected disabled value="">Elige una opción...</option>
+              <option>...</option>
+            </select>
+            <div class="invalid-feedback">Selecciona una opción válida.</div>
+          </div>
+
+          <div class="col-md-4">
+            <label class="form-label">Colonia</label>
+            <select class="form-select" required>
+              <option selected disabled value="">Elige una opción...</option>
+              <option>...</option>
+            </select>
+            <div class="invalid-feedback">Selecciona una opción válida.</div>
+          </div>
+
+          <div class="col-md-2">
+            <label class="form-label">Sanitarios</label>
+            <input type="number" class="form-control" required>
+            <div class="invalid-feedback">Campo requerido.</div>
+          </div>
+
+          <div class="col-md-2">
+            <label class="form-label">Recámaras</label>
+            <input type="number" class="form-control" required>
+            <div class="invalid-feedback">Campo requerido.</div>
+          </div>
+
+          <div class="col-md-2">
+            <label class="form-label">Estacionamiento</label>
+            <input type="number" class="form-control" required>
+            <div class="invalid-feedback">Campo requerido.</div>
+          </div>
+
+          <div class="col-md-2">
+            <label class="form-label">Pisos</label>
+            <input type="number" class="form-control" required>
+            <div class="invalid-feedback">Campo requerido.</div>
+          </div>
+
+          <!-- Sección de metraje -->
+          <div class="col-12 mt-4">
+            <span class="section-title">Metraje</span>
+          </div>
+
+          <div class="col-md-4">
+            <label class="form-label">Terreno (m²)</label>
+            <input type="number" class="form-control" required>
+            <div class="invalid-feedback">Campo requerido.</div>
+          </div>
+
+          <div class="col-md-4">
+            <label class="form-label">Construcción (m²)</label>
+            <input type="number" class="form-control" required>
+            <div class="invalid-feedback">Campo requerido.</div>
+          </div>
+
+          <div class="col-12 text-end mt-4">
+            <button type="submit" class="btn btn-calculate btn-lg animate__animated animate__pulse">Calcular</button>
+          </div>
+
+        </form>
+      </div>
     </div>
-  </div>
-
-  <div class="row justify-content-justify">
-    <p class="lead ms-auto">
-
-    <form class="row g-32 needs-validation" novalidate>
-
-      <div class="col-md-4">
-        <label for="validationCustom04" class="form-label">Tipo de propiedad</label>
-        <select class="form-select" id="validationCustom04" required>
-          <option selected disabled value="">Elige una opción...</option>
-          <option>...</option>
-        </select>
-        <div class="invalid-feedback">
-          Please select a valid state.
-        </div>
-      </div>
-
-      <div class="col-md-4">
-        <label for="validationCustom03" class="form-label">Calle</label>
-        <input type="text" class="form-control" id="validationCustom03" required>
-        <div class="invalid-feedback">
-          Please provide a valid city.
-        </div>
-      </div>
-
-      <div class="col-md-4">
-        <label for="validationCustom04" class="form-label">Delegacíon o municipio</label>
-        <select class="form-select" id="validationCustom04" required>
-          <option selected disabled value="">Elige una opción...</option>
-          <option>...</option>
-        </select>
-        <div class="invalid-feedback">
-          Please select a valid state.
-        </div>
-      </div>
-
-      <div class="col-md-4">
-        <label for="validationCustom04" class="form-label">Estado</label>
-        <select class="form-select" id="validationCustom04" required>
-          <option selected disabled value="">Elige una opción...</option>
-          <option>...</option>
-        </select>
-        <div class="invalid-feedback">
-          Please select a valid state.
-        </div>
-      </div>
-
-      <div class="col-md-4">
-        <label for="validationCustom04" class="form-label">Colonia</label>
-        <select class="form-select" id="validationCustom04" required>
-          <option selected disabled value="">Elige una opción...</option>
-          <option>...</option>
-        </select>
-        <div class="invalid-feedback">
-          Please select a valid state.
-        </div>
-      </div>
-
-      <div class="col-md-1">
-        <label for="validationCustom05" class="form-label">Sanitarios</label>
-        <input type="text" class="form-control" id="validationCustom05" required>
-        <div class="invalid-feedback">
-          Please provide a valid zip.
-        </div>
-      </div>
-
-      <div class="col-md-1">
-        <label for="validationCustom05" class="form-label">Recamaras</label>
-        <input type="text" class="form-control" id="validationCustom05" required>
-        <div class="invalid-feedback">
-          Please provide a valid zip.
-        </div>
-      </div>
-
-      <div class="col-md-2">
-        <label for="validationCustom05" class="form-label">Estacionamiento</label>
-        <input type="text" class="form-control" id="validationCustom05" required>
-        <div class="invalid-feedback">
-          Please provide a valid zip.
-        </div>
-      </div>
-
-
-      <div class="col-md-1">
-        <label for="validationCustom05" class="form-label">Pisos</label>
-        <input type="text" class="form-control" id="validationCustom05" required>
-        <div class="invalid-feedback">
-          Please provide a valid zip.
-        </div>
-      </div>
-
-    </form>
-    </p>
-    
-      <div class="row justify-content-start">
-        <div class="col-md-8 text-start">
-          <h3 style="font: size 1.5em; color: red;">Metraje</h3>
-        </div>
-      </div>
-
-
-      <div class="col-md-2">
-        <label for="validationCustom05" class="form-label">Terreno</label>
-        <input type="text" class="form-control" id="validationCustom05" required>
-        <div class="invalid-feedback">
-          Please provide a valid zip.
-        </div>
-      </div>
-
-      <div class="col-md-2">
-        <label for="validationCustom05" class="form-label">Construcción</label>
-        <input type="text" class="form-control" id="validationCustom05" required>
-        <div class="invalid-feedback">
-          Please provide a valid zip.
-        </div>
-      </div>
-
-      <div class="col-12 text-end">
-        <button class="btn btn-dark" type="submit">Calcular</button>
-      </div>
-            
-
   </div>
 </div>
 {% endblock %}

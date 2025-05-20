@@ -1,27 +1,150 @@
 {% extends 'base.html' %}
+{% load static %}
 
 {% block content %}
-<div class="container mt-5">
-  <div class="row justify-content-center">
-    <div class="col-md-8 text-center">
-      <div class="card shadow-sm border-0">
-        <div class="card-body p-5">
-          <h1 class="display-5 fw-bold">Bienvenido a Inmovalor</h1>
-          <p class="lead mt-3">
-            Plataforma de gestión y organización de tareas pensada para aumentar tu productividad y controlar tus proyectos con eficiencia.
-          </p>
+<style>
+  body {
+    background: linear-gradient(-45deg, #fefcef, #bfc6c7, #52b3c0, #00cccc);
+    background-size: 400% 400%;
+    animation: gradientBG 15s ease infinite;
+  }
 
-          {% if not user.is_authenticated %}
+  @keyframes gradientBG {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+
+  .welcome-card {
+    background-color: #ffffffcc;
+    backdrop-filter: blur(10px);
+    border-left: 8px solid #00cccc;
+    border-radius: 12px;
+    height: 100%;
+  }
+
+  .welcome-btn {
+    background-color: #00cccc;
+    color: #ffffff;
+  }
+
+  .welcome-btn:hover {
+    background-color: #52b3c0;
+    color: #003035;
+  }
+
+  .carousel-container {
+    border-radius: 10px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+    overflow: hidden;
+    height: 100%;
+    display: flex;
+    align-items: stretch;
+  }
+
+  .carousel-inner {
+    width: 100%;
+    height: 100%;
+  }
+
+  .carousel-inner .carousel-item {
+    height: 100%;
+  }
+
+  .carousel-inner img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  @media (max-width: 768px) {
+    .carousel-container {
+      margin-top: 2rem;
+      height: 250px;
+    }
+  }
+</style>
+
+<div class="container mt-5 animate__animated animate__fadeIn">
+  <div class="row justify-content-center align-items-stretch g-4">
+    <!-- Tarjeta de texto -->
+    <div class="col-lg-6 animate__animated animate__fadeInLeft d-flex">
+      <div class="card welcome-card shadow-lg w-100">
+        <div class="card-body p-5 text-center">
+          <h1 class="display-5 fw-bold text-dark animate__animated animate__fadeInDown">
+            Bienvenido a <span style="color: #00cccc;">Inmovalor</span>
+          </h1>
+
+          {% if user.is_authenticated %}
+          <!-- Texto para usuarios autenticados -->
+          <p class="lead mt-3 text-dark animate__animated animate__fadeInUp">
+            ¡Bienvenido a Inmovalor! Aquí podrás obtener una estimación precisa del valor de propiedades y acceder a análisis exhaustivos para tomar decisiones informadas. Explora nuestras herramientas y descubre el potencial de tus propiedades o aquellas que estás considerando. ¡Estamos emocionados de ayudarte a alcanzar tus objetivos inmobiliarios!
+          </p>
           <div class="mt-4">
-            <a href="{% url 'signup' %}" class="btn btn-success me-2">Crear cuenta</a>
-            <a href="{% url 'signin' %}" class="btn btn-outline-primary">Iniciar sesión</a>
+            <a href="{% url 'estimaciones' %}" class="btn btn-dark btn-lg">
+              <i class="bi bi-bar-chart-line me-2"></i> Ir a estimación de propiedad
+            </a>
           </div>
           {% else %}
-          <div class="mt-4">
-            <a href="{% url 'estimaciones' %}" class="btn btn-dark">Ir a estimacion de propiedad.</a>
+          <!-- Texto para visitantes no autenticados -->
+          <p class="lead mt-3 text-dark animate__animated animate__fadeInUp">
+            Plataforma de gestión y organización de tareas pensada para aumentar tu productividad y controlar tus proyectos con eficiencia.
+          </p>
+          <div class="mt-4 d-flex flex-column flex-md-row justify-content-center gap-3">
+            <a href="{% url 'signup' %}" class="btn btn-lg welcome-btn">
+              <i class="bi bi-person-plus-fill me-2"></i> Crear cuenta
+            </a>
+            <a href="{% url 'signin' %}" class="btn btn-outline-dark btn-lg">
+              <i class="bi bi-box-arrow-in-right me-2"></i> Iniciar sesión
+            </a>
           </div>
           {% endif %}
         </div>
+      </div>
+    </div>
+
+    <!-- Carrusel de imágenes -->
+    <div class="col-lg-6 animate__animated animate__fadeInRight d-flex">
+      <div id="carouselWelcome" class="carousel slide carousel-container w-100" data-bs-ride="carousel">
+        <div class="carousel-inner">
+
+          {% if user.is_authenticated %}
+          <!-- Carrusel para usuarios autenticados -->
+          <div class="carousel-item active" data-bs-interval="1500">
+            <img src="{% static 'images/casa5.png' %}" alt="Propiedad 1">
+          </div>
+          <div class="carousel-item" data-bs-interval="1500">
+            <img src="{% static 'images/casa6.png' %}" alt="Propiedad 2">
+          </div>
+          <div class="carousel-item" data-bs-interval="1500">
+            <img src="{% static 'images/casa1.png' %}" alt="Casa 1">
+          </div>
+          <div class="carousel-item" data-bs-interval="1500">
+            <img src="{% static 'images/casa2.png' %}" alt="Casa 2">
+          </div>
+          <div class="carousel-item" data-bs-interval="1500">
+            <img src="{% static 'images/casa3.png' %}" alt="Casa 3">
+          </div>
+          <div class="carousel-item" data-bs-interval="1500">
+            <img src="{% static 'images/casa4.png' %}" alt="Casa 4">
+          </div>
+          {% else %}
+          <!-- Carrusel para visitantes -->
+          <div class="carousel-item active" data-bs-interval="1500">
+            <img src="{% static 'images/Altatium.png' %}" alt="Altatium">
+          </div>
+          <div class="carousel-item" data-bs-interval="1500">
+            <img src="{% static 'images/forbes.png' %}" alt="Forbes">
+          </div>
+          {% endif %}
+
+        </div>
+        <button class="carousel-control-prev" type="button" data-bs-target="#carouselWelcome" data-bs-slide="prev">
+          <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#carouselWelcome" data-bs-slide="next">
+          <span class="carousel-control-next-icon" aria-hidden="true"></span>
+        </button>
       </div>
     </div>
   </div>

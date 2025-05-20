@@ -1,45 +1,72 @@
 {% load static %}
 
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+<!-- Topbar Start -->
+<div class="container-fluid" style="background-color: #00cccc; color: #ffffff;">
+  <div class="container d-flex justify-content-between py-2">
+    <div>
+      <a href="#" class="text-white me-3 text-decoration-none">FAQs</a>
+      <span class="text-white">|</span>
+      <a href="#" class="text-white mx-3 text-decoration-none">Ayuda</a>
+      <span class="text-white">|</span>
+      <a href="#" class="text-white ms-3 text-decoration-none">Soporte</a>
+    </div>
+    <div>
+      <a class="text-white me-2" href="#"><i class="fab fa-facebook-f"></i></a>
+      <a class="text-white me-2" href="#"><i class="fab fa-twitter"></i></a>
+      <a class="text-white me-2" href="#"><i class="fab fa-instagram"></i></a>
+    </div>
+  </div>
+</div>
+<!-- Topbar End -->
+
+<!-- Navbar Start -->
+<nav class="navbar navbar-expand-lg shadow-sm sticky-top animate__animated animate__fadeInDown"
+     style="background-color: #003035;">
   <div class="container">
-    <a class="navbar-brand" href="/">
-      <img src="{% static 'images/logo.png' %}"  width="200" height="90" class="d-inline-block align-text-top">
+    <a class="navbar-brand d-flex align-items-center text-white fw-bold" href="/">
+      <img src="{% static 'images/logo.png' %}" alt="Logo" width="180" height="100">
     </a>
-    <button
-      class="navbar-toggler"
-      type="button"
-      data-bs-toggle="collapse"
-      data-bs-target="#navbarNav"
-      aria-controls="navbarNav"
-      aria-expanded="false"
-      aria-label="Toggle navigation"
-    >
+    <button class="navbar-toggler text-white" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar">
       <span class="navbar-toggler-icon"></span>
     </button>
-    <div class="collapse navbar-collapse" id="navbarNav">
-      <ul class="navbar-nav ms-auto">
+
+    <div class="collapse navbar-collapse justify-content-end" id="mainNavbar">
+      <ul class="navbar-nav mb-2 mb-lg-0">
         <li class="nav-item">
-          <a href="/" class="nav-link">Inicio</a>
+          <a class="nav-link text-white" href="/">Inicio</a>
         </li>
+
+        <!-- Dropdown
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle text-white" href="#" id="serviciosDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            Servicios
+          </a>
+          <ul class="dropdown-menu animate__animated animate__fadeIn" aria-labelledby="serviciosDropdown"
+              style="background-color: #fefcef;">
+            <li><a class="dropdown-item" href="/estimaciones" style="color: #003035;">Estimaciones</a></li>
+            <li><a class="dropdown-item" href="#" style="color: #003035;">Asesoría</a></li>
+            <li><a class="dropdown-item" href="#" style="color: #003035;">Valuación</a></li>
+          </ul>
+        </li> -->
+
         {% if user.is_authenticated %}
-        </li>
-        <div class="collapse navbar-collapse" id="navbarNav">
-          <ul class="navbar-nav ms-auto">
-            <li class="nav-item">
-              <a href="/estimaciones" class="nav-link">Estimación de propiedades</a>
-            </li>
         <li class="nav-item">
-          <a class="nav-link" href="/logout">Cerrar Sesión</a>
+          <a class="nav-link text-white" href="/estimaciones">Estimación de propiedad</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link text-danger" href="/logout">Cerrar Sesión</a>
         </li>
         {% else %}
         <li class="nav-item">
-          <a href="/signin" class="nav-link">Iniciar Sesión</a>
+          <a class="nav-link text-white" href="/signin">Iniciar Sesión</a>
         </li>
         <li class="nav-item">
-          <a href="/signup" class="nav-link">Registrarse</a>
+          <a class="btn ms-2" href="/signup"
+             style="background-color: #00cccc; color: #003035; border: none;">Registrarse</a>
         </li>
         {% endif %}
       </ul>
     </div>
   </div>
 </nav>
+<!-- Navbar End -->
