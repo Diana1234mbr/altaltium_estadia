@@ -1,72 +1,62 @@
 {% load static %}
 
+<style>
+  .navbar-nav .nav-link.active {
+    color: #008a8a !important;
+    font-weight: bold;
+  }
+</style>
+
 <!-- Topbar Start -->
-<div class="container-fluid" style="background-color: #00cccc; color: #ffffff;">
-  <div class="container d-flex justify-content-between py-2">
-    <div>
-      <a href="#" class="text-white me-3 text-decoration-none">FAQs</a>
-      <span class="text-white">|</span>
-      <a href="#" class="text-white mx-3 text-decoration-none">Ayuda</a>
-      <span class="text-white">|</span>
-      <a href="#" class="text-white ms-3 text-decoration-none">Soporte</a>
-    </div>
-    <div>
-      <a class="text-white me-2" href="#"><i class="fab fa-facebook-f"></i></a>
-      <a class="text-white me-2" href="#"><i class="fab fa-twitter"></i></a>
-      <a class="text-white me-2" href="#"><i class="fab fa-instagram"></i></a>
+<div class="container-fluid bg-light pt-3 d-none d-lg-block">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-6 text-center text-lg-left mb-2 mb-lg-0">
+        <div class="d-inline-flex align-items-center">
+          <p class="mb-0"><i class="fa fa-envelope me-2"></i>info@example.com</p>
+          <p class="text-body px-3 mb-0">|</p>
+          <p class="mb-0"><i class="fa fa-phone-alt me-2"></i>+012 345 6789</p>
+        </div>
+      </div>
+      <div class="col-lg-6 text-center text-lg-end">
+        <div class="d-inline-flex align-items-center">
+          <a class="px-2" href="#"><i style="color: #00cccc;" class="fab fa-facebook-f"></i></a>
+          <a class="px-2" href="#"><i style="color: #00cccc;" class="fab fa-twitter"></i></a>
+          <a class="px-2" href="#"><i style="color: #00cccc;" class="fab fa-linkedin-in"></i></a>
+          <a class="px-2" href="#"><i style="color: #00cccc;" class="fab fa-instagram"></i></a>
+          <a class="ps-2" href="#"><i style="color: #00cccc;" class="fab fa-youtube"></i></a>
+        </div>
+      </div>
     </div>
   </div>
 </div>
 <!-- Topbar End -->
 
 <!-- Navbar Start -->
-<nav class="navbar navbar-expand-lg shadow-sm sticky-top animate__animated animate__fadeInDown"
-     style="background-color: #003035;">
-  <div class="container">
-    <a class="navbar-brand d-flex align-items-center text-white fw-bold" href="/">
-      <img src="{% static 'images/logo.png' %}" alt="Logo" width="180" height="100">
-    </a>
-    <button class="navbar-toggler text-white" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar">
-      <span class="navbar-toggler-icon"></span>
-    </button>
-
-    <div class="collapse navbar-collapse justify-content-end" id="mainNavbar">
-      <ul class="navbar-nav mb-2 mb-lg-0">
-        <li class="nav-item">
-          <a class="nav-link text-white" href="/">Inicio</a>
-        </li>
-
-        <!-- Dropdown
-        <li class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle text-white" href="#" id="serviciosDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-            Servicios
-          </a>
-          <ul class="dropdown-menu animate__animated animate__fadeIn" aria-labelledby="serviciosDropdown"
-              style="background-color: #fefcef;">
-            <li><a class="dropdown-item" href="/estimaciones" style="color: #003035;">Estimaciones</a></li>
-            <li><a class="dropdown-item" href="#" style="color: #003035;">Asesoría</a></li>
-            <li><a class="dropdown-item" href="#" style="color: #003035;">Valuación</a></li>
-          </ul>
-        </li> -->
-
-        {% if user.is_authenticated %}
-        <li class="nav-item">
-          <a class="nav-link text-white" href="/estimaciones">Estimación de propiedad</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link text-danger" href="/logout">Cerrar Sesión</a>
-        </li>
-        {% else %}
-        <li class="nav-item">
-          <a class="nav-link text-white" href="/signin">Iniciar Sesión</a>
-        </li>
-        <li class="nav-item">
-          <a class="btn ms-2" href="/signup"
-             style="background-color: #00cccc; color: #003035; border: none;">Registrarse</a>
-        </li>
-        {% endif %}
-      </ul>
-    </div>
+<div class="container-fluid position-relative nav-bar p-0">
+  <div class="container-lg position-relative p-0 px-lg-3" style="z-index: 9;">
+    <nav class="navbar navbar-expand-lg bg-light navbar-light shadow-lg py-3 py-lg-0 px-3">
+      <a href="/" class="navbar-brand">
+          <h1 class="m-0" style="color: #00cccc;">
+          <span style="color: #000000;">Inmo</span>valor
+        </h1>
+      </a>
+      <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse justify-content-between px-3" id="navbarCollapse">
+        <div class="navbar-nav ms-auto py-0">
+          <a href="/" class="nav-item nav-link {% if request.path == '/' %}active{% endif %}" style="color: #00cccc;">Inicio</a>
+          {% if user.is_authenticated %}
+            <a href="/estimaciones" class="nav-item nav-link {% if request.path == '/estimaciones' %}active{% endif %}" style="color: #00cccc;">Estimación</a>
+            <a href="/logout" class="nav-item nav-link" style="color: #ff4d4d;">Cerrar sesión</a>
+          {% else %}
+            <a href="/signin" class="nav-item nav-link {% if request.path == '/signin' %}active{% endif %}" style="color: #00cccc;">Iniciar sesión</a>
+            <a href="/signup" class="nav-item nav-link {% if request.path == '/signup' %}active{% endif %}" style="color: #00cccc;">Registrarse</a>
+          {% endif %}
+        </div>
+      </div>
+    </nav>
   </div>
-</nav>
+</div>
 <!-- Navbar End -->

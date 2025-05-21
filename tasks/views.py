@@ -67,4 +67,11 @@ def forgot_password(request):
     return render(request, 'forgotpassword.html')
 
 def welcome(request):
-    return render(request, 'welcome.html')
+    images_auth = ["casa5.png", "casa6.png", "casa1.png", "casa2.png", "casa3.png", "casa4.png"]
+    images_guest = ["Altatium.png", "forbes.png"]
+    context = {
+        "images_auth": images_auth,
+        "images_guest": images_guest
+    }
+    return render(request, "welcome.html", context)
+
