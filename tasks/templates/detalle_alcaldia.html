@@ -1,0 +1,89 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-5">
+  <div class="card mx-auto" style="max-width: 700px;">
+    <img src="{% static alcaldia.imagen %}" class="card-img-top" alt="{{ alcaldia.nombre }}">
+    <div class="card-body">
+      <h2 class="card-title">{{ alcaldia.nombre }}</h2>
+      <p class="card-text">{{ alcaldia.descripcion }}</p>
+
+      <hr>
+      <h5>Datos clave</h5>
+      <ul>
+        <li><strong>Población:</strong> {{ alcaldia.poblacion }}</li>
+        <li><strong>Superficie:</strong> {{ alcaldia.superficie }}</li>
+      </ul>
+
+      <hr>
+      <h5>Precio por m2 de un departamento en Álvaro Obregón en 2025</h5>
+      <table class="table table-bordered">
+        <thead>
+          <tr>
+            <th>Colonia</th>
+            <th>Valor por m²</th>
+            <th>Precio promedio</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for dato in alcaldia.precios %}
+            <tr>
+              <td>{{ dato.colonia }}</td>
+              <td>${{ dato.valorm2 }}</td>
+              <td>${{ dato.promedio }}</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+
+      <hr>
+      <h5>Ubicación</h5>
+      <!-- Mostrar coordenadas para debug -->
+      <p>Latitud: {{ alcaldia.coordenadas.lat }}</p>
+      <p>Longitud: {{ alcaldia.coordenadas.lng }}</p>
+
+      <div id="map" style="height: 300px;"></div>
+
+      <a href="{% url 'welcome' %}" class="btn btn-primary mt-3">Volver al inicio</a>
+    </div>
+  </div>
+</div>
+
+<!-- Leaflet CSS -->
+<link
+  rel="stylesheet"
+  href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css"
+  integrity="sha256-sA+4kN+wl9MfQ6nqvHsC7hZP3vSvJs6f4ozH+tr+1Po="
+  crossorigin=""
+/>
+
+<!-- Leaflet JS -->
+<script
+  src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"
+  integrity="sha256-DQQXY1v7g2j3r47nI7u7ABdXTPh4u7m1Oq6JtRh7+7A="
+  crossorigin=""
+></script>
+
+<script>
+  window.onload = function () {
+    const lat = parseFloat("{{ alcaldia.coordenadas.lat }}");
+    const lng = parseFloat("{{ alcaldia.coordenadas.lng }}");
+
+    if (!isNaN(lat) && !isNaN(lng)) {
+      const map = L.map('map').setView([lat, lng], 13);
+
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 19,
+        attribution: '&copy; OpenStreetMap contributors'
+      }).addTo(map);
+
+      L.marker([lat, lng]).addTo(map)
+        .bindPopup('{{ alcaldia.nombre }}')
+        .openPopup();
+    } else {
+      console.error("Latitud o longitud inválida:", lat, lng);
+    }
+  };
+</script>
+{% endblock %}

@@ -91,6 +91,15 @@
     background-color: #ffffffcc;
     backdrop-filter: blur(10px);
   }
+
+  .alcaldia-card {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.alcaldia-card:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.3);
+}
+
 </style>
 
 <!-- Fondo animado -->
@@ -149,5 +158,48 @@
   <p>
     Aquí puedes agregar secciones adicionales con contenido relevante, como servicios, características, testimonios o enlaces importantes.
   </p>
+
+  <!-- Tarjetas de alcaldías con animación -->
+<div class="site-section">
+  <div class="container">
+    <div class="row justify-content-center mb-5">
+      <div class="col-md-7 text-center">
+        <h2 class="font-weight-light text-black">Alcaldías</h2>
+        <p class="color-black-opacity-5">Escoge una alcaldía</p>
+      </div>
+    </div>
+
+    <!-- Tarjetas -->
+    <div class="row justify-content-center">
+      {% for i in alcaldias %}
+        <div class="col-md-4 alcaldia-page mb-4 animate__animated animate__fadeInUp">
+          <a href="{% url 'detalle_alcaldia' i.id %}" style="text-decoration: none;">
+            <div class="card shadow-sm h-100 alcaldia-card">
+              <img src="{% static i.imagen %}" class="card-img-top" alt="{{ i.nombre }}">
+              <div class="card-body text-center">
+                <h5 class="card-title">{{ i.nombre }}</h5>
+              </div>
+            </div>
+          </a>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
 </div>
+
+    <!-- Controles de paginación -->
+    <div class="d-flex justify-content-center mt-3">
+      <button id="prevPage" class="btn btn-secondary me-2">Anterior</button>
+      <button id="nextPage" class="btn btn-primary">Siguiente</button>
+    </div>
+  </div>
+</div>
+
+    </div>
+
+    <!-- <div class="site-section bg-light">
+
+</div> -->
+
+
 {% endblock %}
