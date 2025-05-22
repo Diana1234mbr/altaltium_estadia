@@ -97,7 +97,7 @@
 <div class="animated-gradient"></div>
 
 <!-- Carrusel de fondo -->
-<div id="carouselWelcome" class="carousel slide carousel-background" data-bs-ride="carousel" data-bs-interval="1500" data-bs-pause="false">
+<div id="carouselWelcome" class="carousel slide carousel-background" data-bs-ride="carousel" data-bs-interval="5000" data-bs-pause="false">
   <div class="carousel-inner">
     {% if user.is_authenticated %}
     <div class="carousel-item active"><img src="{% static 'images/casa5.png' %}" alt="Propiedad 1"></div>
@@ -145,9 +145,88 @@
 
 <!-- Contenido extra que se verá al hacer scroll -->
 <div class="extra-content">
-  <h2>Más información</h2>
-  <p>
-    Aquí puedes agregar secciones adicionales con contenido relevante, como servicios, características, testimonios o enlaces importantes.
-  </p>
+  <!-- About Start -->
+  <div class="container-fluid py-5">
+      <div class="container pt-5">
+          <div class="row">
+              <div class="col-lg-6" style="min-height: 500px;">
+                  <div class="position-relative h-100">
+                      <img class="position-absolute w-100 h-100" src="{% static 'images/edificio.png' %}" style="object-fit: cover;">
+                  </div>
+              </div>
+              <div class="col-lg-6 pt-5 pb-lg-5">
+                  <div class="about-text bg-white p-4 p-lg-5 my-lg-5">
+                    <h6 class="text-primary text-uppercase" style="letter-spacing: 5px; color: #bfc6c7 !important;">Sobre Altaltium</h6>
+                      <h1 class="mb-3">Inversión inteligente en bienes raíces</h1>
+                      <p>Inspirados por el artículo de Forbes México, en Altaltium estamos transformando el mercado inmobiliario mexicano con soluciones disruptivas que democratizan las oportunidades de inversión y vivienda.</p>
+                      <div class="row mb-4">
+                          <div class="col-6">
+                              <img class="img-fluid" src="{% static 'images/logoforbes.jpg' %}" alt="Forbes">
+                          </div>
+                          <div class="col-6">
+                              <img class="img-fluid" src="{% static 'images/bienes.jpg' %}" alt="Bienes Raíces">
+                          </div>
+                      </div>
+                    <a href="https://forbes.com.mx/ad-altaltium-una-alternativa-hacia-el-futuro-de-los-bienes-raices/" 
+                      class="btn mt-1" 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      style="background-color: #00cccc; border-color: #00cccc; color: white;">
+                      Ver en Forbes
+                    </a>
+                  </div>
+              </div>
+          </div>
+      </div>
+  </div>
+  <!-- About End -->
+
+  <!-- Feature Start -->
+  <div class="container-fluid pb-5">
+      <div class="container pb-5">
+          <div class="row">
+              <!-- Feature 1 -->
+              <div class="col-md-4 mb-5">
+                  <div class="feature-card text-center px-3">
+                      <div class="icon-container mx-auto mb-4" style="width: 80px; height: 80px; background: rgba(0, 204, 204, 0.1); border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                          <i class="fas fa-robot fa-2x" style="color: #00cccc;"></i>
+                      </div>
+                      <h4 class="mb-3" style="color: #333; font-weight: 700; letter-spacing: 0.5px;">TECNOLOGÍA INMOBILIARIA</h4>
+                      <p class="mb-0" style="color: #555; text-align: justify; line-height: 1.7; font-size: 15px;">
+                          Nuestra IA analiza patrones de plusvalía en 15 ciudades mexicanas, identificando oportunidades con 25% mayor rentabilidad que el mercado tradicional.
+                      </p>
+                  </div>
+              </div>
+              
+              <!-- Feature 2 -->
+              <div class="col-md-4 mb-5">
+                  <div class="feature-card text-center px-3">
+                      <div class="icon-container mx-auto mb-4" style="width: 80px; height: 80px; background: rgba(0, 204, 204, 0.1); border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                          <i class="fas fa-users fa-2x" style="color: #00cccc;"></i>
+                      </div>
+                      <h4 class="mb-3" style="color: #333; font-weight: 700; letter-spacing: 0.5px;">PARA NUEVAS GENERACIONES</h4>
+                      <p class="mb-0" style="color: #555; text-align: justify; line-height: 1.7; font-size: 15px;">
+                          Modelos flexibles sin requisitos bancarios, diseñados para millennials y Gen Z. 78% de nuestros inversionistas son menores de 35 años.
+                      </p>
+                  </div>
+              </div>
+              
+              <!-- Feature 3 -->
+              <div class="col-md-4 mb-5">
+                  <div class="feature-card text-center px-3">
+                      <div class="icon-container mx-auto mb-4" style="width: 80px; height: 80px; background: rgba(0, 204, 204, 0.1); border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                          <i class="fas fa-home fa-2x" style="color: #00cccc;"></i>
+                      </div>
+                      <h4 class="mb-3" style="color: #333; font-weight: 700; letter-spacing: 0.5px;">PROPIEDADES CON VENTAJA</h4>
+                      <p class="mb-0" style="color: #555; text-align: justify; line-height: 1.7; font-size: 15px;">
+                          Acceso exclusivo a inmuebles con irregularidades legales (60% del mercado) y remates bancarios verificados, con plusvalía garantizada por contrato.
+                      </p>
+                  </div>
+              </div>
+          </div>
+      </div>
+  </div>
+  <!-- Feature End -->
 </div>
+
 {% endblock %}

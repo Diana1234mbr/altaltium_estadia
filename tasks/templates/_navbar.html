@@ -13,18 +13,26 @@
     <div class="row">
       <div class="col-lg-6 text-center text-lg-left mb-2 mb-lg-0">
         <div class="d-inline-flex align-items-center">
-          <p class="mb-0"><i class="fa fa-envelope me-2"></i>info@example.com</p>
-          <p class="text-body px-3 mb-0">|</p>
-          <p class="mb-0"><i class="fa fa-phone-alt me-2"></i>+012 345 6789</p>
+                <!-- Email con enlace mailto -->
+                <a href="mailto:contacto@altaltiumrealestates.com" class="text-decoration-none me-2" style="color: #00cccc;">
+                  <p class="mb-0"><i class="fa fa-envelope me-2"></i>contacto@altaltiumrealestates.com</p>
+              </a>
+              
+              <p class="text-body px-3 mb-0" style="color: #00cccc;">|</p>
+              
+              <!-- Teléfono con enlace tel -->
+              <a href="tel:+525549065428" class="text-decoration-none" style="color: #00cccc;">
+                  <p class="mb-0"><i class="fa fa-phone-alt me-2"></i>55 4906 5428</p>
+              </a>
         </div>
       </div>
       <div class="col-lg-6 text-center text-lg-end">
         <div class="d-inline-flex align-items-center">
-          <a class="px-2" href="#"><i style="color: #00cccc;" class="fab fa-facebook-f"></i></a>
-          <a class="px-2" href="#"><i style="color: #00cccc;" class="fab fa-twitter"></i></a>
-          <a class="px-2" href="#"><i style="color: #00cccc;" class="fab fa-linkedin-in"></i></a>
-          <a class="px-2" href="#"><i style="color: #00cccc;" class="fab fa-instagram"></i></a>
-          <a class="ps-2" href="#"><i style="color: #00cccc;" class="fab fa-youtube"></i></a>
+          <a class="px-2" href="https://www.facebook.com/altaltiumrealestates/" target="_blank" rel="noopener noreferrer"><i style="color: #00cccc;" class="fab fa-facebook-f"></i></a>
+          <a class="px-2" href="https://www.tiktok.com/@altaltium" target="_blank" rel="noopener noreferrer"><i style="color: #00cccc;" class="fab fa-tiktok"></i></a>
+          <a class="px-2" href="https://www.instagram.com/altaltium/#" target="_blank" rel="noopener noreferrer"><i style="color: #00cccc;" class="fab fa-instagram"></i></a>
+          <a class="ps-2" href="https://wa.me/5215549065428" target="_blank" rel="noopener noreferrer"><i style="color: #00cccc;" class="fab fa-whatsapp"></i></a>
+          <a class="ps-2" href="https://www.youtube.com/@altaltium" target="_blank" rel="noopener noreferrer"><i style="color: #00cccc;" class="fab fa-youtube"></i></a>
         </div>
       </div>
     </div>
@@ -36,14 +44,47 @@
 <div class="container-fluid position-relative nav-bar p-0">
   <div class="container-lg position-relative p-0 px-lg-3" style="z-index: 9;">
     <nav class="navbar navbar-expand-lg bg-light navbar-light shadow-lg py-3 py-lg-0 px-3">
-      <a href="/" class="navbar-brand">
-          <h1 class="m-0" style="color: #00cccc;">
-          <span style="color: #000000;">Inmo</span>valor
+      <!-- Logo animado (versión mejorada) -->
+      <a href="/" class="navbar-brand" style="
+        position: relative;
+        display: inline-block;
+        height: 50px;
+        width: 180px;
+        overflow: hidden;
+      ">
+        <!-- Versión imagen (logo) -->
+        <img src="{% static 'images/logonegro.png' %}" 
+             width="180" 
+             height="50" 
+             style="
+               transition: all 0.6s ease;
+               position: absolute;
+               top: 0;
+               left: 0;
+             "
+             alt="Logo Inmovalor"
+             class="logo-img">
+        
+        <!-- Versión texto -->
+        <h1 class="m-0" style="
+          position: absolute;
+          top: 50%;
+          left: 0;
+          transform: translateY(-50%);
+          opacity: 0;
+          transition: all 0.6s ease;
+          margin: 0;
+          font-size: 1.8rem;
+          white-space: nowrap;
+        ">
+          <span style="color: #000000;">Inmo</span><span style="color: #00cccc;">valor</span>
         </h1>
       </a>
+
       <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
+      
       <div class="collapse navbar-collapse justify-content-between px-3" id="navbarCollapse">
         <div class="navbar-nav ms-auto py-0">
           <a href="/" class="nav-item nav-link {% if request.path == '/' %}active{% endif %}" style="color: #00cccc;">Inicio</a>
@@ -59,4 +100,40 @@
     </nav>
   </div>
 </div>
-<!-- Navbar End -->
+
+<!-- CSS para la animación -->
+<style>
+  .navbar-brand:hover .logo-img {
+    opacity: 0 !important;
+    transform: rotateY(90deg) !important;
+  }
+  
+  .navbar-brand:hover h1 {
+    opacity: 1 !important;
+    transform: translateY(-50%) rotateY(0) !important;
+  }
+</style>
+
+<!-- Opcional: Animación automática -->
+<script>
+  // Activar solo si quieres que cambie automáticamente
+  document.addEventListener('DOMContentLoaded', function() {
+    const brand = document.querySelector('.navbar-brand');
+    let showingText = false;
+    
+    setInterval(() => {
+      showingText = !showingText;
+      if(showingText) {
+        brand.querySelector('.logo-img').style.opacity = '0';
+        brand.querySelector('.logo-img').style.transform = 'rotateY(90deg)';
+        brand.querySelector('h1').style.opacity = '1';
+        brand.querySelector('h1').style.transform = 'translateY(-50%) rotateY(0)';
+      } else {
+        brand.querySelector('.logo-img').style.opacity = '1';
+        brand.querySelector('.logo-img').style.transform = 'rotateY(0)';
+        brand.querySelector('h1').style.opacity = '0';
+        brand.querySelector('h1').style.transform = 'translateY(-50%) rotateY(90deg)';
+      }
+    }, 5000); // Cambia cada 5 segundos
+  });
+</script>
