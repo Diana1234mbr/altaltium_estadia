@@ -1,3 +1,5 @@
+from .decorators import admin_required
+from django.contrib.auth.decorators import login_required, user_passes_test
 from django.shortcuts import render, redirect
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth import login, logout, authenticate
@@ -31,6 +33,11 @@ def signup(request):
 def estimaciones(request):
     return render(request, 'estimaciones.html')
 
+from django.contrib.auth import authenticate, login
+from django.shortcuts import render, redirect
+from django.contrib.auth.forms import AuthenticationForm
+from django.contrib.auth.models import User
+
 def signin(request):
     if request.method == 'GET':
         return render(request, 'signin.html', {"form": AuthenticationForm()})
@@ -49,7 +56,12 @@ def signin(request):
 
         if user is not None:
             login(request, user)
-            return redirect('welcome')
+
+            # 🔒 Redirección según tipo de usuario
+            if user.is_staff or user.is_superuser:
+                return redirect('gentelella_page', page='index')  # Dashboard admin
+            else:
+                return redirect('welcome')  # Usuario normal
         else:
             return render(request, 'signin.html', {
                 "form": AuthenticationForm(),
@@ -401,3 +413,16 @@ def detalle_alcaldia(request, id):
     if not alcaldia:
         return render(request, '404.html', status=404)
     return render(request, 'detalle_alcaldia.html', {'alcaldia': alcaldia})
+
+
+def admin_required(user):
+    return user.is_staff or user.is_superuser
+
+@login_required
+@user_passes_test(admin_required)
+def gentelella_view(request, page):
+    try:
+        return render(request, f'gentelella/{page}.html')
+    except:
+        return render(request, 'gentelella/page_404.html', status=404)
+
