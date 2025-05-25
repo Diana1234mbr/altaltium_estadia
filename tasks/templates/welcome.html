@@ -8,9 +8,10 @@
     padding: 0;
     height: 100%;
     overflow-x: hidden;
+    font-family: 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', sans-serif;
   }
 
-  /* Fondo de gradiente animado */
+  /* Fondo de gradiente animado (más claro) */
   .animated-gradient {
     position: fixed;
     top: 0; left: 0;
@@ -20,6 +21,7 @@
     background-size: 400% 400%;
     animation: gradientBG 15s ease infinite;
     z-index: -3;
+    opacity: 0.6; /* Cambiado de 0.9 a 0.6 para mayor claridad */
   }
 
   @keyframes gradientBG {
@@ -28,7 +30,7 @@
     100% { background-position: 0% 50%; }
   }
 
-  /* Carrusel como fondo */
+  /* Carrusel como fondo (más claro) */
   .carousel-background {
     position: fixed;
     top: 0; left: 0;
@@ -42,9 +44,10 @@
     width: 100%;
     height: 100vh;
     object-fit: cover;
+    filter: brightness(0.9); /* Cambiado de 0.7 a 0.9 para mayor claridad */
   }
 
-  /* Contenido principal encima */
+  /* Contenido principal (sin cambios) */
   .welcome-text-container {
     position: relative;
     min-height: 100vh;
@@ -55,48 +58,209 @@
     padding: 0 1rem;
     text-align: center;
     color: white;
-    text-shadow: 2px 2px 10px rgba(0,0,0,0.8);
+    text-shadow: 2px 2px 8px rgba(0,0,0,0.5);
     z-index: 1;
   }
 
-  h1, p {
-    max-width: 700px;
+  h1 {
+    font-size: 3.2rem;
+    font-weight: 700;
+    margin-bottom: 1.5rem;
+    line-height: 1.2;
   }
 
-  a.btn {
-    margin: 0.5rem;
+  p.lead {
+    font-size: 1.25rem;
+    max-width: 700px;
+    margin-bottom: 2.5rem;
+    font-weight: 300;
+  }
+
+  /* Botones (sin cambios) */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.8rem 2rem;
+    border-radius: 50px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-size: 0.85rem;
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    border: none;
+    cursor: pointer;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .btn i {
+    margin-right: 8px;
+    font-size: 1.1em;
   }
 
   .welcome-btn {
     background-color: #00cccc;
     color: #fff;
+    border: 2px solid #00cccc;
   }
 
   .welcome-btn:hover {
-    background-color: #52b3c0;
+    background-color: transparent;
+    color: #00cccc;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0, 204, 204, 0.3);
+  }
+
+  .btn-outline-light {
+    background-color: transparent;
+    color: white;
+    border: 2px solid white;
+  }
+
+  .btn-outline-light:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(255, 255, 255, 0.1);
+  }
+
+  .btn-dark {
+    background-color: #003035;
+    color: white;
+    border: 2px solid #003035;
+  }
+
+  .btn-dark:hover {
+    background-color: transparent;
     color: #003035;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0, 48, 53, 0.3);
   }
 
-  @media (max-width: 768px) {
-    h1 { font-size: 2rem; }
-    p { font-size: 1rem; }
+  .btn:after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(rgba(255,255,255,0.1), rgba(255,255,255,0));
+    opacity: 0;
+    transition: all 0.3s ease;
   }
 
-  /* Contenido extra */
+  .btn:hover:after {
+    opacity: 1;
+  }
+
+  /* Contenido extra (sin cambios) */
   .extra-content {
     position: relative;
     z-index: 1;
     padding: 4rem 2rem;
     color: #333;
-    background-color: #ffffffcc;
-    backdrop-filter: blur(10px);
+    background-color: rgba(255, 255, 255, 0.92);
+    backdrop-filter: blur(8px);
+    border-top: 1px solid rgba(0,0,0,0.05);
+  }
+
+  /* Feature Cards (sin cambios) */
+  .feature-card {
+    background: white;
+    border-radius: 10px;
+    padding: 2rem;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+    transition: all 0.3s ease;
+    height: 100%;
+    border: 1px solid rgba(0,0,0,0.03);
+  }
+
+  .feature-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px rgba(0, 204, 204, 0.1);
+  }
+
+  .icon-container {
+    width: 80px;
+    height: 80px;
+    background: rgba(0, 204, 204, 0.08);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1.5rem;
+    transition: all 0.3s ease;
+  }
+
+  .feature-card:hover .icon-container {
+    background: rgba(0, 204, 204, 0.2);
+    transform: scale(1.05);
+  }
+
+  .feature-card h4 {
+    color: #003035;
+    font-weight: 600;
+    margin-bottom: 1rem;
+  }
+
+  .feature-card p {
+    color: #555;
+    font-size: 0.95rem;
+    line-height: 1.6;
+  }
+
+  /* About Section (sin cambios) */
+  .about-text {
+    border-radius: 8px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+    overflow: hidden;
+  }
+
+  .text-primary {
+    color: #52b3c0 !important;
+  }
+
+  @media (max-width: 768px) {
+    h1 { 
+      font-size: 2.2rem; 
+      line-height: 1.3;
+    }
+    p.lead { 
+      font-size: 1.05rem;
+      margin-bottom: 1.8rem;
+    }
+    
+    .btn {
+      padding: 0.7rem 1.5rem;
+      font-size: 0.8rem;
+    }
+    
+    .extra-content {
+      padding: 3rem 1.5rem;
+    }
+  }
+
+  @media (max-width: 576px) {
+    h1 { 
+      font-size: 1.8rem; 
+    }
+    
+    .btn-group {
+      flex-direction: column;
+    }
+    
+    .btn {
+      width: 100%;
+      margin-bottom: 0.5rem;
+    }
   }
 </style>
 
-<!-- Fondo animado -->
+<!-- Fondo animado (más claro) -->
 <div class="animated-gradient"></div>
 
-<!-- Carrusel de fondo -->
+<!-- Carrusel de fondo (más claro) -->
 <div id="carouselWelcome" class="carousel slide carousel-background" data-bs-ride="carousel" data-bs-interval="5000" data-bs-pause="false">
   <div class="carousel-inner">
     {% if user.is_authenticated %}
@@ -113,71 +277,163 @@
   </div>
 </div>
 
-<!-- Contenido principal sobre el fondo -->
+<!-- Contenido principal -->
 <div class="welcome-text-container">
-  <h1 class="display-5 fw-bold animate__animated animate__fadeInDown">
+  <h1 class="display-5 fw-bold">
     <span style="color: #ffffff;">Bienvenido a </span> <span style="color: #00cccc;">Inmovalor</span>
   </h1>
 
   {% if user.is_authenticated %}
-  <p class="lead mt-3 animate__animated animate__fadeInUp">
+  <p class="lead mt-3">
     ¡Bienvenido a Inmovalor! Aquí podrás obtener una estimación precisa del valor de propiedades y acceder a análisis exhaustivos para tomar decisiones informadas. Explora nuestras herramientas y descubre el potencial de tus propiedades o aquellas que estás considerando. ¡Estamos emocionados de ayudarte a alcanzar tus objetivos inmobiliarios!
   </p>
   <div class="mt-4">
-    <a href="{% url 'estimaciones' %}" class="btn btn-dark btn-lg">
+    <a href="{% url 'estimaciones' %}" class="btn btn-dark">
       <i class="bi bi-bar-chart-line me-2"></i> Ir a estimación de propiedad
     </a>
   </div>
   {% else %}
-  <p class="lead mt-3 animate__animated animate__fadeInUp">
+  <p class="lead mt-3">
     Plataforma de gestión y organización de tareas pensada para aumentar tu productividad y controlar tus proyectos con eficiencia.
   </p>
   <div class="mt-4 d-flex flex-column flex-md-row justify-content-center gap-3">
-    <a href="{% url 'signup' %}" class="btn btn-lg welcome-btn">
+    <a href="{% url 'signup' %}" class="btn welcome-btn">
       <i class="bi bi-person-plus-fill me-2"></i> Crear cuenta
     </a>
-    <a href="{% url 'signin' %}" class="btn btn-outline-light btn-lg">
+    <a href="{% url 'signin' %}" class="btn btn-outline-light">
       <i class="bi bi-box-arrow-in-right me-2"></i> Iniciar sesión
     </a>
   </div>
   {% endif %}
 </div>
 
-<!-- Contenido extra que se verá al hacer scroll -->
+<!-- Contenido extra -->
 <div class="extra-content">
   <!-- About Start -->
   <div class="container-fluid py-5">
-      <div class="container pt-5">
-          <div class="row">
-              <div class="col-lg-6" style="min-height: 500px;">
-                  <div class="position-relative h-100">
-                      <img class="position-absolute w-100 h-100" src="{% static 'images/edificio.png' %}" style="object-fit: cover;">
-                  </div>
-              </div>
-              <div class="col-lg-6 pt-5 pb-lg-5">
-                  <div class="about-text bg-white p-4 p-lg-5 my-lg-5">
-                    <h6 class="text-primary text-uppercase" style="letter-spacing: 5px; color: #bfc6c7 !important;">Sobre Altaltium</h6>
-                      <h1 class="mb-3">Inversión inteligente en bienes raíces</h1>
-                      <p>Inspirados por el artículo de Forbes México, en Altaltium estamos transformando el mercado inmobiliario mexicano con soluciones disruptivas que democratizan las oportunidades de inversión y vivienda.</p>
-                      <div class="row mb-4">
-                          <div class="col-6">
-                              <img class="img-fluid" src="{% static 'images/logoforbes.jpg' %}" alt="Forbes">
-                          </div>
-                          <div class="col-6">
-                              <img class="img-fluid" src="{% static 'images/bienes.jpg' %}" alt="Bienes Raíces">
-                          </div>
-                      </div>
-                    <a href="https://forbes.com.mx/ad-altaltium-una-alternativa-hacia-el-futuro-de-los-bienes-raices/" 
-                      class="btn mt-1" 
-                      target="_blank" 
-                      rel="noopener noreferrer"
-                      style="background-color: #00cccc; border-color: #00cccc; color: white;">
-                      Ver en Forbes
-                    </a>
-                  </div>
-              </div>
+    <div class="container pt-5">
+      <style>
+        /* Estilo para la sección Sobre Altaltium */
+        .container-fluid.py-5 {
+          background-color: #f8f9fa; /* Fondo claro para coherencia */
+        }
+  
+        .about-image-container {
+          min-height: 600px; /* Aumentado el tamaño del contenedor de la imagen principal */
+          position: relative;
+          border-radius: 12px; /* Bordes redondeados más pronunciados */
+          overflow: hidden;
+          box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2); /* Sombra para profundidad */
+          transition: transform 0.3s ease; /* Transición suave */
+        }
+  
+        .about-image-container:hover {
+          transform: scale(1.02); /* Efecto de escala al pasar el mouse */
+        }
+  
+        .about-image {
+          position: absolute;
+          width: 100%;
+          height: 100%;
+          object-fit: cover; /* Mantener proporción */
+          border-radius: 12px; /* Asegurar bordes redondeados */
+        }
+  
+        .about-text {
+          background-color: #ffffff;
+          padding: 2rem 3rem !important; /* Aumentado el padding para más espacio */
+          margin: 2rem 0 !important; /* Ajustado el margen */
+          border-radius: 12px; /* Bordes redondeados */
+          box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1); /* Sombra suave */
+          transition: transform 0.3s ease;
+        }
+  
+        .about-text:hover {
+          transform: translateY(-5px); /* Efecto de elevación al pasar el mouse */
+        }
+  
+        .about-text h6 {
+          color: #00cccc; /* Color original */
+          letter-spacing: 5px;
+          font-size: 1.1rem; /* Tamaño ajustado */
+          margin-bottom: 1rem;
+        }
+  
+        .about-text h1 {
+          font-size: 2.5rem; /* Tamaño ajustado para más impacto */
+          margin-bottom: 1.5rem;
+        }
+  
+        .about-text p {
+          font-size: 1.1rem; /* Tamaño de texto más grande */
+          line-height: 1.8; /* Más espacio entre líneas */
+          color: #333; /* Color oscuro para mejor legibilidad */
+        }
+  
+        .small-image-container {
+          display: flex;
+          justify-content: center; /* Centrado horizontal */
+          align-items: center; /* Centrado vertical */
+          padding: 0.5rem;
+        }
+  
+        .small-image {
+          max-height: 80px; /* Aumentado el tamaño de las imágenes */
+          width: auto;
+          border-radius: 8px; /* Bordes redondeados */
+          box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Sombra para las imágenes */
+          transition: transform 0.3s ease;
+        }
+  
+        .small-image:hover {
+          transform: scale(1.1); /* Efecto de escala al pasar el mouse */
+        }
+  
+        .welcome-btn {
+          background-color: #00cccc; /* Color original */
+          color: #ffffff !important;
+          padding: 0.8rem 2rem; /* Botón más grande */
+          border-radius: 6px;
+          font-weight: 500;
+          transition: all 0.3s ease;
+          box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+        }
+  
+        .welcome-btn:hover {
+          background-color: #008a8a; /* Color original más oscuro */
+          transform: translateY(-3px);
+          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+      </style>
+      <div class="row">
+        <div class="col-lg-6">
+          <div class="about-image-container">
+            <img class="about-image" src="{% static 'images/edificio.png' %}" alt="Edificio">
           </div>
+        </div>
+        <div class="col-lg-6 pt-5 pb-lg-5">
+          <div class="about-text bg-white p-4 p-lg-5 my-lg-5">
+            <h6 class="text-primary text-uppercase">Sobre Altaltium</h6>
+            <h1 class="mb-3">Inversión inteligente en bienes raíces</h1>
+            <p>Inspirados por el artículo de Forbes México, en Altaltium estamos transformando el mercado inmobiliario mexicano con soluciones disruptivas que democratizan las oportunidades de inversión y vivienda.</p>
+            <div class="row mb-4">
+              <div class="col-6 small-image-container">
+                <img class="small-image img-fluid" src="{% static 'images/logoforbes.jpg' %}" alt="Forbes">
+              </div>
+              <div class="col-6 small-image-container">
+                <img class="small-image img-fluid" src="{% static 'images/bienes.jpg' %}" alt="Bienes Raíces">
+              </div>
+            </div>
+            <a href="https://forbes.com.mx/ad-altaltium-una-alternativa-hacia-el-futuro-de-los-bienes-raices/" 
+               class="btn welcome-btn mt-1" 
+               target="_blank" 
+               rel="noopener noreferrer">
+              Ver en Forbes
+            </a>
+          </div>
+        </div>
       </div>
+    </div>
   </div>
   <!-- About End -->
 
@@ -188,11 +444,11 @@
               <!-- Feature 1 -->
               <div class="col-md-4 mb-5">
                   <div class="feature-card text-center px-3">
-                      <div class="icon-container mx-auto mb-4" style="width: 80px; height: 80px; background: rgba(0, 204, 204, 0.1); border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                      <div class="icon-container mx-auto mb-4">
                           <i class="fas fa-robot fa-2x" style="color: #00cccc;"></i>
                       </div>
-                      <h4 class="mb-3" style="color: #333; font-weight: 700; letter-spacing: 0.5px;">TECNOLOGÍA INMOBILIARIA</h4>
-                      <p class="mb-0" style="color: #555; text-align: justify; line-height: 1.7; font-size: 15px;">
+                      <h4 class="mb-3">TECNOLOGÍA INMOBILIARIA</h4>
+                      <p class="mb-0">
                           Nuestra IA analiza patrones de plusvalía en 15 ciudades mexicanas, identificando oportunidades con 25% mayor rentabilidad que el mercado tradicional.
                       </p>
                   </div>
@@ -201,11 +457,11 @@
               <!-- Feature 2 -->
               <div class="col-md-4 mb-5">
                   <div class="feature-card text-center px-3">
-                      <div class="icon-container mx-auto mb-4" style="width: 80px; height: 80px; background: rgba(0, 204, 204, 0.1); border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                      <div class="icon-container mx-auto mb-4">
                           <i class="fas fa-users fa-2x" style="color: #00cccc;"></i>
                       </div>
-                      <h4 class="mb-3" style="color: #333; font-weight: 700; letter-spacing: 0.5px;">PARA NUEVAS GENERACIONES</h4>
-                      <p class="mb-0" style="color: #555; text-align: justify; line-height: 1.7; font-size: 15px;">
+                      <h4 class="mb-3">PARA NUEVAS GENERACIONES</h4>
+                      <p class="mb-0">
                           Modelos flexibles sin requisitos bancarios, diseñados para millennials y Gen Z. 78% de nuestros inversionistas son menores de 35 años.
                       </p>
                   </div>
@@ -214,15 +470,283 @@
               <!-- Feature 3 -->
               <div class="col-md-4 mb-5">
                   <div class="feature-card text-center px-3">
-                      <div class="icon-container mx-auto mb-4" style="width: 80px; height: 80px; background: rgba(0, 204, 204, 0.1); border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                      <div class="icon-container mx-auto mb-4">
                           <i class="fas fa-home fa-2x" style="color: #00cccc;"></i>
                       </div>
-                      <h4 class="mb-3" style="color: #333; font-weight: 700; letter-spacing: 0.5px;">PROPIEDADES CON VENTAJA</h4>
-                      <p class="mb-0" style="color: #555; text-align: justify; line-height: 1.7; font-size: 15px;">
+                      <h4 class="mb-3">PROPIEDADES CON VENTAJA</h4>
+                      <p class="mb-0">
                           Acceso exclusivo a inmuebles con irregularidades legales (60% del mercado) y remates bancarios verificados, con plusvalía garantizada por contrato.
                       </p>
                   </div>
               </div>
+              <!-- Styles -->
+<style>
+  .destination-section {
+      background-color: #f8f9fa;
+  }
+  .section-title {
+      position: relative;
+      margin-bottom: 3rem;
+  }
+  .section-title h6 {
+      color: #008a8a !important;
+      font-weight: 700;
+      letter-spacing: 3px;
+  }
+  .section-title h1 {
+      font-weight: 800;
+      position: relative;
+      display: inline-block;
+  }
+  .section-title h1:after {
+      content: '';
+      position: absolute;
+      width: 70px;
+      height: 3px;
+      background: #008a8a;
+      bottom: -10px;
+      left: 50%;
+      transform: translateX(-50%);
+  }
+
+  .destination-item {
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+      transition: all 0.3s ease;
+      height: 100%;
+  }
+  .destination-item:hover {
+      transform: translateY(-10px);
+      box-shadow: 0 15px 30px rgba(0, 138, 138, 0.2);
+  }
+  .destination-item img {
+      width: 100%;
+      height: 250px; /* Altura fija para todas las imágenes */
+      object-fit: cover; /* Asegura que la imagen cubra el espacio */
+      transition: transform 0.5s ease;
+  }
+  .destination-item:hover img {
+      transform: scale(1.05);
+  }
+  .destination-overlay {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: linear-gradient(to top, rgba(0, 48, 53, 0.9), transparent);
+      padding: 30px 20px 20px;
+  }
+  .destination-overlay h5 {
+      font-weight: 700;
+      font-size: 1.4rem;
+      margin-bottom: 5px;
+  }
+  .destination-overlay span {
+      display: inline-block;
+      background: #008a8a;
+      padding: 3px 10px;
+      border-radius: 20px;
+      font-size: 0.9rem;
+      font-weight: 600;
+  }
+
+  /* Responsive adjustments */
+  @media (max-width: 767px) {
+      .destination-item img {
+          height: 200px;
+      }
+  }
+</style>
+
+<!-- Destination Start -->
+<div class="container-fluid py-5 destination-section">
+  <div class="container pt-5 pb-3">
+      <div class="text-center mb-5 section-title">
+          <h6 class="text-uppercase">DESCUBRE LAS ALCALDÍAS</h6>
+          <h1 class="display-5">Explora la diversidad de la CDMX</h1>
+      </div>
+      <div class="row">
+          <!-- Coyoacán -->
+          <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
+              <div class="destination-item position-relative overflow-hidden mb-2">
+                  <img class="img-fluid" src="{% static 'images/alcaldia/coyoacan.jpg' %}" alt="Coyoacán">
+                  <a class="destination-overlay text-white text-decoration-none" href="#">
+                      <h5 class="text-white">Coyoacán</h5>
+                      <span>131 Colonias</span>
+                  </a>
+              </div>
+          </div>
+          
+          <!-- Xochimilco -->
+          <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
+              <div class="destination-item position-relative overflow-hidden mb-2">
+                  <img class="img-fluid" src="{% static 'images/alcaldia/xochimilco.jpg' %}" alt="Xochimilco">
+                  <a class="destination-overlay text-white text-decoration-none" href="#">
+                      <h5 class="text-white">Xochimilco</h5>
+                      <span>96 Colonias</span>
+                  </a>
+              </div>
+          </div>
+          
+          <!-- Álvaro Obregón -->
+          <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
+              <div class="destination-item position-relative overflow-hidden mb-2">
+                  <img class="img-fluid" src="{% static 'images/alcaldia/alvaro.jpg' %}" alt="Álvaro Obregón">
+                  <a class="destination-overlay text-white text-decoration-none" href="#">
+                      <h5 class="text-white">Álvaro Obregón</h5>
+                      <span>258 Colonias</span>
+                  </a>
+              </div>
+          </div>
+          
+          <!-- Azcapotzalco -->
+          <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
+              <div class="destination-item position-relative overflow-hidden mb-2">
+                  <img class="img-fluid" src="{% static 'images/alcaldia/azcapotzalco.jpg' %}" alt="Azcapotzalco">
+                  <a class="destination-overlay text-white text-decoration-none" href="#">
+                      <h5 class="text-white">Azcapotzalco</h5>
+                      <span>61 Colonias</span>
+                  </a>
+              </div>
+          </div>
+          
+          <!-- Benito Juárez -->
+          <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
+              <div class="destination-item position-relative overflow-hidden mb-2">
+                  <img class="img-fluid" src="{% static 'images/alcaldia/benito.jpg' %}" alt="Benito Juárez">
+                  <a class="destination-overlay text-white text-decoration-none" href="#">
+                      <h5 class="text-white">Benito Juárez</h5>
+                      <span>56 Colonias</span>
+                  </a>
+              </div>
+          </div>
+          
+          <!-- Cuajimalpa -->
+          <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
+              <div class="destination-item position-relative overflow-hidden mb-2">
+                  <img class="img-fluid" src="{% static 'images/alcaldia/cuajimalpa.jpg' %}" alt="Cuajimalpa">
+                  <a class="destination-overlay text-white text-decoration-none" href="#">
+                      <h5 class="text-white">Cuajimalpa</h5>
+                      <span>39 Colonias</span>
+                  </a>
+              </div>
+          </div>
+          
+          <!-- Cuauhtémoc -->
+          <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
+              <div class="destination-item position-relative overflow-hidden mb-2">
+                  <img class="img-fluid" src="{% static 'images/alcaldia/cuauhtemoc.jpg' %}" alt="Cuauhtémoc">
+                  <a class="destination-overlay text-white text-decoration-none" href="#">
+                      <h5 class="text-white">Cuauhtémoc</h5>
+                      <span>33 Colonias</span>
+                  </a>
+              </div>
+          </div>
+          
+          <!-- Gustavo A. Madero -->
+          <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
+              <div class="destination-item position-relative overflow-hidden mb-2">
+                  <img class="img-fluid" src="{% static 'images/alcaldia/gustavo.jpg' %}" alt="Gustavo A. Madero">
+                  <a class="destination-overlay text-white text-decoration-none" href="#">
+                      <h5 class="text-white">Gustavo A. Madero</h5>
+                      <span>230 Colonias</span>
+                  </a>
+              </div>
+          </div>
+          
+          <!-- Iztacalco -->
+          <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
+              <div class="destination-item position-relative overflow-hidden mb-2">
+                  <img class="img-fluid" src="{% static 'images/alcaldia/iztacalco.jpg' %}" alt="Iztacalco">
+                  <a class="destination-overlay text-white text-decoration-none" href="#">
+                      <h5 class="text-white">Iztacalco</h5>
+                      <span>42 Colonias</span>
+                  </a>
+              </div>
+          </div>
+          
+          <!-- Iztapalapa -->
+          <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
+              <div class="destination-item position-relative overflow-hidden mb-2">
+                  <img class="img-fluid" src="{% static 'images/alcaldia/iztapalapa.jpg' %}" alt="Iztapalapa">
+                  <a class="destination-overlay text-white text-decoration-none" href="#">
+                      <h5 class="text-white">Iztapalapa</h5>
+                      <span>293 Colonias</span>
+                  </a>
+              </div>
+          </div>
+          
+          <!-- La Magdalena Contreras -->
+          <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
+              <div class="destination-item position-relative overflow-hidden mb-2">
+                  <img class="img-fluid" src="{% static 'images/alcaldia/magda.jpg' %}" alt="La Magdalena Contreras">
+                  <a class="destination-overlay text-white text-decoration-none" href="#">
+                      <h5 class="text-white">La Magdalena Contreras</h5>
+                      <span>39 Colonias</span>
+                  </a>
+              </div>
+          </div>
+          
+          <!-- Miguel Hidalgo -->
+          <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
+              <div class="destination-item position-relative overflow-hidden mb-2">
+                  <img class="img-fluid" src="{% static 'images/alcaldia/miguel.jpg' %}" alt="Miguel Hidalgo">
+                  <a class="destination-overlay text-white text-decoration-none" href="#">
+                      <h5 class="text-white">Miguel Hidalgo</h5>
+                      <span>89 Colonias</span>
+                  </a>
+              </div>
+          </div>
+          
+          <!-- Milpa Alta -->
+          <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
+              <div class="destination-item position-relative overflow-hidden mb-2">
+                  <img class="img-fluid" src="{% static 'images/alcaldia/milpa.jpg' %}" alt="Milpa Alta">
+                  <a class="destination-overlay text-white text-decoration-none" href="#">
+                      <h5 class="text-white">Milpa Alta</h5>
+                      <span>12 Colonias</span>
+                  </a>
+              </div>
+          </div>
+          
+          <!-- Tláhuac -->
+          <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
+              <div class="destination-item position-relative overflow-hidden mb-2">
+                  <img class="img-fluid" src="{% static 'images/alcaldia/tlahuac.jpg' %}" alt="Tláhuac">
+                  <a class="destination-overlay text-white text-decoration-none" href="#">
+                      <h5 class="text-white">Tláhuac</h5>
+                      <span>80 Colonias</span>
+                  </a>
+              </div>
+          </div>
+          
+          <!-- Tlalpan -->
+          <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
+              <div class="destination-item position-relative overflow-hidden mb-2">
+                  <img class="img-fluid" src="{% static 'images/alcaldia/tlalpan.jpg' %}" alt="Tlalpan">
+                  <a class="destination-overlay text-white text-decoration-none" href="#">
+                      <h5 class="text-white">Tlalpan</h5>
+                      <span>178 Colonias</span>
+                  </a>
+              </div>
+          </div>
+          
+          <!-- Venustiano Carranza -->
+          <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
+              <div class="destination-item position-relative overflow-hidden mb-2">
+                  <img class="img-fluid" src="{% static 'images/alcaldia/venustiano.jpg' %}" alt="Venustiano Carranza">
+                  <a class="destination-overlay text-white text-decoration-none" href="#">
+                      <h5 class="text-white">Venustiano Carranza</h5>
+                      <span>80 Colonias</span>
+                  </a>
+              </div>
+          </div>
+      </div>
+  </div>
+</div>
+<!-- Destination End --
+
           </div>
       </div>
   </div>

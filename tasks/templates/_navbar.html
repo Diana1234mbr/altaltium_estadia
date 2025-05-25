@@ -1,129 +1,216 @@
 {% load static %}
 
 <style>
+  body {
+    padding-top: 100px;
+  }
+
+  .combined-bar {
+    background-color: #f8f9fa;
+    position: fixed;
+    top: 0;
+    width: 100%;
+    z-index: 1030;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+  }
+
+  .topbar-content {
+    background-color: #f8f9fa;
+    padding: 0.5rem 0;
+  }
+
+  .nav-bar-content {
+    background-color: #f8f9fa;
+  }
+
   .navbar-nav .nav-link.active {
     color: #008a8a !important;
     font-weight: bold;
+    position: relative;
   }
-</style>
 
-<!-- Topbar Start -->
-<div class="container-fluid bg-light pt-3 d-none d-lg-block">
-  <div class="container">
-    <div class="row">
-      <div class="col-lg-6 text-center text-lg-left mb-2 mb-lg-0">
-        <div class="d-inline-flex align-items-center">
-                <!-- Email con enlace mailto -->
-                <a href="mailto:contacto@altaltiumrealestates.com" class="text-decoration-none me-2" style="color: #00cccc;">
-                  <p class="mb-0"><i class="fa fa-envelope me-2"></i>contacto@altaltiumrealestates.com</p>
-              </a>
-              
-              <p class="text-body px-3 mb-0" style="color: #00cccc;">|</p>
-              
-              <!-- Teléfono con enlace tel -->
-              <a href="tel:+525549065428" class="text-decoration-none" style="color: #00cccc;">
-                  <p class="mb-0"><i class="fa fa-phone-alt me-2"></i>55 4906 5428</p>
-              </a>
-        </div>
-      </div>
-      <div class="col-lg-6 text-center text-lg-end">
-        <div class="d-inline-flex align-items-center">
-          <a class="px-2" href="https://www.facebook.com/altaltiumrealestates/" target="_blank" rel="noopener noreferrer"><i style="color: #00cccc;" class="fab fa-facebook-f"></i></a>
-          <a class="px-2" href="https://www.tiktok.com/@altaltium" target="_blank" rel="noopener noreferrer"><i style="color: #00cccc;" class="fab fa-tiktok"></i></a>
-          <a class="px-2" href="https://www.instagram.com/altaltium/#" target="_blank" rel="noopener noreferrer"><i style="color: #00cccc;" class="fab fa-instagram"></i></a>
-          <a class="ps-2" href="https://wa.me/5215549065428" target="_blank" rel="noopener noreferrer"><i style="color: #00cccc;" class="fab fa-whatsapp"></i></a>
-          <a class="ps-2" href="https://www.youtube.com/@altaltium" target="_blank" rel="noopener noreferrer"><i style="color: #00cccc;" class="fab fa-youtube"></i></a>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-<!-- Topbar End -->
+  .navbar-nav .nav-link.active:after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60%;
+    height: 3px;
+    background-color: #00cccc;
+    border-radius: 3px;
+  }
 
-<!-- Navbar Start -->
-<div class="container-fluid position-relative nav-bar p-0">
-  <div class="container-lg position-relative p-0 px-lg-3" style="z-index: 9;">
-    <nav class="navbar navbar-expand-lg bg-light navbar-light shadow-lg py-3 py-lg-0 px-3">
-      <!-- Logo animado (versión mejorada) -->
-      <a href="/" class="navbar-brand" style="
-        position: relative;
-        display: inline-block;
-        height: 50px;
-        width: 180px;
-        overflow: hidden;
-      ">
-        <!-- Versión imagen (logo) -->
-        <img src="{% static 'images/logonegro.png' %}" 
-             width="180" 
-             height="50" 
-             style="
-               transition: all 0.6s ease;
-               position: absolute;
-               top: 0;
-               left: 0;
-             "
-             alt="Logo Inmovalor"
-             class="logo-img">
-        
-        <!-- Versión texto -->
-        <h1 class="m-0" style="
-          position: absolute;
-          top: 50%;
-          left: 0;
-          transform: translateY(-50%);
-          opacity: 0;
-          transition: all 0.6s ease;
-          margin: 0;
-          font-size: 1.8rem;
-          white-space: nowrap;
-        ">
-          <span style="color: #000000;">Inmo</span><span style="color: #00cccc;">valor</span>
-        </h1>
-      </a>
+  .navbar-nav .nav-link {
+    color: #00cccc !important;
+    font-weight: 500;
+    padding: 0.5rem 1rem;
+    margin: 0 0.2rem;
+    border-radius: 4px;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+  }
 
-      <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-      
-      <div class="collapse navbar-collapse justify-content-between px-3" id="navbarCollapse">
-        <div class="navbar-nav ms-auto py-0">
-          <a href="/" class="nav-item nav-link {% if request.path == '/' %}active{% endif %}" style="color: #00cccc;">Inicio</a>
-          {% if user.is_authenticated %}
-            <a href="/estimaciones" class="nav-item nav-link {% if request.path == '/estimaciones' %}active{% endif %}" style="color: #00cccc;">Estimación</a>
-            <a href="/logout" class="nav-item nav-link" style="color: #ff4d4d;">Cerrar sesión</a>
-          {% else %}
-            <a href="/signin" class="nav-item nav-link {% if request.path == '/signin' %}active{% endif %}" style="color: #00cccc;">Iniciar sesión</a>
-            <a href="/signup" class="nav-item nav-link {% if request.path == '/signup' %}active{% endif %}" style="color: #00cccc;">Registrarse</a>
-          {% endif %}
-        </div>
-      </div>
-    </nav>
-  </div>
-</div>
+  .navbar-nav .nav-link:hover {
+    background-color: rgba(0, 204, 204, 0.1);
+    transform: translateY(-2px);
+  }
 
-<!-- CSS para la animación -->
-<style>
+  .navbar-nav .nav-link:before {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background-color: #00cccc;
+    transition: width 0.3s ease;
+  }
+
+  .navbar-nav .nav-link:hover:before {
+    width: 100%;
+  }
+
+  .nav-link[style*="color: #ff4d4d"] {
+    background-color: rgba(255, 77, 77, 0.1) !important;
+    border-radius: 4px;
+    transition: all 0.3s ease;
+  }
+
+  .nav-link[style*="color: #ff4d4d"]:hover {
+    background-color: rgba(255, 77, 77, 0.2) !important;
+    transform: translateY(-2px);
+  }
+
+  .social-links a {
+    display: inline-block;
+    color: #00cccc !important;
+    margin: 0 0.5rem;
+    transition: all 0.3s ease;
+    font-size: 1.1rem;
+  }
+
+  .social-links a:hover {
+    color: #008a8a !important;
+    transform: translateY(-3px) scale(1.2);
+  }
+
+  .contact-info a {
+    color: #00cccc !important;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    padding: 0.3rem 0.5rem;
+    border-radius: 4px;
+  }
+
+  .contact-info a:hover {
+    background-color: rgba(0, 204, 204, 0.1);
+    transform: translateY(-2px);
+  }
+
+  .contact-info a i {
+    margin-right: 0.5rem;
+    font-size: 1rem;
+  }
+
+  .contact-separator {
+    color: rgba(0, 204, 204, 0.5) !important;
+    margin: 0 1rem;
+  }
+
   .navbar-brand:hover .logo-img {
     opacity: 0 !important;
     transform: rotateY(90deg) !important;
   }
-  
+
   .navbar-brand:hover h1 {
     opacity: 1 !important;
     transform: translateY(-50%) rotateY(0) !important;
   }
+
+  /* Cambio específico para el menú vertical */
+  .navbar-nav {
+    margin-left: 20px;
+    display: flex;
+    flex-direction: column; /* Esto coloca los elementos uno encima del otro */
+    gap: 10px; /* Espacio entre elementos */
+  }
+
+  nav.navbar {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    margin: 0 10px;
+  }
 </style>
 
-<!-- Opcional: Animación automática -->
+<!-- El HTML permanece exactamente igual -->
+<div class="combined-bar">
+  <div class="topbar-content d-none d-lg-block">
+    <div class="container">
+      <div class="row align-items-center">
+        <div class="col-lg-6 text-center text-lg-start mb-2 mb-lg-0">
+          <div class="contact-info d-inline-flex align-items-center">
+            <a href="mailto:contacto@altaltiumrealestates.com">
+              <i class="fa fa-envelope"></i>contacto@altaltiumrealestates.com
+            </a>
+            <span class="contact-separator">|</span>
+            <a href="tel:+525549065428">
+              <i class="fa fa-phone-alt"></i>55 4906 5428
+            </a>
+          </div>
+        </div>
+        <div class="col-lg-6 text-center text-lg-end">
+          <div class="social-links d-inline-flex align-items-center">
+            <a href="https://www.facebook.com/altaltiumrealestates/" target="_blank"><i class="fab fa-facebook-f"></i></a>
+            <a href="https://www.tiktok.com/@altaltium" target="_blank"><i class="fab fa-tiktok"></i></a>
+            <a href="https://www.instagram.com/altaltium/#" target="_blank"><i class="fab fa-instagram"></i></a>
+            <a href="https://wa.me/5215549065428" target="_blank"><i class="fab fa-whatsapp"></i></a>
+            <a href="https://www.youtube.com/@altaltium" target="_blank"><i class="fab fa-youtube"></i></a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="nav-bar-content">
+    <div class="container-lg px-lg-3">
+      <nav class="navbar navbar-expand-lg bg-light navbar-light py-3 py-lg-0 px-3">
+        <a href="/" class="navbar-brand" style="position: relative; display: inline-block; height: 65px; width: 250px; overflow: hidden;">
+          <img src="{% static 'images/logonegro.png' %}" width="220" height="65" class="logo-img" style="transition: all 0.6s ease; position: absolute; top: 0; left: 0;" alt="Logo Inmovalor">
+          <h1 class="m-0" style="position: absolute; top: 50%; left: 0; transform: translateY(-50%); opacity: 0; transition: all 0.6s ease; margin: 0; font-size: 2.6rem; white-space: nowrap;">
+            <span style="color: #000000;">Inmo</span><span style="color: #00cccc;">valor</span>
+          </h1>
+        </a>
+        <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse justify-content-between px-3" id="navbarCollapse">
+          <div class="navbar-nav ms-auto py-0">
+            <a href="/" class="nav-item nav-link {% if request.path == '/' %}active{% endif %}">Inicio</a>
+            {% if user.is_authenticated %}
+              <a href="/estimaciones" class="nav-item nav-link {% if request.path == '/estimaciones' %}active{% endif %}">Estimación</a>
+              <a href="/logout" class="nav-item nav-link" style="color: #ff4d4d;">Cerrar sesión</a>
+            {% else %}
+              <a href="/signin" class="nav-item nav-link {% if request.path == '/signin' %}active{% endif %}">Iniciar sesión</a>
+              <a href="/signup" class="nav-item nav-link {% if request.path == '/signup' %}active{% endif %}">Registrarse</a>
+            {% endif %}
+          </div>
+        </div>
+      </nav>
+    </div>
+  </div>
+</div>
+
 <script>
-  // Activar solo si quieres que cambie automáticamente
-  document.addEventListener('DOMContentLoaded', function() {
+  document.addEventListener('DOMContentLoaded', function () {
     const brand = document.querySelector('.navbar-brand');
     let showingText = false;
-    
+
     setInterval(() => {
       showingText = !showingText;
-      if(showingText) {
+      if (showingText) {
         brand.querySelector('.logo-img').style.opacity = '0';
         brand.querySelector('.logo-img').style.transform = 'rotateY(90deg)';
         brand.querySelector('h1').style.opacity = '1';
@@ -134,6 +221,6 @@
         brand.querySelector('h1').style.opacity = '0';
         brand.querySelector('h1').style.transform = 'translateY(-50%) rotateY(90deg)';
       }
-    }, 5000); // Cambia cada 5 segundos
+    }, 5000);
   });
 </script>
