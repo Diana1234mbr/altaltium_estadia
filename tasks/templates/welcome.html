@@ -264,12 +264,7 @@
 <div id="carouselWelcome" class="carousel slide carousel-background" data-bs-ride="carousel" data-bs-interval="5000" data-bs-pause="false">
   <div class="carousel-inner">
     {% if user.is_authenticated %}
-    <div class="carousel-item active"><img src="{% static 'images/casa5.png' %}" alt="Propiedad 1"></div>
-    <div class="carousel-item"><img src="{% static 'images/casa6.png' %}" alt="Propiedad 2"></div>
-    <div class="carousel-item"><img src="{% static 'images/casa1.png' %}" alt="Casa 1"></div>
-    <div class="carousel-item"><img src="{% static 'images/casa2.png' %}" alt="Casa 2"></div>
-    <div class="carousel-item"><img src="{% static 'images/casa3.png' %}" alt="Casa 3"></div>
-    <div class="carousel-item"><img src="{% static 'images/casa4.png' %}" alt="Casa 4"></div>
+    
     {% else %}
     <div class="carousel-item active"><img src="{% static 'images/Altatium.png' %}" alt="Altatium"></div>
     <div class="carousel-item"><img src="{% static 'images/forbes.png' %}" alt="Forbes"></div>
@@ -304,7 +299,7 @@
       <i class="bi bi-box-arrow-in-right me-2"></i> Iniciar sesión
     </a>
   </div>
-  {% endif %}
+  
 </div>
 
 <!-- Contenido extra -->
@@ -615,7 +610,7 @@
           <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
               <div class="destination-item position-relative overflow-hidden mb-2">
                   <img class="img-fluid" src="{% static 'images/alcaldia/benito.jpg' %}" alt="Benito Juárez">
-                  <a class="destination-overlay text-white text-decoration-none" href="#">
+                  <a class="destination-overlay text-white text-decoration-none" href="{% url 'benito' %}">
                       <h5 class="text-white">Benito Juárez</h5>
                       <span>56 Colonias</span>
                   </a>
@@ -745,6 +740,7 @@
       </div>
   </div>
 </div>
+{% endif %}
 <!-- Destination End --
 
           </div>

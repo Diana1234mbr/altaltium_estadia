@@ -1,8 +1,12 @@
+from .decorators import admin_required
+from .models import AlcaldiaVista
+from django.contrib.auth.decorators import login_required, user_passes_test
 from django.shortcuts import render, redirect
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.models import User
 from django.db import IntegrityError
+from django.http import Http404
 
 def signup(request): #Registros de usuarios
     if request.method == 'GET':
@@ -40,7 +44,7 @@ def signin(request):
         password = request.POST['password']
 
         user = authenticate(request, username=input_value, password=password)
-        
+
         if user is None:
             try:
                 user_obj = User.objects.get(email=input_value)
@@ -50,7 +54,12 @@ def signin(request):
 
         if user is not None:
             login(request, user)
-            return redirect('welcome')
+
+            # 🔒 Redirección según tipo de usuario
+            if user.is_staff or user.is_superuser:
+                return redirect('gentelella_page', page='index')  # Dashboard admin
+            else:
+                return redirect('welcome')  # Usuario normal
         else:
             return render(request, 'signin.html', {
                 "form": AuthenticationForm(),
@@ -75,3 +84,21 @@ def welcome(request):
     }
     return render(request, "welcome.html", context)
 
+
+def vista_benito_juarez(request):
+    datos = AlcaldiaVista.objects.filter(Alcaldia__iexact='Benito Juárez')
+    return render(request, 'alcaldias/benito.html', {'datos': datos})
+
+
+
+
+def admin_required(user):
+    return user.is_staff or user.is_superuser
+
+@login_required
+@user_passes_test(admin_required)
+def gentelella_view(request, page):
+    try:
+        return render(request, f'gentelella/{page}.html')
+    except:
+        return render(request, 'gentelella/page_404.html', status=404)

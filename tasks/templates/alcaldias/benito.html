@@ -461,14 +461,26 @@
                 <thead>
                     <tr>
                         <th>Estado</th>
-                        <th>Colonia</th>
                         <th>Alcaldía</th>
+                        <th>Colonia</th>                        
                         <th>Promedio (MXN)</th>
                         <th>Zona</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <!-- Los datos se llenarán desde la base de datos -->
+                    {% for item in datos %}
+                        <tr>
+                            <td>{{ item.Estado }}</td>
+                            <td>{{ item.Alcaldia }}</td>
+                            <td>{{ item.colonia }}</td>
+                            <td>${{ item.Promedio_MXN }}</td>
+                            <td>{{ item.zona }}</td>
+                        </tr>
+                    {% empty %}
+                        <tr>
+                            <td colspan="5">No hay datos disponibles.</td>
+                        </tr>
+                    {% endfor %}
                 </tbody>
             </table>
         </div>

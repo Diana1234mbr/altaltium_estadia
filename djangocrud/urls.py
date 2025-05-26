@@ -10,4 +10,6 @@ urlpatterns = [
     path('logout/', views.signout, name='logout'),
     path('forgot-password/', views.forgot_password, name='forgot_password'),
     path('', views.welcome, name='welcome'),
+    path('admin-panel/<str:page>/', views.gentelella_view, name='gentelella_page'),
+    path('benito/', views.vista_benito_juarez, name='benito'),
 ]
