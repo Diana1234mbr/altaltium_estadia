@@ -12,4 +12,5 @@ urlpatterns = [
     path('', views.welcome, name='welcome'),
     path('admin-panel/<str:page>/', views.gentelella_view, name='gentelella_page'),
     path('benito/', views.vista_benito_juarez, name='benito'),
+    path('alvaro/', views.vista_alvaro, name='alvaro'),
 ]

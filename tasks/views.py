@@ -89,6 +89,9 @@ def vista_benito_juarez(request):
     datos = AlcaldiaVista.objects.filter(Alcaldia__iexact='Benito Juárez')
     return render(request, 'alcaldias/benito.html', {'datos': datos})
 
+def vista_alvaro(request):
+    datos = AlcaldiaVista.objects.filter(Alcaldia__iexact='Álvaro Obregón')
+    return render(request, 'alcaldias/alvaro.html', {'datos': datos})
 
 
 
