@@ -71,31 +71,13 @@
             </select>
             <div class="invalid-feedback">Selecciona una opción válida.</div>
           </div>
-
+        
           <div class="col-md-4">
             <label class="form-label">Calle</label>
             <input type="text" class="form-control" required>
             <div class="invalid-feedback">Introduce una calle válida.</div>
           </div>
-
-          <div class="col-md-4">
-            <label class="form-label">Delegación o municipio</label>
-            <select class="form-select" required>
-              <option selected disabled value="">Elige una opción...</option>
-              <option>...</option>
-            </select>
-            <div class="invalid-feedback">Selecciona una opción válida.</div>
-          </div>
-
-          <div class="col-md-4">
-            <label class="form-label">Estado</label>
-            <select class="form-select" required>
-              <option selected disabled value="">Elige una opción...</option>
-              <option>...</option>
-            </select>
-            <div class="invalid-feedback">Selecciona una opción válida.</div>
-          </div>
-
+        
           <div class="col-md-4">
             <label class="form-label">Colonia</label>
             <select class="form-select" required>
@@ -104,53 +86,88 @@
             </select>
             <div class="invalid-feedback">Selecciona una opción válida.</div>
           </div>
-
-          <div class="col-md-2">
-            <label class="form-label">Sanitarios</label>
-            <input type="number" class="form-control" required>
-            <div class="invalid-feedback">Campo requerido.</div>
+        
+          <div class="col-md-4">
+            <label class="form-label">Código Postal</label>
+            <input type="text" class="form-control" required pattern="\d{5}">
+            <div class="invalid-feedback">Introduce un código postal válido (5 dígitos).</div>
           </div>
-
+        
+          <div class="col-md-4">
+            <label class="form-label">Alcaldía o Municipio</label>
+            <select class="form-select" required>
+              <option selected disabled value="">Elige una opción...</option>
+              <option>...</option>
+            </select>
+            <div class="invalid-feedback">Selecciona una opción válida.</div>
+          </div>
+        
+          <div class="col-md-4">
+            <label class="form-label">Estado</label>
+            <select class="form-select" required>
+              <option selected disabled value="">Elige una opción...</option>
+              <option>...</option>
+            </select>
+            <div class="invalid-feedback">Selecciona una opción válida.</div>
+          </div>
+        
           <div class="col-md-2">
             <label class="form-label">Recámaras</label>
             <input type="number" class="form-control" required>
             <div class="invalid-feedback">Campo requerido.</div>
           </div>
-
+        
           <div class="col-md-2">
+            <label class="form-label">Sanitarios</label>
+            <input type="number" class="form-control" required>
+            <div class="invalid-feedback">Campo requerido.</div>
+          </div>
+        
+          <div class="col-md-3">
             <label class="form-label">Estacionamiento</label>
             <input type="number" class="form-control" required>
             <div class="invalid-feedback">Campo requerido.</div>
           </div>
-
-          <div class="col-md-2">
-            <label class="form-label">Pisos</label>
-            <input type="number" class="form-control" required>
-            <div class="invalid-feedback">Campo requerido.</div>
+        
+          <div class="col-md-5">
+            <label class="form-label">  Comentarios</label>
+            <textarea class="form-control" rows="2"></textarea>
           </div>
-
+        
           <!-- Sección de metraje -->
           <div class="col-12 mt-4">
             <span class="section-title">Metraje</span>
           </div>
-
+        
           <div class="col-md-4">
             <label class="form-label">Terreno (m²)</label>
             <input type="number" class="form-control" required>
             <div class="invalid-feedback">Campo requerido.</div>
           </div>
-
+        
           <div class="col-md-4">
             <label class="form-label">Construcción (m²)</label>
             <input type="number" class="form-control" required>
             <div class="invalid-feedback">Campo requerido.</div>
           </div>
-
+        
+          <div class="col-md-4">
+            <label class="form-label">Estado de conservación</label>
+            <select class="form-select" required>
+              <option selected disabled value="">Selecciona un nivel...</option>
+              <option>Excelente</option>
+              <option>Bueno</option>
+              <option>Regular</option>
+              <option>Malo</option>
+            </select>
+            <div class="invalid-feedback">Selecciona un estado de conservación.</div>
+          </div>
+        
           <div class="col-12 text-end mt-4">
             <button type="submit" class="btn btn-calculate btn-lg animate__animated animate__pulse">Calcular</button>
           </div>
-
-        </form>
+        
+        </form>        
       </div>
     </div>
   </div>

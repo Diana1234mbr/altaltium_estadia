@@ -84,6 +84,7 @@ def welcome(request):
     }
     return render(request, "welcome.html", context)
 
+# alcaldias 
 
 def vista_benito_juarez(request):
     datos = AlcaldiaVista.objects.filter(Alcaldia__iexact='Benito Juárez')
@@ -93,7 +94,23 @@ def vista_alvaro(request):
     datos = AlcaldiaVista.objects.filter(Alcaldia__iexact='Álvaro Obregón')
     return render(request, 'alcaldias/alvaro.html', {'datos': datos})
 
+def vista_coyoacan(request):
+    datos = AlcaldiaVista.objects.filter(Alcaldia__iexact='Coyoacán')
+    return render(request, 'alcaldias/coyoacan.html', {'datos': datos})
 
+def vista_xochimilco(request):
+    datos = AlcaldiaVista.objects.filter(Alcaldia__iexact='Xochimilco')
+    return render(request, 'alcaldias/xochimilco.html', {'datos': datos})  
+
+def vista_azcapotzalco(request):
+    datos = AlcaldiaVista.objects.filter(Alcaldia__iexact='Azcapotzalco')
+    return render(request, 'alcaldias/azcapotzalco.html', {'datos': datos})  
+
+def vista_cuajimalpa(request):
+    datos = AlcaldiaVista.objects.filter(Alcaldia__iexact='Cuajimalpa de Morelos')
+    return render(request, 'alcaldias/cuajimalpa.html', {'datos': datos}) 
+
+# fin de alcaldias 
 
 def admin_required(user):
     return user.is_staff or user.is_superuser

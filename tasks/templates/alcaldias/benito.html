@@ -476,7 +476,7 @@
     <div class="container">
         <!-- Sección Hero -->
         <div class="hero">
-            <img src="{% static 'images/alcaldia/benito.jpg' %}" alt="Benito Juárez" class="hero-image">
+            <img src="{% static 'images/alcaldia/benito4.jpg' %}" alt="Benito Juárez" class="hero-image">
             <div class="hero-content">
                 <h1>Alcaldía Benito Juárez</h1>
                 <p>Explora la vibrante y moderna vida urbana en el corazón de la Ciudad de México</p>
@@ -574,11 +574,11 @@
                 <span class="tag">Del Valle</span>
                 <span class="tag">Nápoles</span>
                 <span class="tag">Portales</span>
-                <span class="tag">Narvarte</span>
-                <span class="tag">Roma Sur</span>
+                <span class="tag">Mixcoac</span>
+                <span class="tag">Merced Gomez</span>
                 <span class="tag">Álamos</span>
                 <span class="tag">Santa Cruz Atoyac</span>
-                <span class="tag">Actipan</span>
+                <span class="tag">Insurgentes Mixcoac</span>
                 <span class="tag">San Pedro de los Pinos</span>
                 <span class="tag">Crédito Constructor</span>
             </div>
@@ -587,6 +587,9 @@
             <div class="search-container">
                 <input type="text" id="searchInput" class="search-input" placeholder="Buscar por estado, alcaldía, colonia o zona...">
             </div>
+
+
+            
             <table class="data-table" id="dataTable">
                 <thead>
                     <tr>
@@ -602,9 +605,9 @@
                         <tr>
                             <td>{{ item.Estado }}</td>
                             <td>{{ item.Alcaldia }}</td>
-                            <td>{{ item.colonia }}</td>
-                            <td>${{ item.Promedio_MXN }}</td>
-                            <td>{{ item.zona }}</td>
+                            <td>{{ item.Colonia }}</td>
+                            <td>{{ item.Promedio_MXN }}</td>
+                            <td>{{ item.Zona }}</td>
                         </tr>
                     {% empty %}
                         <tr>
