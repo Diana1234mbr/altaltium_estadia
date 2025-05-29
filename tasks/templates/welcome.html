@@ -555,24 +555,23 @@
 </style>
 
 <!-- Destination Start -->
-<div class="container-fluid py-5 destination-section">
+<div class="container-fluid py-5 destination-section" id="destinations">
   <div class="container pt-5 pb-3">
       <div class="text-center mb-5 section-title">
           <h6 class="text-uppercase">DESCUBRE LAS ALCALDÍAS</h6>
           <h1 class="display-5">Explora la diversidad de la CDMX</h1>
       </div>
       <div class="row">
-          <!-- Coyoacán -->
-          <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
+             <!-- Miguel Hidalgo -->
+             <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
               <div class="destination-item position-relative overflow-hidden mb-2">
-                  <img class="img-fluid" src="{% static 'images/alcaldia/coyoacan.jpg' %}" alt="Coyoacán">
-                  <a class="destination-overlay text-white text-decoration-none" href="{% url 'coyoacan' %}">
-                      <h5 class="text-white">Coyoacán</h5>
-                      <span>131 Colonias</span>
+                  <img class="img-fluid" src="{% static 'images/alcaldia/miguel4.jpg' %}" alt="Miguel Hidalgo">
+                  <a class="destination-overlay text-white text-decoration-none" href="{% url 'miguel' %}">
+                      <h5 class="text-white">Miguel Hidalgo</h5>
+                      <span>89 Colonias</span>
                   </a>
               </div>
           </div>
-          
           <!-- Xochimilco -->
           <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
               <div class="destination-item position-relative overflow-hidden mb-2">
@@ -583,89 +582,88 @@
                   </a>
               </div>
           </div>
-          
+           <!-- Cuauhtémoc -->
+           <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
+            <div class="destination-item position-relative overflow-hidden mb-2">
+                <img class="img-fluid" src="{% static 'images/alcaldia/cuauhtemoc.jpg' %}" alt="Cuauhtémoc">
+                <a class="destination-overlay text-white text-decoration-none" href="{% url 'cuauhtemoc' %}">
+                    <h5 class="text-white">Cuauhtémoc</h5>
+                    <span>33 Colonias</span>
+                </a>
+            </div>
+        </div>
+        <!-- Gustavo A. Madero -->
+        <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
+          <div class="destination-item position-relative overflow-hidden mb-2">
+              <img class="img-fluid" src="{% static 'images/alcaldia/gustavo.jpg' %}" alt="Gustavo A. Madero">
+              <a class="destination-overlay text-white text-decoration-none" href="{% url 'gustavo' %}">
+                  <h5 class="text-white">Gustavo A. Madero</h5>
+                  <span>230 Colonias</span>
+              </a>
+          </div>
+      </div>
           <!-- Álvaro Obregón -->
           <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
               <div class="destination-item position-relative overflow-hidden mb-2">
-                  <img class="img-fluid" src="{% static 'images/alcaldia/alvaro.jpg' %}" alt="Álvaro Obregón">
+                  <img class="img-fluid" src="{% static 'images/alcaldia/alvaro4.jpg' %}" alt="Álvaro Obregón">
                   <a class="destination-overlay text-white text-decoration-none" href="{% url 'alvaro' %}">
                       <h5 class="text-white">Álvaro Obregón</h5>
                       <span>258 Colonias</span>
                   </a>
               </div>
           </div>
-          
-          <!-- Azcapotzalco -->
+                    <!-- Coyoacán -->
+                    <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
+                      <div class="destination-item position-relative overflow-hidden mb-2">
+                          <img class="img-fluid" src="{% static 'images/alcaldia/coyoacan.jpg' %}" alt="Coyoacán">
+                          <a class="destination-overlay text-white text-decoration-none" href="{% url 'coyoacan' %}">
+                              <h5 class="text-white">Coyoacán</h5>
+                              <span>131 Colonias</span>
+                          </a>
+                      </div>
+                  </div>
+       
+          <!-- Iztacalco -->
           <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
-              <div class="destination-item position-relative overflow-hidden mb-2">
-                  <img class="img-fluid" src="{% static 'images/alcaldia/azcapotzalco.jpg' %}" alt="Azcapotzalco">
-                  <a class="destination-overlay text-white text-decoration-none" href="{% url 'azcapotzalco' %}">
-                      <h5 class="text-white">Azcapotzalco</h5>
-                      <span>61 Colonias</span>
-                  </a>
-              </div>
-          </div>
+            <div class="destination-item position-relative overflow-hidden mb-2">
+                <img class="img-fluid" src="{% static 'images/alcaldia/iztacalco4.jpg' %}" alt="Iztacalco">
+                <a class="destination-overlay text-white text-decoration-none" href="{% url 'iztacalco' %}">
+                    <h5 class="text-white">Iztacalco</h5>
+                    <span>42 Colonias</span>
+                </a>
+            </div>
+        </div>
+                  <!-- Benito Juárez -->
+                  <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
+                    <div class="destination-item position-relative overflow-hidden mb-2">
+                        <img class="img-fluid" src="{% static 'images/alcaldia/benito4.jpg' %}" alt="Benito Juárez">
+                        <a class="destination-overlay text-white text-decoration-none" href="{% url 'benito' %}">
+                            <h5 class="text-white">Benito Juárez</h5>
+                            <span>56 Colonias</span>
+                        </a>
+                    </div>
+                </div>
+   
           
-          <!-- Benito Juárez -->
-          <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
-              <div class="destination-item position-relative overflow-hidden mb-2">
-                  <img class="img-fluid" src="{% static 'images/alcaldia/benito4.jpg' %}" alt="Benito Juárez">
-                  <a class="destination-overlay text-white text-decoration-none" href="{% url 'benito' %}">
-                      <h5 class="text-white">Benito Juárez</h5>
-                      <span>56 Colonias</span>
-                  </a>
-              </div>
-          </div>
+
           
           <!-- Cuajimalpa -->
           <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
               <div class="destination-item position-relative overflow-hidden mb-2">
-                  <img class="img-fluid" src="{% static 'images/alcaldia/cuajimalpa.jpg' %}" alt="Cuajimalpa">
+                  <img class="img-fluid" src="{% static 'images/alcaldia/cuajimalpa4.jpg' %}" alt="Cuajimalpa">
                   <a class="destination-overlay text-white text-decoration-none" href="{% url 'cuajimalpa' %}">
                       <h5 class="text-white">Cuajimalpa</h5>
                       <span>39 Colonias</span>
                   </a>
               </div>
           </div>
-          
-          <!-- Cuauhtémoc -->
-          <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
-              <div class="destination-item position-relative overflow-hidden mb-2">
-                  <img class="img-fluid" src="{% static 'images/alcaldia/cuauhtemoc.jpg' %}" alt="Cuauhtémoc">
-                  <a class="destination-overlay text-white text-decoration-none" href="#">
-                      <h5 class="text-white">Cuauhtémoc</h5>
-                      <span>33 Colonias</span>
-                  </a>
-              </div>
-          </div>
-          
-          <!-- Gustavo A. Madero -->
-          <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
-              <div class="destination-item position-relative overflow-hidden mb-2">
-                  <img class="img-fluid" src="{% static 'images/alcaldia/gustavo.jpg' %}" alt="Gustavo A. Madero">
-                  <a class="destination-overlay text-white text-decoration-none" href="#">
-                      <h5 class="text-white">Gustavo A. Madero</h5>
-                      <span>230 Colonias</span>
-                  </a>
-              </div>
-          </div>
-          
-          <!-- Iztacalco -->
-          <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
-              <div class="destination-item position-relative overflow-hidden mb-2">
-                  <img class="img-fluid" src="{% static 'images/alcaldia/iztacalco4.jpg' %}" alt="Iztacalco">
-                  <a class="destination-overlay text-white text-decoration-none" href="#">
-                      <h5 class="text-white">Iztacalco</h5>
-                      <span>42 Colonias</span>
-                  </a>
-              </div>
-          </div>
+      
           
           <!-- Iztapalapa -->
           <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
               <div class="destination-item position-relative overflow-hidden mb-2">
-                  <img class="img-fluid" src="{% static 'images/alcaldia/iztapalapa6.jpg' %}" alt="Iztapalapa">
-                  <a class="destination-overlay text-white text-decoration-none" href="#">
+                  <img class="img-fluid" src="{% static 'images/alcaldia/iztapalapa4.jpg' %}" alt="Iztapalapa">
+                  <a class="destination-overlay text-white text-decoration-none" href="{% url 'iztapalapa' %}">
                       <h5 class="text-white">Iztapalapa</h5>
                       <span>293 Colonias</span>
                   </a>
@@ -675,30 +673,21 @@
           <!-- La Magdalena Contreras -->
           <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
               <div class="destination-item position-relative overflow-hidden mb-2">
-                  <img class="img-fluid" src="{% static 'images/alcaldia/magda4.jpg' %}" alt="La Magdalena Contreras">
-                  <a class="destination-overlay text-white text-decoration-none" href="#">
+                  <img class="img-fluid" src="{% static 'images/alcaldia/magda5.jpg' %}" alt="La Magdalena Contreras">
+                  <a class="destination-overlay text-white text-decoration-none" href="{% url 'magda' %}">
                       <h5 class="text-white">La Magdalena Contreras</h5>
                       <span>39 Colonias</span>
                   </a>
               </div>
           </div>
           
-          <!-- Miguel Hidalgo -->
-          <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
-              <div class="destination-item position-relative overflow-hidden mb-2">
-                  <img class="img-fluid" src="{% static 'images/alcaldia/miguel4.jpg' %}" alt="Miguel Hidalgo">
-                  <a class="destination-overlay text-white text-decoration-none" href="#">
-                      <h5 class="text-white">Miguel Hidalgo</h5>
-                      <span>89 Colonias</span>
-                  </a>
-              </div>
-          </div>
+          
           
           <!-- Milpa Alta -->
           <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
               <div class="destination-item position-relative overflow-hidden mb-2">
-                  <img class="img-fluid" src="{% static 'images/alcaldia/milpa.jpg' %}" alt="Milpa Alta">
-                  <a class="destination-overlay text-white text-decoration-none" href="#">
+                  <img class="img-fluid" src="{% static 'images/alcaldia/milpa4.jpg' %}" alt="Milpa Alta">
+                  <a class="destination-overlay text-white text-decoration-none" href="{% url 'milpa' %}">
                       <h5 class="text-white">Milpa Alta</h5>
                       <span>12 Colonias</span>
                   </a>
@@ -708,8 +697,8 @@
           <!-- Tláhuac -->
           <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
               <div class="destination-item position-relative overflow-hidden mb-2">
-                  <img class="img-fluid" src="{% static 'images/alcaldia/tlahuac.jpg' %}" alt="Tláhuac">
-                  <a class="destination-overlay text-white text-decoration-none" href="#">
+                  <img class="img-fluid" src="{% static 'images/alcaldia/tlahuac4.jpg' %}" alt="Tláhuac">
+                  <a class="destination-overlay text-white text-decoration-none" href="{% url 'tlahuac' %}">
                       <h5 class="text-white">Tláhuac</h5>
                       <span>80 Colonias</span>
                   </a>
@@ -719,8 +708,8 @@
           <!-- Tlalpan -->
           <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
               <div class="destination-item position-relative overflow-hidden mb-2">
-                  <img class="img-fluid" src="{% static 'images/alcaldia/tlalpan.jpg' %}" alt="Tlalpan">
-                  <a class="destination-overlay text-white text-decoration-none" href="#">
+                  <img class="img-fluid" src="{% static 'images/alcaldia/tlalpan6.jpg' %}" alt="Tlalpan">
+                  <a class="destination-overlay text-white text-decoration-none" href="{% url 'tlalpan' %}">
                       <h5 class="text-white">Tlalpan</h5>
                       <span>178 Colonias</span>
                   </a>
@@ -730,13 +719,23 @@
           <!-- Venustiano Carranza -->
           <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
               <div class="destination-item position-relative overflow-hidden mb-2">
-                  <img class="img-fluid" src="{% static 'images/alcaldia/venustiano.jpg' %}" alt="Venustiano Carranza">
-                  <a class="destination-overlay text-white text-decoration-none" href="#">
+                  <img class="img-fluid" src="{% static 'images/alcaldia/venustiano4.jpg' %}" alt="Venustiano Carranza">
+                  <a class="destination-overlay text-white text-decoration-none" href="{% url 'venustiano' %}">
                       <h5 class="text-white">Venustiano Carranza</h5>
                       <span>80 Colonias</span>
                   </a>
               </div>
           </div>
+                 <!-- Azcapotzalco -->
+                 <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
+                  <div class="destination-item position-relative overflow-hidden mb-2">
+                      <img class="img-fluid" src="{% static 'images/alcaldia/azcapotzalco5.jpg' %}" alt="Azcapotzalco">
+                      <a class="destination-overlay text-white text-decoration-none" href="{% url 'azcapotzalco' %}">
+                          <h5 class="text-white">Azcapotzalco</h5>
+                          <span>61 Colonias</span>
+                      </a>
+                  </div>
+              </div>
       </div>
   </div>
 </div>

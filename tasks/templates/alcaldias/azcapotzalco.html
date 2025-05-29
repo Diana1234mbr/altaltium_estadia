@@ -467,14 +467,14 @@
 <body>
     <!-- Barra de navegación fija -->
     <div class="navbar">
-        <a href="{% url 'welcome' %}" class="back-button"><i class="fas fa-arrow-left"></i> Regresar</a>
+        <a href="{% url 'welcome' %}#destinations" class="back-button"><i class="fas fa-arrow-left"></i> Regresar</a>
         <div class="navbar-title">Alcaldía Azcapotzalco</div>
     </div>
 
     <div class="container">
         <!-- Sección Hero -->
         <div class="hero">
-            <img src="{% static 'images/alcaldia/azcapotzalco.jpg' %}" alt="Azcapotzalco" class="hero-image">
+            <img src="{% static 'images/alcaldia/azcapotzalco5.jpg' %}" alt="Azcapotzalco" class="hero-image">
             <div class="hero-content">
                 <h1>Alcaldía Azcapotzalco</h1>
                 <p>Descubre la herencia industrial, cultural e histórica en el corazón del noroeste de la Ciudad de México</p>
@@ -609,7 +609,6 @@
                             <td colspan="5" class="data-placeholder">No hay datos disponibles.</td>
                         </tr>
                     {% endfor %}
- 
                 </tbody>
             </table>
         </div>

@@ -110,6 +110,46 @@ def vista_cuajimalpa(request):
     datos = AlcaldiaVista.objects.filter(Alcaldia__iexact='Cuajimalpa de Morelos')
     return render(request, 'alcaldias/cuajimalpa.html', {'datos': datos}) 
 
+def vista_cuauhtemoc(request):
+    datos = AlcaldiaVista.objects.filter(Alcaldia__iexact='Cuauhtémoc')
+    return render(request, 'alcaldias/cuauhtemoc.html', {'datos': datos}) 
+
+def vista_miguel(request):
+    datos = AlcaldiaVista.objects.filter(Alcaldia__iexact='Miguel Hidalgo')
+    return render(request, 'alcaldias/miguel.html', {'datos': datos}) 
+
+def vista_gustavo(request):
+    datos = AlcaldiaVista.objects.filter(Alcaldia__iexact='Gustavo A. Madero')
+    return render(request, 'alcaldias/gustavo.html', {'datos': datos}) 
+
+def vista_iztacalco(request):
+    datos = AlcaldiaVista.objects.filter(Alcaldia__iexact='Iztacalco')
+    return render(request, 'alcaldias/iztacalco.html', {'datos': datos}) 
+
+def vista_iztapalapa(request):
+    datos = AlcaldiaVista.objects.filter(Alcaldia__iexact='Iztapalapa')
+    return render(request, 'alcaldias/iztapalapa.html', {'datos': datos}) 
+
+def vista_magda(request):
+    datos = AlcaldiaVista.objects.filter(Alcaldia__iexact='La Magdalena Contreras')
+    return render(request, 'alcaldias/magda.html', {'datos': datos}) 
+
+def vista_milpa(request):
+    datos = AlcaldiaVista.objects.filter(Alcaldia__iexact='Milpa Alta')
+    return render(request, 'alcaldias/milpa.html', {'datos': datos}) 
+
+def vista_tlahuac(request):
+    datos = AlcaldiaVista.objects.filter(Alcaldia__iexact='Tláhuac')
+    return render(request, 'alcaldias/tlahuac.html', {'datos': datos}) 
+
+def vista_tlalpan(request):
+    datos = AlcaldiaVista.objects.filter(Alcaldia__iexact='Tlalpan')
+    return render(request, 'alcaldias/tlalpan.html', {'datos': datos}) 
+
+def vista_venustiano(request):
+    datos = AlcaldiaVista.objects.filter(Alcaldia__iexact='Venustiano Carranza')
+    return render(request, 'alcaldias/venustiano.html', {'datos': datos}) 
+
 # fin de alcaldias 
 
 def admin_required(user):

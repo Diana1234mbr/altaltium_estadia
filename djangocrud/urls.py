@@ -17,6 +17,16 @@ urlpatterns = [
     path('xochimilco/', views.vista_xochimilco, name='xochimilco'),
     path('azcapotzalco/', views.vista_azcapotzalco, name='azcapotzalco'),
     path('cuajimalpa/', views.vista_cuajimalpa, name='cuajimalpa'),
+    path('cuauhtemoc/', views.vista_cuauhtemoc, name='cuauhtemoc'),
+    path('miguel/', views.vista_miguel, name='miguel'),
+    path('gustavo/', views.vista_gustavo, name='gustavo'),
+    path('iztacalco/', views.vista_iztacalco, name='iztacalco'),
+    path('iztapalapa/', views.vista_iztapalapa, name='iztapalapa'),
+    path('magda/', views.vista_magda, name='magda'),
+    path('milpa/', views.vista_milpa, name='milpa'),
+    path('tlahuac/', views.vista_tlahuac, name='tlahuac'),
+    path('tlalpan/', views.vista_tlalpan, name='tlalpan'),
+    path('venustiano/', views.vista_venustiano, name='venustiano'),
 
 ]
 
