@@ -1,5 +1,4 @@
 from .decorators import admin_required
-from .models import AlcaldiaVista
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.shortcuts import render, redirect
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
@@ -7,6 +6,9 @@ from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.models import User
 from django.db import IntegrityError
 from django.http import Http404
+from django.http import JsonResponse
+from .models import Estados, Municipios, Colonias, CodigosPostales, AlcaldiaVistas, Propiedades
+
 
 def signup(request): #Registros de usuarios
     if request.method == 'GET':
@@ -34,7 +36,47 @@ def signup(request): #Registros de usuarios
         })
 
 def estimaciones(request):
-    return render(request, 'estimaciones.html')
+    if request.method == 'POST':
+        tipo_propiedad = request.POST.get('tipo_propiedad')
+        calle = request.POST.get('calle')
+        id_codigo_postal = request.POST.get('cp')
+        recamaras = request.POST.get('recamaras')
+        sanitarios = request.POST.get('sanitarios')
+        estacionamiento = request.POST.get('estacionamiento')
+        terreno = request.POST.get('terreno')
+        construccion = request.POST.get('construccion')
+        estado_conservacion = request.POST.get('estado_conservacion')
+        comentarios = request.POST.get('comentarios')
+
+        try:
+            propiedad = Propiedades(
+                tipo_propiedad=tipo_propiedad,
+                calle=calle,
+                id_codigo_postal=CodigosPostales.objects.get(id_codigo_postal=id_codigo_postal),
+                recamaras=int(recamaras) if recamaras else 0,
+                sanitarios=float(sanitarios) if sanitarios else 0.0,
+                estacionamiento=int(estacionamiento) if estacionamiento else 0,
+                terreno=float(terreno) if terreno else 0.0,
+                construccion=float(construccion) if construccion else 0.0,
+                estado_conservacion=estado_conservacion,
+                comentarios=comentarios,
+            )
+            propiedad.save()
+            messages.success(request, 'Propiedad guardada correctamente.')
+            return redirect('estimaciones')
+        except (CodigosPostales.DoesNotExist, ValueError) as e:
+            messages.error(request, f'Error al guardar los datos: {str(e)}')
+
+    context = {
+        'estados': Estados.objects.all(),
+        'municipios': Municipios.objects.all(),
+        'colonias': Colonias.objects.all(),
+        'codigos_postales': CodigosPostales.objects.all(),
+        'propiedades': Propiedades.objects.all(),
+        'datos_alcaldia': AlcaldiaVistas.objects.all(),
+    }
+    return render(request, 'estimaciones.html', context)
+
 
 def signin(request):
     if request.method == 'GET':
@@ -162,3 +204,16 @@ def gentelella_view(request, page):
         return render(request, f'gentelella/{page}.html')
     except:
         return render(request, 'gentelella/page_404.html', status=404)
+
+# Agregado 31/05/25
+
+
+def obtener_colonias(request):
+    municipio_id = request.GET.get('municipio_id')
+    colonias = Colonias.objects.filter(id_municipio=municipio_id).values('id_colonia', 'nombre')
+    return JsonResponse(list(colonias), safe=False)
+
+def obtener_codigos_postales(request):
+    colonia_id = request.GET.get('colonia_id')
+    codigos = CodigosPostales.objects.filter(id_colonia=colonia_id).values('id_codigo_postal', 'codigo')
+    return JsonResponse(list(codigos), safe=False)

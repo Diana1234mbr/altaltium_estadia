@@ -7,7 +7,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('signup/', views.signup, name='signup'),
     path('signin/', views.signin, name='signin'),
-    path('logout/', views.signout, name='logout'),
+    path('logout/', views.signout, name='signout'),
     path('forgot-password/', views.forgot_password, name='forgot_password'),
     path('', views.welcome, name='welcome'),
     path('admin-panel/<str:page>/', views.gentelella_view, name='gentelella_page'),
@@ -27,6 +27,6 @@ urlpatterns = [
     path('tlahuac/', views.vista_tlahuac, name='tlahuac'),
     path('tlalpan/', views.vista_tlalpan, name='tlalpan'),
     path('venustiano/', views.vista_venustiano, name='venustiano'),
-
+    path('obtener_colonias/', views.obtener_colonias, name='obtener_colonias'),
+    path('obtener_codigos_postales/', views.obtener_codigos_postales, name='obtener_codigos_postales'),
 ]
-
