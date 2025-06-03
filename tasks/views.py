@@ -129,67 +129,67 @@ def welcome(request):
 # alcaldias 
 
 def vista_benito_juarez(request):
-    datos = AlcaldiaVista.objects.filter(Alcaldia__iexact='Benito Juárez')
+    datos = AlcaldiaVistas.objects.filter(alcaldia__iexact='Benito Juárez')
     return render(request, 'alcaldias/benito.html', {'datos': datos})
 
 def vista_alvaro(request):
-    datos = AlcaldiaVista.objects.filter(Alcaldia__iexact='Álvaro Obregón')
+    datos = AlcaldiaVistas.objects.filter(alcaldia__iexact='Álvaro Obregón')
     return render(request, 'alcaldias/alvaro.html', {'datos': datos})
 
 def vista_coyoacan(request):
-    datos = AlcaldiaVista.objects.filter(Alcaldia__iexact='Coyoacán')
+    datos = AlcaldiaVistas.objects.filter(alcaldia__iexact='Coyoacán')
     return render(request, 'alcaldias/coyoacan.html', {'datos': datos})
 
 def vista_xochimilco(request):
-    datos = AlcaldiaVista.objects.filter(Alcaldia__iexact='Xochimilco')
+    datos = AlcaldiaVistas.objects.filter(alcaldia__iexact='Xochimilco')
     return render(request, 'alcaldias/xochimilco.html', {'datos': datos})  
 
 def vista_azcapotzalco(request):
-    datos = AlcaldiaVista.objects.filter(Alcaldia__iexact='Azcapotzalco')
+    datos = AlcaldiaVistas.objects.filter(alcaldia__iexact='Azcapotzalco')
     return render(request, 'alcaldias/azcapotzalco.html', {'datos': datos})  
 
 def vista_cuajimalpa(request):
-    datos = AlcaldiaVista.objects.filter(Alcaldia__iexact='Cuajimalpa de Morelos')
+    datos = AlcaldiaVistas.objects.filter(alcaldia__iexact='Cuajimalpa de Morelos')
     return render(request, 'alcaldias/cuajimalpa.html', {'datos': datos}) 
 
 def vista_cuauhtemoc(request):
-    datos = AlcaldiaVista.objects.filter(Alcaldia__iexact='Cuauhtémoc')
+    datos = AlcaldiaVistas.objects.filter(alcaldia__iexact='Cuauhtémoc')
     return render(request, 'alcaldias/cuauhtemoc.html', {'datos': datos}) 
 
 def vista_miguel(request):
-    datos = AlcaldiaVista.objects.filter(Alcaldia__iexact='Miguel Hidalgo')
+    datos = AlcaldiaVistas.objects.filter(alcaldia__iexact='Miguel Hidalgo')
     return render(request, 'alcaldias/miguel.html', {'datos': datos}) 
 
 def vista_gustavo(request):
-    datos = AlcaldiaVista.objects.filter(Alcaldia__iexact='Gustavo A. Madero')
+    datos = AlcaldiaVistas.objects.filter(alcaldia__iexact='Gustavo A. Madero')
     return render(request, 'alcaldias/gustavo.html', {'datos': datos}) 
 
 def vista_iztacalco(request):
-    datos = AlcaldiaVista.objects.filter(Alcaldia__iexact='Iztacalco')
+    datos = AlcaldiaVistas.objects.filter(alcaldia__iexact='Iztacalco')
     return render(request, 'alcaldias/iztacalco.html', {'datos': datos}) 
 
 def vista_iztapalapa(request):
-    datos = AlcaldiaVista.objects.filter(Alcaldia__iexact='Iztapalapa')
+    datos = AlcaldiaVistas.objects.filter(alcaldia__iexact='Iztapalapa')
     return render(request, 'alcaldias/iztapalapa.html', {'datos': datos}) 
 
 def vista_magda(request):
-    datos = AlcaldiaVista.objects.filter(Alcaldia__iexact='La Magdalena Contreras')
+    datos = AlcaldiaVistas.objects.filter(alcaldia__iexact='La Magdalena Contreras')
     return render(request, 'alcaldias/magda.html', {'datos': datos}) 
 
 def vista_milpa(request):
-    datos = AlcaldiaVista.objects.filter(Alcaldia__iexact='Milpa Alta')
+    datos = AlcaldiaVistas.objects.filter(alcaldia__iexact='Milpa Alta')
     return render(request, 'alcaldias/milpa.html', {'datos': datos}) 
 
 def vista_tlahuac(request):
-    datos = AlcaldiaVista.objects.filter(Alcaldia__iexact='Tláhuac')
+    datos = AlcaldiaVistas.objects.filter(alcaldia__iexact='Tláhuac')
     return render(request, 'alcaldias/tlahuac.html', {'datos': datos}) 
 
 def vista_tlalpan(request):
-    datos = AlcaldiaVista.objects.filter(Alcaldia__iexact='Tlalpan')
+    datos = AlcaldiaVistas.objects.filter(alcaldia__iexact='Tlalpan')
     return render(request, 'alcaldias/tlalpan.html', {'datos': datos}) 
 
 def vista_venustiano(request):
-    datos = AlcaldiaVista.objects.filter(Alcaldia__iexact='Venustiano Carranza')
+    datos = AlcaldiaVistas.objects.filter(alcaldia__iexact='Venustiano Carranza')
     return render(request, 'alcaldias/venustiano.html', {'datos': datos}) 
 
 # fin de alcaldias 
@@ -199,11 +199,74 @@ def admin_required(user):
 
 @login_required
 @user_passes_test(admin_required)
+
+
+
+
+#Colonias calculadora 
 def gentelella_view(request, page):
     try:
-        return render(request, f'gentelella/{page}.html')
-    except:
+        context = {}
+
+        if page == "cal_colonia":
+            colonias = Colonias.objects.all()
+            
+            if 'eliminar' in request.GET:
+                Colonias.objects.filter(id_colonia=request.GET['eliminar']).delete()
+                return redirect('gentelella_page', page='cal_colonia')
+
+            if 'editar' in request.GET:  # NUEVO: Redirigir a página de edición
+                return redirect('gentelella_page', page='editar_colonia') + f"?editar={request.GET['editar']}"
+
+            if request.method == 'POST':
+                id_colonia = request.POST.get('id_colonia')
+                nombre = request.POST.get('nombre')
+                promedio_precio = request.POST.get('promedio_precio', 0)
+                
+                if id_colonia:
+                    colonia = Colonias.objects.get(id_colonia=id_colonia)
+                    colonia.nombre = nombre
+                    colonia.Promedio_precio = promedio_precio
+                    colonia.save()
+                else:
+                    Colonias.objects.create(
+                        nombre=nombre,
+                        Promedio_precio=promedio_precio
+                    )
+                return redirect('gentelella_page', page='cal_colonia')
+
+            context = {'colonias': colonias}
+
+        elif page == "editar_colonia":
+            if 'editar' in request.GET:
+                colonia_editar = Colonias.objects.get(id_colonia=request.GET['editar'])
+                context = {'colonia_editar': colonia_editar}
+            
+            if request.method == 'POST':
+                id_colonia = request.POST.get('id_colonia')
+                nombre = request.POST.get('nombre')
+                promedio_precio = request.POST.get('promedio_precio')
+                
+                colonia = Colonias.objects.get(id_colonia=id_colonia)
+                colonia.nombre = nombre
+                colonia.Promedio_precio = promedio_precio
+                colonia.save()
+                return redirect('gentelella_page', page='cal_colonia')
+
+        return render(request, f'gentelella/{page}.html', context)
+
+    except Colonias.DoesNotExist:
+        return redirect('gentelella_page', page='cal_colonia')
+    except Exception as e:
+        print("Error en gentelella_view:", e)
         return render(request, 'gentelella/page_404.html', status=404)
+#Fin de colonias
+
+
+
+
+
+
 
 # Agregado 31/05/25
 
@@ -217,3 +280,5 @@ def obtener_codigos_postales(request):
     colonia_id = request.GET.get('colonia_id')
     codigos = CodigosPostales.objects.filter(id_colonia=colonia_id).values('id_codigo_postal', 'codigo')
     return JsonResponse(list(codigos), safe=False)
+    
+    

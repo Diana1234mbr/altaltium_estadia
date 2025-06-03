@@ -29,4 +29,8 @@ urlpatterns = [
     path('venustiano/', views.vista_venustiano, name='venustiano'),
     path('obtener_colonias/', views.obtener_colonias, name='obtener_colonias'),
     path('obtener_codigos_postales/', views.obtener_codigos_postales, name='obtener_codigos_postales'),
+
+    path('colonias/', views.gentelella_view, {'page': 'cal_colonia'}, name='colonias_list'),
+    path('colonias/editar/', views.gentelella_view, {'page': 'editar_colonia'}, name='editar_colonia'),
+
 ]

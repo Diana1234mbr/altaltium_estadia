@@ -53,11 +53,12 @@ class Colonias(models.Model):
     id_colonia = models.AutoField(primary_key=True)
     nombre = models.CharField(max_length=100)
     id_municipio = models.ForeignKey(Municipios, models.DO_NOTHING, db_column='id_municipio')
+    promedio_precio = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
 
     class Meta:
         db_table = 'colonias'
         unique_together = (('nombre', 'id_municipio'),)
-        managed = False
+        managed = True
 
     def __str__(self):
         return self.nombre
