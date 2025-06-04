@@ -1,3 +1,4 @@
+from django.contrib import messages
 from .decorators import admin_required
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.shortcuts import render, redirect
@@ -8,6 +9,7 @@ from django.db import IntegrityError
 from django.http import Http404
 from django.http import JsonResponse
 from .models import Estados, Municipios, Colonias, CodigosPostales, AlcaldiaVistas, Propiedades
+
 
 
 def signup(request): #Registros de usuarios
@@ -202,66 +204,84 @@ def admin_required(user):
 
 
 
-
-#Colonias calculadora 
+ #crud colonia 
 def gentelella_view(request, page):
     try:
         context = {}
-
         if page == "cal_colonia":
             colonias = Colonias.objects.all()
-            
+            municipios = Municipios.objects.all()
             if 'eliminar' in request.GET:
-                Colonias.objects.filter(id_colonia=request.GET['eliminar']).delete()
+                try:
+                    Colonias.objects.filter(id_colonia=request.GET['eliminar']).delete()
+                    messages.success(request, "Colonia eliminada correctamente.")
+                except Colonias.DoesNotExist:
+                    messages.error(request, f"No se encontró la colonia con ID {request.GET['eliminar']}.")
                 return redirect('gentelella_page', page='cal_colonia')
-
-            if 'editar' in request.GET:  # NUEVO: Redirigir a página de edición
-                return redirect('gentelella_page', page='editar_colonia') + f"?editar={request.GET['editar']}"
-
-            if request.method == 'POST':
-                id_colonia = request.POST.get('id_colonia')
+            if request.method == 'POST' and 'editar' not in request.GET:
                 nombre = request.POST.get('nombre')
-                promedio_precio = request.POST.get('promedio_precio', 0)
-                
-                if id_colonia:
-                    colonia = Colonias.objects.get(id_colonia=id_colonia)
-                    colonia.nombre = nombre
-                    colonia.Promedio_precio = promedio_precio
-                    colonia.save()
+                promedio_precio = request.POST.get('promedio_precio', None)
+                id_municipio = request.POST.get('id_municipio')
+                if nombre and id_municipio:
+                    try:
+                        municipio = Municipios.objects.get(id_municipio=id_municipio)
+                        Colonias.objects.create(
+                            nombre=nombre,
+                            id_municipio=municipio,
+                            promedio_precio=promedio_precio
+                        )
+                        messages.success(request, "Colonia creada correctamente.")
+                    except Municipios.DoesNotExist:
+                        messages.error(request, "Municipio no encontrado.")
+                    except IntegrityError:
+                        messages.error(request, "Ya existe una colonia con ese nombre en el municipio seleccionado.")
                 else:
-                    Colonias.objects.create(
-                        nombre=nombre,
-                        Promedio_precio=promedio_precio
-                    )
+                    messages.error(request, "Faltan datos para crear la colonia.")
                 return redirect('gentelella_page', page='cal_colonia')
-
-            context = {'colonias': colonias}
-
+            context = {
+    'colonias': colonias,
+    'municipios': municipios,}
         elif page == "editar_colonia":
+            context['municipios'] = Municipios.objects.all()
             if 'editar' in request.GET:
-                colonia_editar = Colonias.objects.get(id_colonia=request.GET['editar'])
-                context = {'colonia_editar': colonia_editar}
-            
+                try:
+                    colonia_editar = Colonias.objects.get(id_colonia=request.GET['editar'])
+                    context['colonia_editar'] = colonia_editar
+                except Colonias.DoesNotExist:
+                    messages.error(request, f"No se encontró la colonia con ID {request.GET['editar']}.")
+                    return redirect('gentelella_page', page='cal_colonia')
             if request.method == 'POST':
                 id_colonia = request.POST.get('id_colonia')
-                nombre = request.POST.get('nombre')
-                promedio_precio = request.POST.get('promedio_precio')
-                
-                colonia = Colonias.objects.get(id_colonia=id_colonia)
-                colonia.nombre = nombre
-                colonia.Promedio_precio = promedio_precio
-                colonia.save()
-                return redirect('gentelella_page', page='cal_colonia')
-
+                try:
+                    colonia = Colonias.objects.get(id_colonia=id_colonia)
+                    nombre = request.POST.get('nombre')
+                    id_municipio = request.POST.get('id_municipio')
+                    promedio_precio = request.POST.get('promedio_precio', None)
+                    if nombre and id_municipio:
+                        municipio = Municipios.objects.get(id_municipio=id_municipio)
+                        colonia.nombre = nombre
+                        colonia.id_municipio = municipio
+                        colonia.promedio_precio = promedio_precio if promedio_precio else None
+                        colonia.save()
+                        messages.success(request, "Colonia actualizada correctamente.")
+                        return redirect('gentelella_page', page='cal_colonia')
+                    else:
+                        messages.error(request, "Faltan datos para actualizar la colonia.")
+                except Colonias.DoesNotExist:
+                    messages.error(request, f"No se encontró la colonia con ID {id_colonia}.")
+                except Municipios.DoesNotExist:
+                    messages.error(request, "Municipio no encontrado.")
+                except IntegrityError:
+                    messages.error(request, "Ya existe una colonia con ese nombre en el municipio seleccionado.")
+                except ValueError:
+                    messages.error(request, "El precio promedio debe ser un número válido.")
+                return redirect('gentelella_page', page='editar_colonia', editar=id_colonia)
+            return render(request, 'gentelella/editar_colonia.html', context)
         return render(request, f'gentelella/{page}.html', context)
-
-    except Colonias.DoesNotExist:
-        return redirect('gentelella_page', page='cal_colonia')
     except Exception as e:
-        print("Error en gentelella_view:", e)
+        messages.error(request, f"Error inesperado: {str(e)}")
         return render(request, 'gentelella/page_404.html', status=404)
-#Fin de colonias
-
+#crud colonia fin 
 
 
 
