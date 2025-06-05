@@ -91,11 +91,16 @@ class Propiedades(models.Model):
     estado_conservacion = models.CharField(max_length=50)
     comentarios = models.TextField(blank=True, null=True)
     resultado_calculo = models.DecimalField(max_digits=15, decimal_places=2, blank=True, null=True)
-    created_at = models.DateTimeField(auto_now_add=False, blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True, blank=True, null=True)  # Cambio a auto_now_add=True
+    # Campos adicionales sugeridos
+    id_colonia = models.ForeignKey(Colonias, models.DO_NOTHING, db_column='id_colonia', null=True, blank=True)
+    id_municipio = models.ForeignKey(Municipios, models.DO_NOTHING, db_column='id_municipio', null=True, blank=True)
+    id_estado = models.ForeignKey(Estados, models.DO_NOTHING, db_column='id_estado', null=True, blank=True)
+    valor_judicial = models.DecimalField(max_digits=15, decimal_places=2, blank=True, null=True)
 
     class Meta:
         db_table = 'propiedades'
-        managed = False
+        managed = True  # Cambia a True si puedes gestionar la tabla con Django
 
     def __str__(self):
         return f'{self.tipo_propiedad} en {self.calle}'

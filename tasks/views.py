@@ -39,8 +39,10 @@ def signup(request): #Registros de usuarios
 
 def estimaciones(request):
     if request.method == 'POST':
+        # Obtener los datos del formulario
         tipo_propiedad = request.POST.get('tipo_propiedad')
         calle = request.POST.get('calle')
+        id_colonia = request.POST.get('colonia')
         id_codigo_postal = request.POST.get('cp')
         recamaras = request.POST.get('recamaras')
         sanitarios = request.POST.get('sanitarios')
@@ -49,26 +51,78 @@ def estimaciones(request):
         construccion = request.POST.get('construccion')
         estado_conservacion = request.POST.get('estado_conservacion')
         comentarios = request.POST.get('comentarios')
+        id_municipio = request.POST.get('municipio')
+        id_estado = request.POST.get('estado')
 
-        try:
-            propiedad = Propiedades(
-                tipo_propiedad=tipo_propiedad,
-                calle=calle,
-                id_codigo_postal=CodigosPostales.objects.get(id_codigo_postal=id_codigo_postal),
-                recamaras=int(recamaras) if recamaras else 0,
-                sanitarios=float(sanitarios) if sanitarios else 0.0,
-                estacionamiento=int(estacionamiento) if estacionamiento else 0,
-                terreno=float(terreno) if terreno else 0.0,
-                construccion=float(construccion) if construccion else 0.0,
-                estado_conservacion=estado_conservacion,
-                comentarios=comentarios,
-            )
-            propiedad.save()
-            messages.success(request, 'Propiedad guardada correctamente.')
-            return redirect('estimaciones')
-        except (CodigosPostales.DoesNotExist, ValueError) as e:
-            messages.error(request, f'Error al guardar los datos: {str(e)}')
+        # Validación de campos requeridos
+        campos_requeridos = [
+            tipo_propiedad, calle, id_colonia, id_codigo_postal,
+            recamaras, sanitarios, estacionamiento,
+            terreno, construccion, estado_conservacion,
+            id_municipio, id_estado
+        ]
 
+        if not all(campos_requeridos):
+            messages.error(request, "Todos los campos obligatorios deben ser llenados.")
+            return render(request, 'estimaciones.html')  # Cambia por el nombre de tu template
+
+        # Convertir a los tipos adecuados
+        recamaras = int(recamaras)
+        sanitarios = float(sanitarios)
+        estacionamiento = int(estacionamiento)
+        terreno = float(terreno)
+        construccion = float(construccion)
+
+#De aqui
+        # Fórmulas para calcular los esto si lo puedes cambiar
+        valor_m2 = 12000  # Valor de referencia por metro cuadrado de construcción
+        valor_terreno_m2 = 6000  # Valor de referencia por metro cuadrado de terreno
+        coef_conservacion = {
+            'Muy bueno': 0.0625,
+            'Bueno': -0.0625,
+            'Regular': -0.01375,
+            'Malo': -0.01855,
+            'Muy malo': 1
+        }
+
+        # Cálculo del resultado comercial  si lo puedes cambiar
+        coef = coef_conservacion.get(estado_conservacion, 1.00)
+        resultado_calculo = ((construccion * valor_m2) + (terreno * valor_terreno_m2)) * coef
+
+        # Valor judicial estimado como un porcentaje menor del valor comercial si lo puedes cambiar
+        valor_judicial = resultado_calculo * 0.65
+        #Ah aqui puedes cambiar
+        
+
+        # Crear la propiedad
+        propiedad = Propiedades(
+            tipo_propiedad=tipo_propiedad,
+            calle=calle,
+            id_colonia_id=id_colonia,
+            id_codigo_postal_id=id_codigo_postal,
+            recamaras=recamaras,
+            sanitarios=sanitarios,
+            estacionamiento=estacionamiento,
+            terreno=terreno,
+            construccion=construccion,
+            estado_conservacion=estado_conservacion,
+            comentarios=comentarios,
+            id_municipio_id=id_municipio,
+            id_estado_id=id_estado,
+            resultado_calculo=resultado_calculo,
+            valor_judicial=valor_judicial
+        )
+        propiedad.save()
+
+        messages.success(request, "Propiedad registrada y calculada exitosamente.")
+        return redirect('estimaciones')  # Cambia por tu vista objetivo
+
+    # Si es GET, mostrar formulario
+    estados = Estados.objects.all()
+    municipios = Municipios.objects.all()
+    colonias = Colonias.objects.all()
+
+    # Contexto para la vista GET
     context = {
         'estados': Estados.objects.all(),
         'municipios': Municipios.objects.all(),
@@ -283,22 +337,22 @@ def gentelella_view(request, page):
         return render(request, 'gentelella/page_404.html', status=404)
 #crud colonia fin 
 
-
-
-
-
-
 # Agregado 31/05/25
-
 
 def obtener_colonias(request):
     municipio_id = request.GET.get('municipio_id')
-    colonias = Colonias.objects.filter(id_municipio=municipio_id).values('id_colonia', 'nombre')
-    return JsonResponse(list(colonias), safe=False)
+    try:
+        colonias = Colonias.objects.filter(id_municipio=municipio_id).values('id_colonia', 'nombre')
+        return JsonResponse(list(colonias), safe=False)
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=400)
 
 def obtener_codigos_postales(request):
     colonia_id = request.GET.get('colonia_id')
-    codigos = CodigosPostales.objects.filter(id_colonia=colonia_id).values('id_codigo_postal', 'codigo')
-    return JsonResponse(list(codigos), safe=False)
+    try:
+        codigos_postales = CodigosPostales.objects.filter(id_colonia=colonia_id).values('id_codigo_postal', 'codigo')
+        return JsonResponse(list(codigos_postales), safe=False)
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=400)
     
     
