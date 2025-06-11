@@ -306,70 +306,112 @@
 
 
 
-			<!-- page content  principio -->
-			<div class="right_col" role="main">
-				<div class="container">
-					<div class="page-title">
-						<div class="title_left">
+			<!-- page content -->
+            <div class="right_col" role="main">
+                <div class="container">
+                    <!-- Encabezado y barra de búsqueda -->
+                    <div class="row" style="margin-bottom: 15px;">
+                        <div class="col-md-6 col-sm-12">
+                            <h2 style="color: #003035; font-size: 24px; font-weight: 600; margin: 0;">Colonias
+                                Registradas</h2>
+                        </div>
+                        <div class="col-md-6 col-sm-12 text-right">
+                            <div class="search-bar">
+                                <input type="text" id="searchInput" class="form-control"
+                                    placeholder="Buscar por nombre o precio...">
+                                <i class="fa fa-search"></i>
+                            </div>
+                        </div>
+                    </div>
 
+                    <!-- Mostrar mensajes de éxito o error -->
+                    {% if messages %}
+                    <div class="alert alert-dismissible {% if message.tags == 'success' %}alert-danger{% else %}alert-success{% endif %}"
+                        role="alert">
+                        {% for message in messages %}
+                        <p>{{ message }}</p>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
 
-							<!-- TABLA DE COLONIAS -->
-							
-							{% if colonia_editar %}
-							<form method="post" class="form-horizontal form-label-left">
-								{% csrf_token %}
-								<input type="hidden" name="id_colonia" value="{{ colonia_editar.id_colonia }}">
-								<div class="item form-group">
-									<label class="col-form-label col-md-3 col-sm-3 label-align">Editar nombre:</label>
-									<div class="col-md-6 col-sm-6">
-										<input type="text" name="nombre" class="form-control" required
-											value="{{ colonia_editar.nombre }}">
-									</div>
-								</div>
-								<div class="item form-group">
-									<div class="col-md-6 col-sm-6 offset-md-3">
-										<button type="submit" class="btn btn-warning">Actualizar</button>
-										<a href="{% url 'crud_colonias' %}" class="btn btn-secondary">Cancelar</a>
-									</div>
-								</div>
-							</form>
-							{% endif %}
+                    <!-- Formulario para agregar nueva colonia -->
+                    <div class="card">
+                        <div class="collapsible-header" onclick="toggleForm('addForm')">
+                            <h3 style="color: #008a8a; font-size: 18px; font-weight: 600; margin: 0;">Agregar Nueva
+                                Colonia</h3>
+                            <i id="addFormIcon" class="fa fa-chevron-down"></i>
+                        </div>
+                        <form method="post" id="addForm" style="display: none; margin-top: 15px;"
+                            class="form-horizontal">
+                            {% csrf_token %}
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label>Nombre</label>
+                                    <input type="text" name="nombre" class="form-control" required
+                                        placeholder="Nombre de la colonia">
+                                </div>
+                                <div class="form-group" style="flex: 1; min-width: 300px;">
+                                    <label style="color: #003035; font-weight: 600;">Municipio</label>
+                                    <select name="id_municipio" class="form-control" required
+                                        style="border: 1px solid #bfc6c7; border-radius: 4px; padding: 10px; color: #0d1d1f; background-color: #fefcef; transition: border-color 0.3s;">
+                                        {% for municipio in municipios %}
+                                        <option value="{{ municipio.id_municipio }}">{{ municipio.nombre }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
 
-							<h3>Colonias Registradas</h3>
-							<table class="table table-bordered">
-								<thead>
-									<tr>
-										<th>ID</th>
-										<th>Nombre</th>
-										<th>Promedio Precio (m2)</th>
-										<th>Acciones</th>
-									</tr>
-								</thead>
-								<tbody>
-									{% for colonia in colonias %}
-									<tr>
-										<td>{{ colonia.id_colonia }}</td>
-										<td>{{ colonia.nombre }}</td>
-										<td>{{ colonia.Promedio_precio }}</td>
-										<td>
-											<a href="?editar={{ colonia.id_colonia }}"
-												class="btn btn-sm btn-info">Editar</a>
-											<a href="?eliminar={{ colonia.id_colonia }}" class="btn btn-sm btn-danger"
-												onclick="return confirm('¿Deseas eliminar esta colonia?');">Eliminar</a>
-										</td>
-									</tr>
-									{% empty %}
-									<tr>
-										<td colspan="3">No hay colonias registradas.</td>
-									</tr>
-									{% endfor %}
-								</tbody>
-							</table>
-						</div>
-					</div>
-				</div>
-			</div>
-							<!-- /page content termino -->
+                                <div class="form-group">
+                                    <label>Promedio Precio (m²)</label>
+                                    <input type="number" name="promedio_precio" class="form-control" required
+                                        placeholder="Precio por m²">
+                                </div>
+                                <div class="form-group">
+                                    <button type="submit" class="btn btn-add">Agregar</button>
+                                    <button type="reset" class="btn btn-cancel">Limpiar</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+
+                    <!-- Tabla de colonias -->
+                    <div class="card table-container">
+                        <table class="table" id="coloniasTable">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Nombre</th>
+                                    <th>Municipio</th>
+                                    <th>Promedio Precio (m²)</th>            
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for colonia in colonias %}
+                                <tr>
+                                    <td>{{ colonia.id_colonia }}</td>
+                                    <td>{{ colonia.nombre }}</td>
+                                    <td>{{ colonia.id_municipio.nombre }}</td>
+                                    <td>{{ colonia.promedio_precio|default:'-' }}</td>
+                                    <td>
+                                        <a href="{% url 'gentelella_page' page='editar_colonia' %}?editar={{ colonia.id_colonia }}"
+                                            class="btn btn-edit btn-sm">Editar</a>
+                                        <a href="?eliminar={{ colonia.id_colonia }}" class="btn btn-delete btn-sm"
+                                            onclick="return confirm('¿Deseas eliminar esta colonia?');">Eliminar</a>
+                                    </td>
+                                </tr>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="4" style="text-align: center; color: #949797;">No hay colonias
+                                        registradas.</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <!-- /page content -->
+
 
 
 
