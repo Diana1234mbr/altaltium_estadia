@@ -495,11 +495,11 @@
         <!-- Encabezado y barra de búsqueda -->
         <div class="row" style="margin-bottom: 15px;">
             <div class="col-md-6 col-sm-12">
-                <h2 style="color: #003035; font-size: 24px; font-weight: 600; margin: 0;">Municipios Registrados</h2>
+                <h2 style="color: #003035; font-size: 24px; font-weight: 600; margin: 0;">Codigos Postales Registrados</h2>
             </div>
             <div class="col-md-6 col-sm-12 text-right">
                 <div class="search-bar">
-                    <input type="text" id="searchInput" class="form-control" placeholder="Buscar por nombre o estado...">
+                    <input type="text" id="searchInput" class="form-control" placeholder="Buscar por codigo o colonia...">
                     <i class="fa fa-search"></i>
                 </div>
             </div>
@@ -514,24 +514,24 @@
         </div>
         {% endif %}
 
-        <!-- Formulario para agregar nuevo municipio -->
+        <!-- Formulario para agregar nuevo codigo -->
         <div class="card">
             <div class="collapsible-header" onclick="toggleForm('addForm')">
-                <h3 style="color: #008a8a; font-size: 18px; font-weight: 600; margin: 0;">Agregar Nuevo Municipio</h3>
+                <h3 style="color: #008a8a; font-size: 18px; font-weight: 600; margin: 0;">Agregar Nuevo Codigo Postal</h3>
                 <i id="addFormIcon" class="fa fa-chevron-down"></i>
             </div>
             <form method="post" id="addForm" style="display: none; margin-top: 15px;" class="form-horizontal">
                 {% csrf_token %}
                 <div class="form-row">
                     <div class="form-group">
-                        <label>Nombre</label>
-                        <input type="text" name="nombre" class="form-control" required placeholder="Nombre del municipio">
+                        <label>Codigo postal</label>
+                        <input type="text" name="nombre" class="form-control" required placeholder="Codigo Postal">
                     </div>
                     <div class="form-group" style="flex: 1; min-width: 300px;">
-                        <label style="color: #003035; font-weight: 600;">Estado</label>
-                        <select name="id_estado" class="form-control" required style="border: 1px solid #bfc6c7; border-radius: 4px; padding: 10px; color: #0d1d1f; background-color: #fefcef; transition: border-color 0.3s;">
-                            {% for estado in estados %}
-                            <option value="{{ estado.id_estado }}">{{ estado.nombre }}</option>
+                        <label style="color: #003035; font-weight: 600;">Colonia</label>
+                        <select name="id_colonia" class="form-control" required style="border: 1px solid #bfc6c7; border-radius: 4px; padding: 10px; color: #0d1d1f; background-color: #fefcef; transition: border-color 0.3s;">
+                            {% for colonia in colonias %}
+                            <option value="{{ colonia.id_colonia }}">{{ colonia.nombre }}</option>
                             {% endfor %}
                         </select>
                     </div>
@@ -543,31 +543,31 @@
             </form>
         </div>
 
-        <!-- Tabla de municipios -->
+        <!-- Tabla de Codigos -->
         <div class="card table-container">
             <table class="table" id="municipioTable">
                 <thead>
                     <tr>
                         <th>ID</th>
-                        <th>Nombre</th>
-                        <th>Estado</th>
+                        <th>Codigo</th>
+                        <th>Id Colonia</th>
                         <th>Acciones</th>
                     </tr>
                 </thead>
                 <tbody>
-                    {% for municipio in municipios %}
+                    {% for codigo in codigos %}
                     <tr>
-                        <td>{{ municipio.id_municipio }}</td>
-                        <td>{{ municipio.nombre }}</td>
-                        <td>{{ municipio.id_estado.nombre }}</td>
+                        <td>{{ codigo.id_codigo_postal }}</td>
+                        <td>{{ codigo.codigo }}</td>
+                        <td>{{ codigo.id_colonia }}</td>
                         <td>
-                            <a href="{% url 'gentelella_page' page='editar_municipio' %}?editar={{ municipio.id_municipio }}" class="btn btn-edit btn-sm">Editar</a>
-            				        <a href="{% url 'gentelella_page' page='cal_municipio' %}?eliminar={{ municipio.id_municipio }}" class="btn btn-delete btn-sm" onclick="return confirm('¿Deseas eliminar este municipio?');">Eliminar</a>
+                            <a href="{% url 'gentelella_page' page='editar_cp' %}?editar={{ codigo.id_codigo_postal }}" class="btn btn-edit btn-sm">Editar</a>
+							<a href="{% url 'gentelella_page' page='cal_cp' %}?eliminar={{ codigo.id_codigo_postal }}" class="btn btn-delete btn-sm" onclick="return confirm('¿Deseas eliminar este municipio?');">Eliminar</a>
                         </td>
                     </tr>
                     {% empty %}
                     <tr>
-                        <td colspan="4" style="text-align: center; color: #949797;">No hay municipios registrados.</td>
+                        <td colspan="4" style="text-align: center; color: #949797;">No hay codigos postales registrados.</td>
                     </tr>
                     {% endfor %}
                 </tbody>
@@ -686,3 +686,7 @@ document.getElementById('searchInput').addEventListener('input', function() {
 </body>
 
 </html>
+
+
+
+

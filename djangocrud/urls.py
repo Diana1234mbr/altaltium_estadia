@@ -39,4 +39,5 @@ urlpatterns = [
 
     # Panel admin Gentelella
     path('admin-panel/<str:page>/', views.gentelella_view, name='gentelella_page'),
+
 ]
