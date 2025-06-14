@@ -1,19 +1,21 @@
 from django.contrib import messages
-from .decorators import admin_required
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.shortcuts import render, redirect
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.models import User
 from django.db import IntegrityError
-from django.http import Http404
-from django.http import JsonResponse
+from django.http import Http404, JsonResponse
 from .models import Estados, Municipios, Colonias, CodigosPostales, AlcaldiaVistas, Propiedades
 from django.views.decorators.csrf import csrf_exempt
 import json
 
+# Decorador para verificar si es admin
+def admin_required(user):
+    return user.is_staff or user.is_superuser
 
-def signup(request): #Registros de usuarios
+# Registro de usuarios
+def signup(request):
     if request.method == 'GET':
         return render(request, 'signup.html', {"form": UserCreationForm})
     else:
@@ -37,10 +39,8 @@ def signup(request): #Registros de usuarios
             "form": UserCreationForm,
             "error": "Las contraseñas no coinciden."
         })
-    
 
-# desde aqui
-
+# Estimaciones de propiedades
 def estimaciones(request):
     if request.method == 'POST':
         # Obtener los datos del formulario
@@ -155,7 +155,7 @@ def estimaciones(request):
                 id_estado_id=id_estado,
                 valor_judicial=valor_judicial,
                 valor_comercial=valor_comercial,
-                valor_inicial=valor_inicial  # Corregido de valor_inicia a valor_inicial
+                valor_inicial=valor_inicial
             )
             propiedad.save()
 
@@ -185,12 +185,8 @@ def estimaciones(request):
         'datos_alcaldia': AlcaldiaVistas.objects.all(),
     }
     return render(request, 'estimaciones.html', context)
- 
 
- #hasta aqui
-
-
-
+# Inicio de sesión
 def signin(request):
     if request.method == 'GET':
         return render(request, 'signin.html', {"form": AuthenticationForm()})
@@ -209,8 +205,6 @@ def signin(request):
 
         if user is not None:
             login(request, user)
-
-            # 🔒 Redirección según tipo de usuario
             if user.is_staff or user.is_superuser:
                 return redirect('gentelella_page', page='index')  # Dashboard admin
             else:
@@ -221,15 +215,16 @@ def signin(request):
                 "error": "Usuario o contraseña incorrectos."
             })
 
-
+# Cerrar sesión
 def signout(request):
     logout(request)
     return redirect('signin')
 
-
+# Olvidé contraseña
 def forgot_password(request):
     return render(request, 'forgotpassword.html')
 
+# Página de bienvenida
 def welcome(request):
     images_auth = ["casa5.png", "casa6.png", "casa1.png", "casa2.png", "casa3.png", "casa4.png"]
     images_guest = ["Altatium.png", "forbes.png"]
@@ -239,8 +234,7 @@ def welcome(request):
     }
     return render(request, "welcome.html", context)
 
-# alcaldias 
-
+# Vistas de alcaldías
 def vista_benito_juarez(request):
     datos = AlcaldiaVistas.objects.filter(alcaldia__iexact='Benito Juárez')
     return render(request, 'alcaldias/benito.html', {'datos': datos})
@@ -255,87 +249,81 @@ def vista_coyoacan(request):
 
 def vista_xochimilco(request):
     datos = AlcaldiaVistas.objects.filter(alcaldia__iexact='Xochimilco')
-    return render(request, 'alcaldias/xochimilco.html', {'datos': datos})  
+    return render(request, 'alcaldias/xochimilco.html', {'datos': datos})
 
 def vista_azcapotzalco(request):
     datos = AlcaldiaVistas.objects.filter(alcaldia__iexact='Azcapotzalco')
-    return render(request, 'alcaldias/azcapotzalco.html', {'datos': datos})  
+    return render(request, 'alcaldias/azcapotzalco.html', {'datos': datos})
 
 def vista_cuajimalpa(request):
     datos = AlcaldiaVistas.objects.filter(alcaldia__iexact='Cuajimalpa de Morelos')
-    return render(request, 'alcaldias/cuajimalpa.html', {'datos': datos}) 
+    return render(request, 'alcaldias/cuajimalpa.html', {'datos': datos})
 
 def vista_cuauhtemoc(request):
     datos = AlcaldiaVistas.objects.filter(alcaldia__iexact='Cuauhtémoc')
-    return render(request, 'alcaldias/cuauhtemoc.html', {'datos': datos}) 
+    return render(request, 'alcaldias/cuauhtemoc.html', {'datos': datos})
 
 def vista_miguel(request):
     datos = AlcaldiaVistas.objects.filter(alcaldia__iexact='Miguel Hidalgo')
-    return render(request, 'alcaldias/miguel.html', {'datos': datos}) 
+    return render(request, 'alcaldias/miguel.html', {'datos': datos})
 
 def vista_gustavo(request):
     datos = AlcaldiaVistas.objects.filter(alcaldia__iexact='Gustavo A. Madero')
-    return render(request, 'alcaldias/gustavo.html', {'datos': datos}) 
+    return render(request, 'alcaldias/gustavo.html', {'datos': datos})
 
 def vista_iztacalco(request):
     datos = AlcaldiaVistas.objects.filter(alcaldia__iexact='Iztacalco')
-    return render(request, 'alcaldias/iztacalco.html', {'datos': datos}) 
+    return render(request, 'alcaldias/iztacalco.html', {'datos': datos})
 
 def vista_iztapalapa(request):
     datos = AlcaldiaVistas.objects.filter(alcaldia__iexact='Iztapalapa')
-    return render(request, 'alcaldias/iztapalapa.html', {'datos': datos}) 
+    return render(request, 'alcaldias/iztapalapa.html', {'datos': datos})
 
 def vista_magda(request):
     datos = AlcaldiaVistas.objects.filter(alcaldia__iexact='La Magdalena Contreras')
-    return render(request, 'alcaldias/magda.html', {'datos': datos}) 
+    return render(request, 'alcaldias/magda.html', {'datos': datos})
 
 def vista_milpa(request):
     datos = AlcaldiaVistas.objects.filter(alcaldia__iexact='Milpa Alta')
-    return render(request, 'alcaldias/milpa.html', {'datos': datos}) 
+    return render(request, 'alcaldias/milpa.html', {'datos': datos})
 
 def vista_tlahuac(request):
     datos = AlcaldiaVistas.objects.filter(alcaldia__iexact='Tláhuac')
-    return render(request, 'alcaldias/tlahuac.html', {'datos': datos}) 
+    return render(request, 'alcaldias/tlahuac.html', {'datos': datos})
 
 def vista_tlalpan(request):
     datos = AlcaldiaVistas.objects.filter(alcaldia__iexact='Tlalpan')
-    return render(request, 'alcaldias/tlalpan.html', {'datos': datos}) 
+    return render(request, 'alcaldias/tlalpan.html', {'datos': datos})
 
 def vista_venustiano(request):
     datos = AlcaldiaVistas.objects.filter(alcaldia__iexact='Venustiano Carranza')
-    return render(request, 'alcaldias/venustiano.html', {'datos': datos}) 
+    return render(request, 'alcaldias/venustiano.html', {'datos': datos})
 
-# fin de alcaldias 
-
-def admin_required(user):
-    return user.is_staff or user.is_superuser
-
-@login_required
-@user_passes_test(admin_required)
-
-
-
-
-# Agregado 31/05/25
-
+# Obtener colonias por municipio (AJAX)
 def obtener_colonias(request):
     municipio_id = request.GET.get('municipio_id')
+    if not municipio_id:
+        return JsonResponse({'error': 'ID de municipio no proporcionado'}, status=400)
     try:
         colonias = Colonias.objects.filter(id_municipio=municipio_id).values('id_colonia', 'nombre')
         return JsonResponse(list(colonias), safe=False)
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=400)
 
+# Obtener códigos postales por colonia (AJAX)
 def obtener_codigos_postales(request):
     colonia_id = request.GET.get('colonia_id')
+    if not colonia_id:
+        return JsonResponse({'error': 'ID de colonia no proporcionado'}, status=400)
     try:
         codigos_postales = CodigosPostales.objects.filter(id_colonia=colonia_id).values('id_codigo_postal', 'codigo')
         return JsonResponse(list(codigos_postales), safe=False)
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=400)
-    
-  
- #crud colonia 
+
+# Vista principal para panel admin
+@login_required
+@user_passes_test(admin_required)
 def gentelella_view(request, page):
     try:
         context = {}
@@ -454,7 +442,6 @@ def gentelella_view(request, page):
             if request.method == 'POST':
                 id_estado = request.POST.get('id_estado')
                 nombre = request.POST.get('nombre')
-
                 try:
                     estado = Estados.objects.get(id_estado=id_estado)
                     if nombre:
@@ -469,8 +456,8 @@ def gentelella_view(request, page):
                 except IntegrityError:
                     messages.error(request, "Ya existe un estado con ese nombre.")
                 return redirect('gentelella_page', page='editar_estado', editar=id_estado)
-            
-# ================= MUNICIPIOS ====================
+
+        # ================= MUNICIPIOS ====================
         elif page == "cal_municipio":
             municipios = Municipios.objects.select_related('id_estado').all()
             estados = Estados.objects.all()
@@ -535,7 +522,7 @@ def gentelella_view(request, page):
                     messages.error(request, "Ya existe un municipio con ese nombre.")
                 return redirect('gentelella_page', page='editar_municipio', editar=id_municipio)
 
-# ================= Codigos Postales ====================
+        # ================= CÓDIGOS POSTALES ====================
         elif page == "cal_cp":
             codigos = CodigosPostales.objects.select_related('id_colonia').all()
             colonias = Colonias.objects.all()
@@ -600,14 +587,9 @@ def gentelella_view(request, page):
                     messages.error(request, "Ya existe un código con ese valor.")
                 return redirect('gentelella_page', page='editar_cp', editar=id_codigo_postal)
 
-
-
         return render(request, f'gentelella/{page}.html', context)
 
     except Exception as e:
         print(f"Error: {str(e)}")
         messages.error(request, f"Error inesperado: {str(e)}")
         return render(request, 'gentelella/page_404.html', status=404)
-
-#crud colonia fin 
-
