@@ -586,6 +586,99 @@ def gentelella_view(request, page):
                 except IntegrityError:
                     messages.error(request, "Ya existe un código con ese valor.")
                 return redirect('gentelella_page', page='editar_cp', editar=id_codigo_postal)
+            
+            # ================ PROPIEDADES ====================
+        elif page == "cal_estimaciones":
+            propiedades = Propiedades.objects.select_related('id_estado', 'id_municipio', 'id_colonia', 'id_codigo_postal').all()
+            context['propiedades'] = propiedades
+            
+
+            # Eliminar propiedad
+            if 'eliminar' in request.GET:
+                try:
+                    propiedad = Propiedades.objects.get(id_propiedad=request.GET['eliminar'])
+                    propiedad.delete()
+                    messages.success(request, "Propiedad eliminada correctamente.")
+                except Propiedades.DoesNotExist:
+                    messages.error(request, f"No se encontró la propiedad con ID {request.GET['eliminar']}.")
+                return redirect('gentelella_page', page='cal_estimaciones')
+
+            # Crear propiedad (simplificado: ajusta según tus campos obligatorios)
+            if request.method == 'POST' and 'editar' not in request.GET:
+                try:
+                    nueva = Propiedades(
+                        tipo_propiedad=request.POST.get('tipo_propiedad'),
+                        calle=request.POST.get('calle'),
+                        id_estado_id=request.POST.get('id_estado'),
+                        id_municipio_id=request.POST.get('id_municipio'),
+                        id_colonia_id=request.POST.get('id_colonia'),
+                        id_codigo_postal_id=request.POST.get('id_codigo_postal'),
+                        recamaras=int(request.POST.get('recamaras', 0)),
+                        sanitarios=float(request.POST.get('sanitarios', 0)),
+                        estacionamiento=int(request.POST.get('estacionamiento', 0)),
+                        terreno=request.POST.get('terreno') or 0,
+                        construccion=request.POST.get('construccion') or 0,
+                        estado_conservacion=request.POST.get('estado_conservacion') or "",
+                        comentarios=request.POST.get('comentarios') or "",
+                        valor_aprox=request.POST.get('valor_aprox') or None,
+                        valor_judicial=request.POST.get('valor_judicial') or None,
+                        valor_comercial=request.POST.get('valor_comercial') or None,
+                        valor_inicial=request.POST.get('valor_inicial') or None,
+                    )
+                    nueva.save()
+                    messages.success(request, "Propiedad creada correctamente.")
+                except Exception as e:
+                    messages.error(request, f"Error al crear la propiedad: {str(e)}")
+
+                return redirect('gentelella_page', page='cal_estimaciones')
+
+        elif page == "editar_estimacion":
+            if 'editar' in request.GET:
+                try:
+                    propiedad_editar = Propiedades.objects.get(id_propiedad=request.GET['editar'])
+                    context['propiedad_editar'] = propiedad_editar
+                    context['estados'] = Estados.objects.all()
+                    context['municipios'] = Municipios.objects.all()
+                    context['colonias'] = Colonias.objects.all()
+                    context['codigos_postales'] = CodigosPostales.objects.all()
+                except Propiedades.DoesNotExist:
+                    messages.error(request, f"No se encontró la propiedad con ID {request.GET['editar']}.")
+                    return redirect('gentelella_page', page='cal_estimaciones')
+
+            if request.method == 'POST':
+                try:
+                    id_propiedad = request.POST.get('id_propiedad')
+                    propiedad = Propiedades.objects.get(id_propiedad=id_propiedad)
+
+                    # Actualizar campos
+                    propiedad.tipo_propiedad = request.POST.get('tipo_propiedad')
+                    propiedad.calle = request.POST.get('calle')
+                    propiedad.id_estado = request.POST.get('id_estado')
+                    propiedad.id_municipio = request.POST.get('id_municipio')
+                    propiedad.id_colonia = request.POST.get('id_colonia')
+                    propiedad.id_codigo_postal = request.POST.get('id_codigo_postal')
+                    propiedad.recamaras = int(request.POST.get('recamaras', 0))
+                    propiedad.sanitarios = float(request.POST.get('sanitarios', 0))
+                    propiedad.estacionamiento = int(request.POST.get('estacionamiento', 0))
+                    propiedad.terreno = request.POST.get('terreno') or 0
+                    propiedad.construccion = request.POST.get('construccion') or 0
+                    propiedad.estado_conservacion = request.POST.get('estado_conservacion') or ""
+                    propiedad.comentarios = request.POST.get('comentarios') or ""
+                    propiedad.valor_aprox = request.POST.get('valor_aprox') or None
+                    propiedad.valor_judicial = request.POST.get('valor_judicial') or None
+                    propiedad.valor_comercial = request.POST.get('valor_comercial') or None
+                    propiedad.valor_inicial = request.POST.get('valor_inicial') or None
+
+                    propiedad.save()
+                    messages.success(request, "Propiedad actualizada correctamente.")
+                    return redirect('gentelella_page', page='cal_estimaciones')
+
+                except Propiedades.DoesNotExist:
+                    messages.error(request, f"No se encontró la propiedad con ID {id_propiedad}.")
+                except Exception as e:
+                    messages.error(request, f"Error al actualizar la propiedad: {str(e)}")
+                return redirect('gentelella_page', page='editar_estimacion', editar=id_propiedad)
+
 
         return render(request, f'gentelella/{page}.html', context)
 

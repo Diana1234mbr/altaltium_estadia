@@ -67,7 +67,7 @@
                       <li><a href="{% url 'gentelella_page' page='form_advanced' %}">Advanced Components</a></li>
                       <li><a href="{% url 'gentelella_page' page='form_validation' %}">Form Validation</a></li>
                       <li><a href="{% url 'gentelella_page' page='form_wizards' %}">Form Wizard</a></li>
-                      <li><a href="{% url 'gentelella_page' page='form_upload' %}">Form Upload</a></li>
+                      <li><a href="{% url 'gentelella_page' page='cal_estimaciones' %}">Estimaciones</a>
                       <li><a href="{% url 'gentelella_page' page='form_buttons' %}">Form Buttons</a></li>
                     </ul>
                   </li>
@@ -125,7 +125,7 @@
                       <li><a href="page_404.html">404 Error</a></li>
                       <li><a href="page_500.html">500 Error</a></li>
                       <li><a href="plain_page.html">Plain Page</a></li>
-                      <li><a href="login.html">Login Page</a></li>
+                      <li><a href="{% url 'signin' %}">Login Page</a></li>
                       <li><a href="pricing_tables.html">Pricing Tables</a></li>
                     </ul>
                   </li>
@@ -164,7 +164,7 @@
               <a data-toggle="tooltip" data-placement="top" title="Lock">
                 <span class="glyphicon glyphicon-eye-close" aria-hidden="true"></span>
               </a>
-              <a data-toggle="tooltip" data-placement="top" title="Logout" href="login.html">
+              <a data-toggle="tooltip" data-placement="top" title="Logout" href="{% url 'signin' %}">
                 <span class="glyphicon glyphicon-off" aria-hidden="true"></span>
               </a>
             </div>
@@ -191,7 +191,7 @@
                           <span>Settings</span>
                         </a>
                     <a class="dropdown-item"  href="javascript:;">Help</a>
-                      <a class="dropdown-item"  href="login.html"><i class="fa fa-sign-out pull-right"></i> Log Out</a>
+                      <a class="dropdown-item"  href="{% url 'signin' %}"><i class="fa fa-sign-out pull-right"></i> Log Out</a>
                     </div>
                   </li>
   
