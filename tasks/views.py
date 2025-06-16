@@ -332,6 +332,7 @@ def gentelella_view(request, page):
         if page == "cal_colonia":
             colonias = Colonias.objects.all()
             municipios = Municipios.objects.all()
+            estados = Estados.objects.all()
 
             if 'eliminar' in request.GET:
                 try:
@@ -343,32 +344,42 @@ def gentelella_view(request, page):
 
             if request.method == 'POST' and 'editar' not in request.GET:
                 nombre = request.POST.get('nombre')
-                promedio_precio = request.POST.get('promedio_precio', None)
                 id_municipio = request.POST.get('id_municipio')
-                if nombre and id_municipio:
+                id_estado = request.POST.get('id_estado')
+                promedio_precio = request.POST.get('promedio_precio', None)
+
+                if nombre and id_municipio and id_estado:
                     try:
                         municipio = Municipios.objects.get(id_municipio=id_municipio)
+                        estado = Estados.objects.get(id_estado=id_estado)
                         Colonias.objects.create(
                             nombre=nombre,
                             id_municipio=municipio,
+                            id_estado=estado,
                             promedio_precio=promedio_precio
                         )
                         messages.success(request, "Colonia creada correctamente.")
                     except Municipios.DoesNotExist:
                         messages.error(request, "Municipio no encontrado.")
+                    except Estados.DoesNotExist:
+                        messages.error(request, "Estado no encontrado.")
                     except IntegrityError:
                         messages.error(request, "Ya existe una colonia con ese nombre en el municipio seleccionado.")
                 else:
                     messages.error(request, "Faltan datos para crear la colonia.")
+
                 return redirect('gentelella_page', page='cal_colonia')
 
             context = {
                 'colonias': colonias,
                 'municipios': municipios,
+                'estados': estados,
             }
 
         elif page == "editar_colonia":
             context['municipios'] = Municipios.objects.all()
+            context['estados'] = Estados.objects.all()
+
             if 'editar' in request.GET:
                 try:
                     colonia_editar = Colonias.objects.get(id_colonia=request.GET['editar'])
@@ -383,11 +394,14 @@ def gentelella_view(request, page):
                     colonia = Colonias.objects.get(id_colonia=id_colonia)
                     nombre = request.POST.get('nombre')
                     id_municipio = request.POST.get('id_municipio')
+                    id_estado = request.POST.get('id_estado')
                     promedio_precio = request.POST.get('promedio_precio', None)
-                    if nombre and id_municipio:
+                    if nombre and id_municipio and id_estado:
                         municipio = Municipios.objects.get(id_municipio=id_municipio)
+                        estado = Estados.objects.get(id_estado=id_estado)
                         colonia.nombre = nombre
                         colonia.id_municipio = municipio
+                        colonia.id_estado = estado
                         colonia.promedio_precio = promedio_precio if promedio_precio else None
                         colonia.save()
                         messages.success(request, "Colonia actualizada correctamente.")
@@ -526,8 +540,13 @@ def gentelella_view(request, page):
         elif page == "cal_cp":
             codigos = CodigosPostales.objects.select_related('id_colonia').all()
             colonias = Colonias.objects.all()
+            municipios = Municipios.objects.all()
+            estados = Estados.objects.all()
+
             context['codigos'] = codigos
             context['colonias'] = colonias
+            context['municipios'] = municipios
+            context['estados'] = estados
 
             if 'eliminar' in request.GET:
                 try:
@@ -539,23 +558,37 @@ def gentelella_view(request, page):
                 return redirect('gentelella_page', page='cal_cp')
 
             if request.method == 'POST' and 'editar' not in request.GET:
-                codigo_valor = request.POST.get('nombre')
+                codigo_valor = request.POST.get('nombre')  # Nombre del input para el código
                 id_colonia = request.POST.get('id_colonia')
-                if codigo_valor and id_colonia:
+                id_municipio = request.POST.get('id_municipio')
+                id_estado = request.POST.get('id_estado')
+
+                if codigo_valor and id_colonia and id_municipio and id_estado:
                     try:
                         colonia = Colonias.objects.get(id_colonia=id_colonia)
-                        CodigosPostales.objects.create(codigo=codigo_valor, id_colonia=colonia)
+                        municipio = Municipios.objects.get(id_municipio=id_municipio)
+                        estado = Estados.objects.get(id_estado=id_estado)
+                        CodigosPostales.objects.create(
+                            codigo=codigo_valor,
+                            id_colonia=colonia,
+                            id_municipio=municipio,
+                            id_estado=estado
+                        )
                         messages.success(request, "Código postal creado correctamente.")
-                    except Colonias.DoesNotExist:
-                        messages.error(request, "Colonia no encontrada.")
+                    except (Colonias.DoesNotExist, Municipios.DoesNotExist, Estados.DoesNotExist):
+                        messages.error(request, "Datos inválidos. Verifica colonia, municipio o estado.")
                     except IntegrityError:
                         messages.error(request, "Ya existe un código con ese valor en la colonia seleccionada.")
                 else:
                     messages.error(request, "Faltan datos para crear el código.")
                 return redirect('gentelella_page', page='cal_cp')
 
+
         elif page == "editar_cp":
             context['colonias'] = Colonias.objects.all()
+            context['municipios'] = Municipios.objects.all()
+            context['estados'] = Estados.objects.all()
+
             if 'editar' in request.GET:
                 try:
                     codigo_editar = CodigosPostales.objects.get(id_codigo_postal=request.GET['editar'])
@@ -568,24 +601,31 @@ def gentelella_view(request, page):
                 id_codigo_postal = request.POST.get('id_codigo_postal')
                 codigo_valor = request.POST.get('codigo')
                 id_colonia = request.POST.get('id_colonia')
+                id_municipio = request.POST.get('id_municipio')
+                id_estado = request.POST.get('id_estado')
+
                 try:
                     codigo_postal = CodigosPostales.objects.get(id_codigo_postal=id_codigo_postal)
-                    if codigo_valor and id_colonia:
+                    if codigo_valor and id_colonia and id_municipio and id_estado:
                         colonia = Colonias.objects.get(id_colonia=id_colonia)
+                        municipio = Municipios.objects.get(id_municipio=id_municipio)
+                        estado = Estados.objects.get(id_estado=id_estado)
+
                         codigo_postal.codigo = codigo_valor
                         codigo_postal.id_colonia = colonia
+                        codigo_postal.id_municipio = municipio
+                        codigo_postal.id_estado = estado
                         codigo_postal.save()
                         messages.success(request, "Código postal actualizado correctamente.")
                         return redirect('gentelella_page', page='cal_cp')
                     else:
                         messages.error(request, "Faltan datos para actualizar el código.")
-                except CodigosPostales.DoesNotExist:
-                    messages.error(request, f"No se encontró el código con ID {id_codigo_postal}.")
-                except Colonias.DoesNotExist:
-                    messages.error(request, "Colonia no encontrada.")
+                except (CodigosPostales.DoesNotExist, Colonias.DoesNotExist, Municipios.DoesNotExist, Estados.DoesNotExist):
+                    messages.error(request, "Datos inválidos.")
                 except IntegrityError:
                     messages.error(request, "Ya existe un código con ese valor.")
                 return redirect('gentelella_page', page='editar_cp', editar=id_codigo_postal)
+
             
             # ================ PROPIEDADES ====================
         elif page == "cal_estimaciones":

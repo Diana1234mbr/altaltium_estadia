@@ -31,13 +31,18 @@
             </div>
             <form method="POST" id="editForm" class="form-horizontal" style="margin-top: 20px;">
                 {% csrf_token %}
-                <input type="hidden" name="id_colonia" value="{{ colonia_editar.id_colonia }}">
+                
+                <input type="hidden" name="id_colonia" value="{{ colonia_editar.id_colonia }}">                
                 <div class="form-row" style="display: flex; flex-wrap: wrap; gap: 20px;">
                     <div class="form-group" style="flex: 1; min-width: 300px;">
-                        <label style="color: #003035; font-weight: 600; margin-bottom: 8px;">Nombre</label>
-                        <input type="text" name="nombre" class="form-control" required value="{{ colonia_editar.nombre }}" style="border: 1px solid #bfc6c7; border-radius: 4px; padding: 10px; color: #0d1d1f; background-color: #fefcef; transition: border-color 0.3s;">
+                        <label style="color: #003035; font-weight: 600; margin-bottom: 8px;">Estado</label>
+                        <select name="id_estado" class="form-control" required style="border: 1px solid #bfc6c7; border-radius: 4px; padding: 10px; color: #0d1d1f; background-color: #fefcef; transition: border-color 0.3s;">
+                            {% for estado in estados %}
+                            <option value="{{ estado.id_estado }}" {% if estado.id_estado == colonia_editar.id_estado.id_estado %}selected{% endif %}>{{ estado.nombre }}</option>
+                            {% endfor %}
+                        </select>
                     </div>
-                    <div class="form-group" style="flex: 1; min-width: 300px;">
+                <div class="form-group" style="flex: 1; min-width: 300px;">
                         <label style="color: #003035; font-weight: 600; margin-bottom: 8px;">Municipio</label>
                         <select name="id_municipio" class="form-control" required style="border: 1px solid #bfc6c7; border-radius: 4px; padding: 10px; color: #0d1d1f; background-color: #fefcef; transition: border-color 0.3s;">
                             {% for municipio in municipios %}
@@ -45,6 +50,10 @@
                             {% endfor %}
                         </select>
                     </div>
+                    <div class="form-group" style="flex: 1; min-width: 300px;">
+                        <label style="color: #003035; font-weight: 600; margin-bottom: 8px;">Nombre</label>
+                        <input type="text" name="nombre" class="form-control" required value="{{ colonia_editar.nombre }}" style="border: 1px solid #bfc6c7; border-radius: 4px; padding: 10px; color: #0d1d1f; background-color: #fefcef; transition: border-color 0.3s;">
+                    </div>                                        
                     <div class="form-group" style="flex: 1; min-width: 300px;">
                         <label style="color: #003035; font-weight: 600; margin-bottom: 8px;">Promedio Precio (m²)</label>
                         <input type="number" name="promedio_precio" class="form-control" value="{{ colonia_editar.promedio_precio|default_if_none:'' }}" step="0.01" style="border: 1px solid #bfc6c7; border-radius: 4px; padding: 10px; color: #0d1d1f; background-color: #fefcef; transition: border-color 0.3s;">

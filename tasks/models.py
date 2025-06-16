@@ -53,6 +53,7 @@ class Colonias(models.Model):
     id_colonia = models.AutoField(primary_key=True)
     nombre = models.CharField(max_length=100)
     id_municipio = models.ForeignKey(Municipios, models.DO_NOTHING, db_column='id_municipio')
+    id_estado = models.ForeignKey(Estados, models.DO_NOTHING, db_column='id_estado', null=True, blank=True)
     promedio_precio = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
 
     class Meta:
@@ -68,14 +69,17 @@ class CodigosPostales(models.Model):
     id_codigo_postal = models.AutoField(primary_key=True)
     codigo = models.CharField(max_length=5)
     id_colonia = models.ForeignKey(Colonias, models.DO_NOTHING, db_column='id_colonia')
+    id_municipio = models.ForeignKey(Municipios, models.DO_NOTHING, db_column='id_municipio', null=True, blank=True)
+    id_estado = models.ForeignKey(Estados, models.DO_NOTHING, db_column='id_estado', null=True, blank=True)
 
     class Meta:
         db_table = 'codigos_postales'
         unique_together = (('codigo', 'id_colonia'),)
-        managed = False
+        managed = True  # ponlo en True si deseas que Django lo administre
 
     def __str__(self):
         return self.codigo
+
 
 
 class Propiedades(models.Model):
