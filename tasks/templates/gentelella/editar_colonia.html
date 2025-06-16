@@ -36,7 +36,7 @@
                 <div class="form-row" style="display: flex; flex-wrap: wrap; gap: 20px;">
                     <div class="form-group" style="flex: 1; min-width: 300px;">
                         <label style="color: #003035; font-weight: 600; margin-bottom: 8px;">Estado</label>
-                        <select name="id_estado" class="form-control" required style="border: 1px solid #bfc6c7; border-radius: 4px; padding: 10px; color: #0d1d1f; background-color: #fefcef; transition: border-color 0.3s;">
+                        <select id="estado" name="id_estado" class="form-control" required style="border: 1px solid #bfc6c7; border-radius: 4px; padding: 10px; color: #0d1d1f; background-color: #fefcef; transition: border-color 0.3s;">
                             {% for estado in estados %}
                             <option value="{{ estado.id_estado }}" {% if estado.id_estado == colonia_editar.id_estado.id_estado %}selected{% endif %}>{{ estado.nombre }}</option>
                             {% endfor %}
@@ -44,7 +44,7 @@
                     </div>
                 <div class="form-group" style="flex: 1; min-width: 300px;">
                         <label style="color: #003035; font-weight: 600; margin-bottom: 8px;">Municipio</label>
-                        <select name="id_municipio" class="form-control" required style="border: 1px solid #bfc6c7; border-radius: 4px; padding: 10px; color: #0d1d1f; background-color: #fefcef; transition: border-color 0.3s;">
+                        <select id="municipio" name="id_municipio" class="form-control" required style="border: 1px solid #bfc6c7; border-radius: 4px; padding: 10px; color: #0d1d1f; background-color: #fefcef; transition: border-color 0.3s;">
                             {% for municipio in municipios %}
                             <option value="{{ municipio.id_municipio }}" {% if municipio.id_municipio == colonia_editar.id_municipio.id_municipio %}selected{% endif %}>{{ municipio.nombre }}</option>
                             {% endfor %}
@@ -87,4 +87,22 @@ function toggleForm(formId) {
         icon.classList.add('fa-chevron-down');
     }
 }
+</script>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).ready(function () {
+        $('#estado').change(function () {
+            const estadoId = $(this).val();
+            $('#municipio').html('<option value="">Selecciona un municipio</option>');
+
+            if (estadoId) {
+                $.get('{% url "obtener_municipios" %}', { estado_id: estadoId }, function (data) {
+                    $.each(data, function (i, municipio) {
+                        $('#municipio').append(`<option value="${municipio.id_municipio}">${municipio.nombre}</option>`);
+                    });
+                });
+            }
+        });
+    });
 </script>

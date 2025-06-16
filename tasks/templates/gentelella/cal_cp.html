@@ -525,21 +525,21 @@
                 <div class="form-row">
                     <div class="form-group" style="flex: 1; min-width: 300px;">
                         <label style="color: #003035; font-weight: 600;">Estado</label>
-                        <select name="id_estado" class="form-control" required style="border: 1px solid #bfc6c7; border-radius: 4px; padding: 10px; color: #0d1d1f; background-color: #fefcef; transition: border-color 0.3s;">
+                        <select id="estado" name="id_estado" class="form-control" required style="border: 1px solid #bfc6c7; border-radius: 4px; padding: 10px; color: #0d1d1f; background-color: #fefcef; transition: border-color 0.3s;">
                             {% for estado in estados %}
                             <option value="{{ estado.id_estado }}">{{ estado.nombre }}</option>
                             {% endfor %}
                         </select>
                     </div><div class="form-group" style="flex: 1; min-width: 300px;">
                         <label style="color: #003035; font-weight: 600;">Municipio</label>
-                        <select name="id_colonia" class="form-control" required style="border: 1px solid #bfc6c7; border-radius: 4px; padding: 10px; color: #0d1d1f; background-color: #fefcef; transition: border-color 0.3s;">
+                        <select id="municipio" name="id_colonia" class="form-control" required style="border: 1px solid #bfc6c7; border-radius: 4px; padding: 10px; color: #0d1d1f; background-color: #fefcef; transition: border-color 0.3s;">
                             {% for municipio in municipios %}
                             <option value="{{ municipio.id_municipio }}">{{ municipio.nombre }}</option>
                             {% endfor %}
                         </select>
                     </div><div class="form-group" style="flex: 1; min-width: 300px;">
                         <label style="color: #003035; font-weight: 600;">Colonia</label>
-                        <select name="id_colonia" class="form-control" required style="border: 1px solid #bfc6c7; border-radius: 4px; padding: 10px; color: #0d1d1f; background-color: #fefcef; transition: border-color 0.3s;">
+                        <select id="colonia" name="id_colonia" class="form-control" required style="border: 1px solid #bfc6c7; border-radius: 4px; padding: 10px; color: #0d1d1f; background-color: #fefcef; transition: border-color 0.3s;">
                             {% for colonia in colonias %}
                             <option value="{{ colonia.id_colonia }}">{{ colonia.nombre }}</option>
                             {% endfor %}
@@ -696,6 +696,46 @@ document.getElementById('searchInput').addEventListener('input', function() {
             <script src="{% static 'vendors/starrr/dist/starrr.js' %}"></script>
             <!-- Custom Theme Scripts -->
             <script src="{% static 'js/custom.min.js' %}"></script>
+
+            <script>
+                $(document).ready(function () {
+                    $('#estado').change(function () {
+                        const estadoId = $(this).val();
+                        $('#municipio').html('<option>Selecciona un municipio</option>');
+                        $('#colonia').html('<option>Selecciona una colonia</option>');
+                        $('#codigo').val('');
+
+                        $.get('{% url "obtener_municipios" %}', { estado_id: estadoId }, function (data) {
+                            $.each(data, function (i, municipio) {
+                                $('#municipio').append(`<option value="${municipio.id_municipio}">${municipio.nombre}</option>`);
+                            });
+                        });
+                    });
+
+                    $('#municipio').change(function () {
+                        const municipioId = $(this).val();
+                        $('#colonia').html('<option>Selecciona una colonia</option>');
+                        $('#codigo').val('');
+
+                        $.get('{% url "obtener_colonias" %}', { municipio_id: municipioId }, function (data) {
+                            $.each(data, function (i, colonia) {
+                                $('#colonia').append(`<option value="${colonia.id_colonia}">${colonia.nombre}</option>`);
+                            });
+                        });
+                    });
+
+                    $('#colonia').change(function () {
+                        const coloniaId = $(this).val();
+                        $('#codigo').val('');
+
+                        $.get('{% url "obtener_codigos_postales" %}', { colonia_id: coloniaId }, function (data) {
+                            if (data.length > 0) {
+                                $('#codigo').val(data[0].codigo); // toma el primer código asociado
+                            }
+                        });
+                    });
+                });
+            </script>
         </div>
     </div>
 </body>

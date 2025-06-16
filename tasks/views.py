@@ -310,7 +310,20 @@ def obtener_colonias(request):
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=400)
 
-# Obtener códigos postales por colonia (AJAX)
+# Obtener códigos postales por municipio (AJAX)
+
+def obtener_municipios(request):
+    estado_id = request.GET.get('estado_id')
+    if not estado_id:
+        return JsonResponse({'error': 'ID de estado no proporcionado'}, status=400)
+    try:
+        municipios = Municipios.objects.filter(id_estado=estado_id).values('id_municipio', 'nombre')
+        return JsonResponse(list(municipios), safe=False)
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=400)
+
+
+
 def obtener_codigos_postales(request):
     colonia_id = request.GET.get('colonia_id')
     if not colonia_id:

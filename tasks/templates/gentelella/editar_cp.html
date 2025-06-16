@@ -35,7 +35,7 @@
                 <div class="form-row" style="display: flex; flex-wrap: wrap; gap: 20px;">
                     <div class="form-group" style="flex: 1; min-width: 300px;">
                         <label style="color: #003035; font-weight: 600; margin-bottom: 8px;">Estado</label>
-                        <select name="id_estado" class="form-control" required style="border: 1px solid #bfc6c7; border-radius: 4px; padding: 10px; color: #0d1d1f; background-color: #fefcef; transition: border-color 0.3s;">
+                        <select id="estado" name="id_estado" class="form-control" required style="border: 1px solid #bfc6c7; border-radius: 4px; padding: 10px; color: #0d1d1f; background-color: #fefcef; transition: border-color 0.3s;">
                             {% for estado in estados %}
                             <option value="{{ estado.id_estado }}" {% if estado.id_estado == codigo_editar.id_estado.id_estado %}selected{% endif %}>{{ estado.nombre }}</option>
                             {% endfor %}
@@ -44,7 +44,7 @@
 
                     <div class="form-group" style="flex: 1; min-width: 300px;">
                         <label style="color: #003035; font-weight: 300; margin-bottom: 8px;">Municipio</label>
-                        <select name="id_municipio" class="form-control" required style="border: 1px solid #bfc6c7; border-radius: 4px; padding: 10px; color: #0d1d1f; background-color: #fefcef; transition: border-color 0.3s;">
+                        <select id="municipio" name="id_municipio" class="form-control" required style="border: 1px solid #bfc6c7; border-radius: 4px; padding: 10px; color: #0d1d1f; background-color: #fefcef; transition: border-color 0.3s;">
                             {% for municipio in municipios %}
                             <option value="{{ municipio.id_municipio }}" {% if municipio.id_municipio == codigo_editar.id_municipio.id_municipio %}selected{% endif %}>{{ municipio.nombre }}</option>
                             {% endfor %}
@@ -53,7 +53,7 @@
 
                     <div class="form-group" style="flex: 1; min-width: 300px;">
                         <label style="color: #003035; font-weight: 600; margin-bottom: 8px;">Colonia</label>
-                        <select name="id_colonia" class="form-control" required style="border: 1px solid #bfc6c7; border-radius: 4px; padding: 10px; color: #0d1d1f; background-color: #fefcef; transition: border-color 0.3s;">                            
+                        <select id="colonia" name="id_colonia" class="form-control" required style="border: 1px solid #bfc6c7; border-radius: 4px; padding: 10px; color: #0d1d1f; background-color: #fefcef; transition: border-color 0.3s;">                            
                             {% for colonia in colonias %}
                             <option value="{{ colonia.id_colonia }}" {% if colonia.id_colonia == codigo_editar.id_colonia.id_colonia %}selected{% endif %}>{{ colonia.nombre }}</option>
                             {% endfor %}
@@ -62,7 +62,7 @@
 
                     <div class="form-group" style="flex: 1; min-width: 300px;">
                         <label style="color: #003035; font-weight: 600; margin-bottom: 8px;">Codigo</label>                    
-                        <input type="text" name="codigo" class="form-control" required value="{{ codigo_editar.codigo }}" style="border: 1px solid #bfc6c7; border-radius: 4px; padding: 10px; color: #0d1d1f; background-color: #fefcef; transition: border-color 0.3s;">
+                        <input type="text" id="codigo" name="codigo" class="form-control" required value="{{ codigo_editar.codigo }}" style="border: 1px solid #bfc6c7; border-radius: 4px; padding: 10px; color: #0d1d1f; background-color: #fefcef; transition: border-color 0.3s;">
                     </div>
 
                     <div class="form-group" style="flex: 1; min-width: 300px; display: flex; gap: 10px;">
@@ -95,3 +95,46 @@ function toggleForm(formId) {
     }
 }
 </script>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).ready(function () {
+        $('#estado').change(function () {
+            const estadoId = $(this).val();
+            $('#municipio').html('<option>Selecciona un municipio</option>');
+            $('#colonia').html('<option>Selecciona una colonia</option>');
+            $('#codigo').val('');
+
+            $.get('{% url "obtener_municipios" %}', { estado_id: estadoId }, function (data) {
+                $.each(data, function (i, municipio) {
+                    $('#municipio').append(`<option value="${municipio.id_municipio}">${municipio.nombre}</option>`);
+                });
+            });
+        });
+
+        $('#municipio').change(function () {
+            const municipioId = $(this).val();
+            $('#colonia').html('<option>Selecciona una colonia</option>');
+            $('#codigo').val('');
+
+            $.get('{% url "obtener_colonias" %}', { municipio_id: municipioId }, function (data) {
+                $.each(data, function (i, colonia) {
+                    $('#colonia').append(`<option value="${colonia.id_colonia}">${colonia.nombre}</option>`);
+                });
+            });
+        });
+
+        $('#colonia').change(function () {
+            const coloniaId = $(this).val();
+            $('#codigo').val('');
+
+            $.get('{% url "obtener_codigos_postales" %}', { colonia_id: coloniaId }, function (data) {
+                if (data.length > 0) {
+                    $('#codigo').val(data[0].codigo); // toma el primer código asociado
+                }
+            });
+        });
+    });
+</script>
+

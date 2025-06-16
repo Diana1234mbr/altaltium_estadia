@@ -515,116 +515,20 @@
         {% endif %}
 
         <!-- Formulario para agregar nueva propiedad -->
-        <div class="card">
-            <div class="collapsible-header" onclick="toggleForm('addForm')">
-                <h3 style="color: #008a8a; font-size: 18px; font-weight: 600; margin: 0;">Agregar Nueva Propiedad</h3>
-                <i id="addFormIcon" class="fa fa-chevron-down"></i>
-            </div>
-            <form method="post" id="addForm" style="display: none; margin-top: 15px;" class="form-horizontal">
-                {% csrf_token %}
-                <div class="form-row">
-                    <div class="form-group col-md-4">
-                        <label>Tipo de Propiedad</label>
-                        <input type="text" name="tipo_propiedad" class="form-control" required placeholder="Ej: Casa, Departamento">
-                    </div>
-                    <div class="form-group col-md-4">
-                        <label>Calle</label>
-                        <input type="text" name="calle" class="form-control" required placeholder="Ej: Av. Reforma #123">
-                    </div>
-                    <div class="form-group col-md-4">
-                        <label>Estado</label>
-                        <select name="id_estado" class="form-control" required>
-                            {% for estado in estados %}
-                            <option value="{{ estado.id_estado }}">{{ estado.nombre }}</option>
-                            {% endfor %}
-                        </select>
-                    </div>
-                    <div class="form-group col-md-4">
-                        <label>Municipio</label>
-                        <select name="id_municipio" class="form-control" required>
-                            {% for municipio in municipios %}
-                            <option value="{{ municipio.id_municipio }}">{{ municipio.nombre }}</option>
-                            {% endfor %}
-                        </select>
-                    </div>
-                    <div class="form-group col-md-4">
-                        <label>Colonia</label>
-                        <select name="id_colonia" class="form-control">
-                            {% for colonia in colonias %}
-                            <option value="{{ colonia.id_colonia }}">{{ colonia.nombre }}</option>
-                            {% endfor %}
-                        </select>
-                    </div>
-                    <div class="form-group col-md-4">
-                        <label>Código Postal</label>
-                        <select name="id_codigo_postal" class="form-control">
-                            {% for cp in codigos_postales %}
-                            <option value="{{ cp.id_codigo_postal }}">{{ cp.codigo }}</option>
-                            {% endfor %}
-                        </select>
-                    </div>
-                    <div class="form-group col-md-2">
-                        <label>Recámaras</label>
-                        <input type="number" name="recamaras" class="form-control" min="0">
-                    </div>
-                    <div class="form-group col-md-2">
-                        <label>Sanitarios</label>
-                        <input type="number" step="0.5" name="sanitarios" class="form-control" min="0">
-                    </div>
-                    <div class="form-group col-md-2">
-                        <label>Estacionamientos</label>
-                        <input type="number" name="estacionamiento" class="form-control" min="0">
-                    </div>
-                    <div class="form-group col-md-3">
-                        <label>Terreno (m²)</label>
-                        <input type="number" step="0.01" name="terreno" class="form-control">
-                    </div>
-                    <div class="form-group col-md-3">
-                        <label>Construcción (m²)</label>
-                        <input type="number" step="0.01" name="construccion" class="form-control">
-                    </div>
-                    <div class="form-group col-md-6">
-                        <label>Estado de Conservación</label>
-                        <input type="text" name="estado_conservacion" class="form-control" placeholder="Ej: Bueno, Regular, Malo">
-                    </div>
-                    <div class="form-group col-md-12">
-                        <label>Comentarios</label>
-                        <textarea name="comentarios" class="form-control" rows="3"></textarea>
-                    </div>
-                    <div class="form-group col-md-3">
-                        <label>Valor Aproximado</label>
-                        <input type="number" step="0.01" name="valor_aprox" class="form-control">
-                    </div>
-                    <div class="form-group col-md-3">
-                        <label>Valor Judicial</label>
-                        <input type="number" step="0.01" name="valor_judicial" class="form-control">
-                    </div>
-                    <div class="form-group col-md-3">
-                        <label>Valor Comercial</label>
-                        <input type="number" step="0.01" name="valor_comercial" class="form-control">
-                    </div>
-                    <div class="form-group col-md-3">
-                        <label>Valor Inicial</label>
-                        <input type="number" step="0.01" name="valor_inicial" class="form-control">
-                    </div>
-                    <div class="form-group col-md-12 text-right">
-                        <button type="submit" class="btn btn-add">Agregar</button>
-                        <button type="reset" class="btn btn-cancel">Limpiar</button>
-                    </div>
-                </div>
-            </form>
-        </div>
-
+        
         <!-- Tabla de propiedades -->
         <div class="card table-container">
             <table class="table" id="propiedadesTable">
                 <thead>
                     <tr>
                         <th>ID</th>
-                        <th>Tipo</th>
-                        <th>Calle</th>
-                        <th>Municipio</th>
+                        <th>Tipo</th>                        
                         <th>Estado</th>
+                        <th>Municipio</th>
+                        <th>Colonia</th>
+                        <th>Calle</th>                    
+                        <th>Valor comercial</th>
+                        <th>Valor Aproximado</th>
                         <th>Acciones</th>
                     </tr>
                 </thead>
@@ -632,13 +536,16 @@
                     {% for propiedad in propiedades %}
                     <tr>
                         <td>{{ propiedad.id_propiedad }}</td>
-                        <td>{{ propiedad.tipo_propiedad }}</td>
-                        <td>{{ propiedad.calle }}</td>
-                        <td>{{ propiedad.id_municipio.nombre }}</td>
+                        <td>{{ propiedad.tipo_propiedad }}</td>                        
                         <td>{{ propiedad.id_estado.nombre }}</td>
+                        <td>{{ propiedad.id_municipio.nombre }}</td>
+                        <td>{{ propiedad.id_colonia.nombre }}</td>
+                        <td>{{ propiedad.calle }}</td>
+                        <td>{{ propiedad.valor_comercial }}</td>
+                        <td>{{ propiedad.valor_aprox }}</td>
                         <td>
                             <a href="{% url 'gentelella_page' page='editar_estimacion' %}?editar={{ propiedad.id_propiedad }}" class="btn btn-edit btn-sm">Editar</a>
-                            <a href="{% url 'gentelella_page' page='cal_propiedades' %}?eliminar={{ propiedad.id_propiedad }}" class="btn btn-delete btn-sm" onclick="return confirm('¿Deseas eliminar esta propiedad?');">Eliminar</a>
+                            <a href="{% url 'gentelella_page' page='cal_estimaciones' %}?eliminar={{ propiedad.id_propiedad }}" class="btn btn-delete btn-sm" onclick="return confirm('¿Deseas eliminar esta propiedad?');">Eliminar</a>
                         </td>
                     </tr>
                     {% empty %}

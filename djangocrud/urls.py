@@ -17,6 +17,7 @@ urlpatterns = [
 
     # Ajax para colonias y CP
     path('obtener_colonias/', views.obtener_colonias, name='obtener_colonias'),
+    path('obtener_municipios/', views.obtener_municipios, name='obtener_municipios'),
     path('obtener_codigos_postales/', views.obtener_codigos_postales, name='obtener_codigos_postales'),
 
     # Alcaldías

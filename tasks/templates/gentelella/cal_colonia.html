@@ -338,7 +338,7 @@
                                         <li><a href="{% url 'gentelella_page' page='page_404' %}">404 Error</a></li>
                                         <li><a href="{% url 'gentelella_page' page='page_500' %}">500 Error</a></li>
                                         <li><a href="{% url 'gentelella_page' page='plain_page' %}">Plain Page</a></li>
-                                        <li><a href="{% url 'signin' %}">Login Page</a></li>
+                                        <li><a href="{% url 'signout' %}">Login Page</a></li>
                                         <li><a href="{% url 'gentelella_page' page='pricing_tables' %}">Pricing
                                                 Tables</a></li>
                                     </ul>
@@ -377,7 +377,7 @@
                             <span class="glyphicon glyphicon-eye-close" aria-hidden="true"></span>
                         </a>
                         <a data-toggle="tooltip" data-placement="top" title="Logout"
-                            href="{% url 'signin' %}">
+                            href="{% url 'signout' %}">
                             <span class="glyphicon glyphicon-off" aria-hidden="true"></span>
                         </a>
                     </div>
@@ -405,7 +405,7 @@
                                         <span>Settings</span>
                                     </a>
                                     <a class="dropdown-item" href="javascript:;">Help</a>
-                                    <a class="dropdown-item" href="{% url 'signin' %}"><i
+                                    <a class="dropdown-item" href="{% url 'signout' %}"><i
                                             class="fa fa-sign-out pull-right"></i> Log Out</a>
                                 </div>
                             </li>
@@ -532,7 +532,7 @@
                             <div class="form-row">
                                 <div class="form-group" style="flex: 1; min-width: 300px;">
                                     <label style="color: #003035; font-weight: 600;">Estado</label>
-                                    <select name="id_estado" class="form-control" required
+                                    <select id="estado" name="id_estado" class="form-control" required
                                         style="border: 1px solid #bfc6c7; border-radius: 4px; padding: 10px; color: #0d1d1f; background-color: #fefcef; transition: border-color 0.3s;">
                                         {% for estado in estados %}
                                         <option value="{{ estado.id_estado }}">{{ estado.nombre }}</option>
@@ -541,7 +541,7 @@
                                 </div>
                                 <div class="form-group" style="flex: 1; min-width: 300px;">
                                     <label style="color: #003035; font-weight: 600;">Municipio</label>
-                                    <select name="id_municipio" class="form-control" required
+                                    <select id="municipio" name="id_municipio" class="form-control" required
                                         style="border: 1px solid #bfc6c7; border-radius: 4px; padding: 10px; color: #0d1d1f; background-color: #fefcef; transition: border-color 0.3s;">
                                         {% for municipio in municipios %}
                                         <option value="{{ municipio.id_municipio }}">{{ municipio.nombre }}</option>
@@ -676,6 +676,23 @@
             <script src="{% static 'vendors/starrr/dist/starrr.js' %}"></script>
             <!-- Custom Theme Scripts -->
             <script src="{% static 'js/custom.min.js' %}"></script>
+
+            <script>
+                $(document).ready(function () {
+                    $('#estado').change(function () {
+                        const estadoId = $(this).val();
+                        $('#municipio').html('<option value="">Selecciona un municipio</option>');
+
+                        if (estadoId) {
+                            $.get('{% url "obtener_municipios" %}', { estado_id: estadoId }, function (data) {
+                                $.each(data, function (i, municipio) {
+                                    $('#municipio').append(`<option value="${municipio.id_municipio}">${municipio.nombre}</option>`);
+                                });
+                            });
+                        }
+                    });
+                });
+            </script>
         </div>
     </div>
 </body>
