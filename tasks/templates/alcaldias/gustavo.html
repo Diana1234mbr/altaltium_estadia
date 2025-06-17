@@ -500,16 +500,19 @@
                 <div class="stat-label">hab/km² densidad</div>
             </div>
         </div>
-
-        <!-- Map Section -->
-        <div class="main-card">
-            <h2 class="section-title">Ubicación de la Alcaldía</h2>
-            <div class="map-container">
-                <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3760.987!2d-99.1132!3d19.4823!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x85d1f9c2b66f14db%3A0x7f5b7e1e9c6f3d62!2sGustavo%20A.%20Madero%2C%20Ciudad%20de%20M%C3%A9xico%2C%20CDMX%2C%20M%C3%A9xico!5e0!3m2!1ses!2smx!4v1698765432110" class="map-iframe" allowfullscreen="" loading="lazy"></iframe>
-            </div>
-        </div>
-
-        <!-- Main Content -->
+<!-- Map Section -->
+<div class="main-card">
+  <h2 class="section-title">Ubicación de la Alcaldía Gustavo A. Madero</h2>
+  <div class="map-container">
+    <iframe
+      src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d120640!2d-99.1130!3d19.4820!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x85d1f9c7b2a3d4e5%3A0x7a2b3c4d5e6f7a8b!2sGustavo%20A.%20Madero%2C%20Ciudad%20de%20M%C3%A9xico%2C%20CDMX%2C%20M%C3%A9xico!5e0!3m2!1ses!2smx!4v1729108260"
+      class="map-iframe"
+      allowfullscreen=""
+      loading="lazy"
+    ></iframe>
+  </div>
+</div>
+<!-- Main Content -->
         <div class="main-card">
             <h2 class="section-title">Características Principales</h2>
             
@@ -598,11 +601,11 @@
                 <tbody id="tableBody">
                     {% for item in datos %}
                         <tr>
-                            <td>{{ item.Estado }}</td>
-                            <td>{{ item.Alcaldia }}</td>
-                            <td>{{ item.Colonia }}</td>
-                            <td>{{ item.Promedio_MXN }}</td>
-                            <td>{{ item.Zona }}</td>
+                            <td>{{ item.estado }}</td>
+                            <td>{{ item.alcaldia }}</td>
+                            <td>{{ item.colonia }}</td>
+                            <td>{{ item.promedio_mxn }}</td>
+                            <td>{{ item.zona }}</td>
                         </tr>
                     {% empty %}
                         <tr>

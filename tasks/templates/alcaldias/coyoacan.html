@@ -501,16 +501,19 @@
                 <div class="stat-label">hab/km² densidad</div>
             </div>
         </div>
-
-        <!-- Map Section -->
-        <div class="main-card">
+  <!-- Map Section -->
+            <div class="main-card">
             <h2 class="section-title">Ubicación de la Alcaldía</h2>
             <div class="map-container">
-                <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3764.5677!2d-99.161743!3d19.346679!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x85ce0026db097507%3A0x54061076256e7ebb!2sCoyoac%C3%A1n%2C%20Ciudad%20de%20M%C3%A9xico%2C%20CDMX%2C%20M%C3%A9xico!5e0!3m2!1ses!2sus!4v1635098765432" class="map-iframe" allowfullscreen="" loading="lazy"></iframe>
+                <iframe
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d120660!2d-99.1600!3d19.3400!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f6!3m3!1m2!1s0x85d1ff6b1c2c3e2f%3A0x8a2b3c4d5e6f7a8b!2sCoyoac%C3%A1n%2C%20Ciudad%20de%20M%C3%A9xico%2C%20CDMX%2C%20M%C3%A9xico!5e0!3m2!1ses!2smx!4v1729094000"
+                class="map-iframe"
+                allowfullscreen=""
+                loading="lazy"
+                ></iframe>
             </div>
-        </div>
-
-        <!-- Main Content -->
+            </div>
+            <!-- Main Content -->
         <div class="main-card">
             <h2 class="section-title">Características Principales</h2>
             
@@ -598,12 +601,12 @@
                 </thead>
                 <tbody id="tableBody">
                     {% for item in datos %}
-                        <tr>
-                            <td>{{ item.Estado }}</td>
-                            <td>{{ item.Alcaldia }}</td>
-                            <td>{{ item.Colonia }}</td>
-                            <td>{{ item.Promedio_MXN }}</td>
-                            <td>{{ item.Zona }}</td>
+                       <tr>
+                            <td>{{ item.estado }}</td>
+                            <td>{{ item.alcaldia }}</td>
+                            <td>{{ item.colonia }}</td>
+                            <td>{{ item.promedio_mxn }}</td>
+                            <td>{{ item.zona }}</td>
                         </tr>
                     {% empty %}
                         <tr>

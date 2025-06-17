@@ -523,10 +523,6 @@
             <form method="post" id="addForm" style="display: none; margin-top: 15px;" class="form-horizontal">
                 {% csrf_token %}
                 <div class="form-row">
-                    <div class="form-group">
-                        <label>Nombre</label>
-                        <input type="text" name="nombre" class="form-control" required placeholder="Nombre del municipio">
-                    </div>
                     <div class="form-group" style="flex: 1; min-width: 300px;">
                         <label style="color: #003035; font-weight: 600;">Estado</label>
                         <select name="id_estado" class="form-control" required style="border: 1px solid #bfc6c7; border-radius: 4px; padding: 10px; color: #0d1d1f; background-color: #fefcef; transition: border-color 0.3s;">
@@ -535,6 +531,11 @@
                             {% endfor %}
                         </select>
                     </div>
+                    <div class="form-group">
+                        <label>Nombre</label>
+                        <input type="text" name="nombre" class="form-control" required placeholder="Nombre del municipio">
+                    </div>
+
                     <div class="form-group">
                         <button type="submit" class="btn btn-add">Agregar</button>
                         <button type="reset" class="btn btn-cancel">Limpiar</button>

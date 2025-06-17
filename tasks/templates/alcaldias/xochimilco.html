@@ -501,13 +501,20 @@
             </div>
         </div>
 
+   
         <!-- Map Section -->
         <div class="main-card">
-            <h2 class="section-title">Ubicación de la Alcaldía</h2>
-            <div class="map-container">
-                <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3765.297!2d-99.1035!3d19.2626!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x85ce003e6f6b2b2b%3A0xbecd75e8f1f5e7c6!2sXochimilco%2C%20Ciudad%20de%20M%C3%A9xico%2C%20CDMX%2C%20M%C3%A9xico!5e0!3m2!1ses!2smx!4v1698765432109" class="map-iframe" allowfullscreen="" loading="lazy"></iframe>
-            </div>
+        <h2 class="section-title">Ubicación de la Alcaldía</h2>
+        <div class="map-container">
+            <iframe
+            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d120660!2d-99.1000!3d19.2900!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f6!3m3!1m2!1s0x85cd8e6e2c8b8f8f%3A0x9c1a5b1d7e2f3c4d!2sXochimilco%2C%20Ciudad%20de%20M%C3%A9xico%2C%20CDMX%2C%20M%C3%A9xico!5e0!3m2!1ses!2smx!4v1729090320"
+            class="map-iframe"
+            allowfullscreen=""
+            loading="lazy"
+            ></iframe>
         </div>
+        </div>
+<!-- Main Content -->
 
         <!-- Main Content -->
         <div class="main-card">
@@ -597,12 +604,12 @@
                 </thead>
                 <tbody id="tableBody">
                     {% for item in datos %}
-                        <tr>
-                            <td>{{ item.Estado }}</td>
-                            <td>{{ item.Alcaldia }}</td>
-                            <td>{{ item.Colonia }}</td>
-                            <td>{{ item.Promedio_MXN }}</td>
-                            <td>{{ item.Zona }}</td>
+                       <tr>
+                            <td>{{ item.estado }}</td>
+                            <td>{{ item.alcaldia }}</td>
+                            <td>{{ item.colonia }}</td>
+                            <td>{{ item.promedio_mxn }}</td>
+                            <td>{{ item.zona }}</td>
                         </tr>
                     {% empty %}
                         <tr>

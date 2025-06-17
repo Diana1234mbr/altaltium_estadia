@@ -500,16 +500,19 @@
                 <div class="stat-label">hab/km² densidad</div>
             </div>
         </div>
-
-        <!-- Map Section -->
-        <div class="main-card">
-            <h2 class="section-title">Ubicación de la Alcaldía</h2>
-            <div class="map-container">
-                <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3763.377!2d-99.2907!3d19.3579!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x85ce02b7b7c8b3b7%3A0x7c8f8b7f7e4b3c2d!2sCuajimalpa%20de%20Morelos%2C%20Ciudad%20de%20M%C3%A9xico%2C%20CDMX%2C%20M%C3%A9xico!5e0!3m2!1ses!2smx!4v1698765432109" class="map-iframe" allowfullscreen="" loading="lazy"></iframe>
-            </div>
-        </div>
-
-        <!-- Main Content -->
+<!-- Map Section -->
+<div class="main-card">
+  <h2 class="section-title">Ubicación de la Alcaldía Cuajimalpa de Morelos</h2>
+  <div class="map-container">
+    <iframe
+      src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d90560!2d-99.2970!3d19.3570!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x85cd8b3b7b2f3d4e%3A0x8a2b3c4d5e6f7a8b!2sCuajimalpa%20de%20Morelos%2C%20Ciudad%20de%20M%C3%A9xico%2C%20CDMX%2C%20M%C3%A9xico!5e0!3m2!1ses!2smx!4v1729108260"
+      class="map-iframe"
+      allowfullscreen=""
+      loading="lazy"
+    ></iframe>
+  </div>
+</div>
+<!-- Main Content -->
         <div class="main-card">
             <h2 class="section-title">Características Principales</h2>
             
@@ -598,11 +601,11 @@
                 <tbody id="tableBody">
                     {% for item in datos %}
                         <tr>
-                            <td>{{ item.Estado }}</td>
-                            <td>{{ item.Alcaldia }}</td>
-                            <td>{{ item.Colonia }}</td>
-                            <td>{{ item.Promedio_MXN }}</td>
-                            <td>{{ item.Zona }}</td>
+                            <td>{{ item.estado }}</td>
+                            <td>{{ item.alcaldia }}</td>
+                            <td>{{ item.colonia }}</td>
+                            <td>{{ item.promedio_mxn }}</td>
+                            <td>{{ item.zona }}</td>
                         </tr>
                     {% empty %}
                         <tr>

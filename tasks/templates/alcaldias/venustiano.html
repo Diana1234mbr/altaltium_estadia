@@ -501,13 +501,17 @@
                 </div>
 
                 <!-- Map Section -->
-                <div class="main-card">
-                    <h2 class="section-title">Ubicación de la Alcaldía</h2>
-                    <div class="map-container">
-                        <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3762.789!2d-99.1052!3d19.4187!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x85d1fe9b7c7a3f5b%3A0x6e7b8c2d3e4f5a6e!2sVenustiano%20Carranza%2C%20Ciudad%20de%20M%C3%A9xico%2C%20CDMX%2C%20M%C3%A9xico!5e0!3m2!1ses!2smx!4v1698765432110" class="map-iframe" allowfullscreen="" loading="lazy"></iframe>
-                    </div>
-                </div>
-
+                      <div class="main-card">
+        <h2 class="section-title">Ubicación de la Alcaldía</h2>
+        <div class="map-container">
+          <iframe
+            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d30165!2d-99.10499!3d19.44361!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f10!3m3!1m2!1s0x85d1ff6b1c2c3e2f%3A0x8a2b3c4d5e6f7a8b!2sVenustiano%20Carranza%2C%20Ciudad%20de%20M%C3%A9xico%2C%20CDMX%2C%20M%C3%A9xico!5e0!3m2!1ses!2smx!4v1729108260"
+            class="map-iframe"
+            allowfullscreen=""
+            loading="lazy"
+          ></iframe>
+        </div>
+      </div>
                 <!-- Main Content -->
                 <div class="main-card">
                     <h2 class="section-title">Características Principales</h2>
@@ -597,12 +601,12 @@
                         <tbody id="tableBody">
                             {% for item in datos %}
                                 <tr>
-                                    <td>{{ item.Estado }}</td>
-                                    <td>{{ item.Alcaldia }}</td>
-                                    <td>{{ item.Colonia }}</td>
-                                    <td>{{ item.Promedio_MXN }}</td>
-                                    <td>{{ item.Zona }}</td>
-                                </tr>
+                            <td>{{ item.estado }}</td>
+                            <td>{{ item.alcaldia }}</td>
+                            <td>{{ item.colonia }}</td>
+                            <td>{{ item.promedio_mxn }}</td>
+                            <td>{{ item.zona }}</td>
+                        </tr>
                             {% empty %}
                                 <tr>
                                     <td colspan="5" class="data-placeholder">No hay datos disponibles.</td>
