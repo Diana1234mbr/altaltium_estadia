@@ -266,19 +266,36 @@
     {% if user.is_authenticated %}
     
     {% else %}
+
     <div class="carousel-item active"><img src="{% static 'images/Altatium.png' %}" alt="Altatium"></div>
     <div class="carousel-item"><img src="{% static 'images/forbes.png' %}" alt="Forbes"></div>
+
+        <!-- Contenido principal -->
+<div class="welcome-text-container">
+  <h1 class="display-5 fw-bold">
+    <span style="color: #ffffff;">Biengbggggvenido a </span> <span style="color: #00cccc;">Inmovalor</span>
+  </h1>
+
+  <p class="lead mt-3">
+    Plataforma de gestión y organización de tareas pensada para aumentar tu productividad y controlar tus proyectos con eficiencia.
+  </p>
+  <div class="mt-4 d-flex flex-column flex-md-row justify-content-center gap-3">
+    <a href="{% url 'signin' %}" class="btn welcome-btn">
+      <i class="bi bi-person-plus-fill me-2"></i> Iniciar Sesión
+    </a>
+  </div>
     {% endif %}
   </div>
 </div>
 
-<!-- Contenido principal -->
+
+  {% if user.is_authenticated %}
+  <!-- Contenido principal -->
 <div class="welcome-text-container">
   <h1 class="display-5 fw-bold">
     <span style="color: #ffffff;">Bienvenido a </span> <span style="color: #00cccc;">Inmovalor</span>
   </h1>
 
-  {% if user.is_authenticated %}
   <p class="lead mt-3">
     ¡Bienvenido a Inmovalor! Aquí podrás obtener una estimación precisa del valor de propiedades y acceder a análisis exhaustivos para tomar decisiones informadas. Explora nuestras herramientas y descubre el potencial de tus propiedades o aquellas que estás considerando. ¡Estamos emocionados de ayudarte a alcanzar tus objetivos inmobiliarios!
   </p>
@@ -288,20 +305,13 @@
     </a>
   </div>
   {% else %}
-  <p class="lead mt-3">
-    Plataforma de gestión y organización de tareas pensada para aumentar tu productividad y controlar tus proyectos con eficiencia.
-  </p>
-  <div class="mt-4 d-flex flex-column flex-md-row justify-content-center gap-3">
-    <a href="{% url 'signup' %}" class="btn welcome-btn">
-      <i class="bi bi-person-plus-fill me-2"></i> Crear cuenta
-    </a>
-    <a href="{% url 'signin' %}" class="btn btn-outline-light">
-      <i class="bi bi-box-arrow-in-right me-2"></i> Iniciar sesión
-    </a>
-  </div>
   
+  {% endif %}
 </div>
 
+
+
+{% if user.is_authenticated %}
 <!-- Contenido extra -->
 <div class="extra-content">
   <!-- About Start -->

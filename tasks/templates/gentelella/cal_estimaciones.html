@@ -1,4 +1,5 @@
 {% load static %}
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -507,15 +508,22 @@
 
         <!-- Mostrar mensajes de éxito o error -->
         {% if messages %}
-        <div class="alert alert-dismissible {% if message.tags == 'success' %}alert-success{% else %}alert-danger{% endif %}" role="alert">
+        <div class="alert alert-dismissible {% if message.tags == 'success' %}alert-danger{% else %}alert-success{% endif %}" role="alert">
             {% for message in messages %}
             <p>{{ message }}</p>
             {% endfor %}
         </div>
         {% endif %}
 
-        <!-- Formulario para agregar nueva propiedad -->
-        
+        <!-- Botón para generar reporte PDF de todas las propiedades -->
+        <div class="row mb-3">
+            <div class="col-md-12 text-right">
+                <a href="{% url 'gentelella_page' page='cal_estimaciones' %}?generar_reporte_todos=1" class="btn btn-primary">
+                    <i class="fa fa-file-pdf"></i> Generar Reporte PDF de Todas las Propiedades
+                </a>
+            </div>
+        </div>
+
         <!-- Tabla de propiedades -->
         <div class="card table-container">
             <table class="table" id="propiedadesTable">
@@ -546,11 +554,14 @@
                         <td>
                             <a href="{% url 'gentelella_page' page='editar_estimacion' %}?editar={{ propiedad.id_propiedad }}" class="btn btn-edit btn-sm">Editar</a>
                             <a href="{% url 'gentelella_page' page='cal_estimaciones' %}?eliminar={{ propiedad.id_propiedad }}" class="btn btn-delete btn-sm" onclick="return confirm('¿Deseas eliminar esta propiedad?');">Eliminar</a>
+                            <a href="{% url 'gentelella_page' page='cal_estimaciones' %}?generar_reporte_individual=1&id_propiedad={{ propiedad.id_propiedad }}" class="btn btn-success btn-sm">
+                                <i class="fa fa-file-pdf"></i> Reporte Individual
+                            </a>
                         </td>
                     </tr>
                     {% empty %}
                     <tr>
-                        <td colspan="6" style="text-align: center; color: #949797;">No hay propiedades registradas.</td>
+                        <td colspan="9" style="text-align: center; color: #949797;">No hay propiedades registradas.</td>
                     </tr>
                     {% endfor %}
                 </tbody>
@@ -559,7 +570,6 @@
     </div>
 </div>
 <!-- /page content -->
-
 
 <script>
 function toggleForm(formId) {

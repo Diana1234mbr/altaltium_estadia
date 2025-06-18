@@ -1,3 +1,4 @@
+from fpdf import FPDF
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.shortcuts import render, redirect
@@ -5,7 +6,7 @@ from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.models import User
 from django.db import IntegrityError
-from django.http import Http404, JsonResponse
+from django.http import Http404, JsonResponse, HttpResponse
 from .models import Estados, Municipios, Colonias, CodigosPostales, AlcaldiaVistas, Propiedades
 from django.views.decorators.csrf import csrf_exempt
 import json
@@ -684,7 +685,47 @@ def gentelella_view(request, page):
                     messages.error(request, f"Error al crear la propiedad: {str(e)}")
 
                 return redirect('gentelella_page', page='cal_estimaciones')
+            
 
+            # Generar reporte PDF de todas las propiedades
+            if 'generar_reporte_todos' in request.GET:
+                print("Generando reporte de todas las propiedades...")
+                response = HttpResponse(content_type='application/pdf')
+                response['Content-Disposition'] = 'attachment; filename="reporte_todas_propiedades.pdf"'
+                pdf = FPDF()
+                pdf.add_page()
+                pdf.set_font("Arial", size=12)
+                pdf.cell(200, 10, txt="Reporte de Todas las Propiedades", ln=True, align='C')
+                for prop in propiedades:
+                    pdf.cell(200, 10, txt=f"ID: {prop.id_propiedad} - Tipo: {prop.tipo_propiedad} - Calle: {prop.calle}", ln=True)
+                # Cambia output para devolver el contenido como string
+                response.write(pdf.output(dest='S').encode('latin-1'))  # 'S' devuelve el PDF como string
+                print("Reporte generado exitosamente.")
+                return response
+
+            # Generar reporte PDF de una propiedad individual
+            if 'generar_reporte_individual' in request.GET and 'id_propiedad' in request.GET:
+                print(f"Generando reporte individual para propiedad ID: {request.GET['id_propiedad']}")
+                try:
+                    propiedad_id = request.GET['id_propiedad']
+                    propiedad = Propiedades.objects.get(id_propiedad=propiedad_id)
+                    response = HttpResponse(content_type='application/pdf')
+                    response['Content-Disposition'] = f'attachment; filename="reporte_propiedad_{propiedad_id}.pdf"'
+                    pdf = FPDF()
+                    pdf.add_page()
+                    pdf.set_font("Arial", size=12)
+                    pdf.cell(200, 10, txt=f"Reporte de Propiedad ID: {propiedad.id_propiedad}", ln=True, align='C')
+                    pdf.cell(200, 10, txt=f"Tipo: {propiedad.tipo_propiedad}", ln=True)
+                    pdf.cell(200, 10, txt=f"Calle: {propiedad.calle}", ln=True)
+                    # Cambia output para devolver el contenido como string
+                    response.write(pdf.output(dest='S').encode('latin-1'))  # 'S' devuelve el PDF como string
+                    print(f"Reporte individual generado para ID: {propiedad_id}")
+                    return response
+                except Propiedades.DoesNotExist:
+                    messages.error(request, f"No se encontró la propiedad con ID {propiedad_id}.")
+                    return redirect('gentelella_page', page='cal_estimaciones')
+
+        #Funcion para editar estimacion
         elif page == "editar_estimacion":
             if 'editar' in request.GET:
                 try:
@@ -703,13 +744,18 @@ def gentelella_view(request, page):
                     id_propiedad = request.POST.get('id_propiedad')
                     propiedad = Propiedades.objects.get(id_propiedad=id_propiedad)
 
-                    # Actualizar campos
+                    # Obtener instancias de los modelos relacionados usando los IDs
+                    id_estado = request.POST.get('id_estado')
+                    id_municipio = request.POST.get('id_municipio')
+                    id_colonia = request.POST.get('id_colonia')
+                    id_codigo_postal = request.POST.get('id_codigo_postal')
+
                     propiedad.tipo_propiedad = request.POST.get('tipo_propiedad')
                     propiedad.calle = request.POST.get('calle')
-                    propiedad.id_estado = request.POST.get('id_estado')
-                    propiedad.id_municipio = request.POST.get('id_municipio')
-                    propiedad.id_colonia = request.POST.get('id_colonia')
-                    propiedad.id_codigo_postal = request.POST.get('id_codigo_postal')
+                    propiedad.id_estado = Estados.objects.get(id_estado=id_estado) if id_estado else None
+                    propiedad.id_municipio = Municipios.objects.get(id_municipio=id_municipio) if id_municipio else None
+                    propiedad.id_colonia = Colonias.objects.get(id_colonia=id_colonia) if id_colonia else None
+                    propiedad.id_codigo_postal = CodigosPostales.objects.get(id_codigo_postal=id_codigo_postal) if id_codigo_postal else None
                     propiedad.recamaras = int(request.POST.get('recamaras', 0))
                     propiedad.sanitarios = float(request.POST.get('sanitarios', 0))
                     propiedad.estacionamiento = int(request.POST.get('estacionamiento', 0))
@@ -725,12 +771,20 @@ def gentelella_view(request, page):
                     propiedad.save()
                     messages.success(request, "Propiedad actualizada correctamente.")
                     return redirect('gentelella_page', page='cal_estimaciones')
-
                 except Propiedades.DoesNotExist:
                     messages.error(request, f"No se encontró la propiedad con ID {id_propiedad}.")
+                except Estados.DoesNotExist:
+                    messages.error(request, "Estado no encontrado.")
+                except Municipios.DoesNotExist:
+                    messages.error(request, "Municipio no encontrado.")
+                except Colonias.DoesNotExist:
+                    messages.error(request, "Colonia no encontrada.")
+                except CodigosPostales.DoesNotExist:
+                    messages.error(request, "Código postal no encontrado.")
                 except Exception as e:
                     messages.error(request, f"Error al actualizar la propiedad: {str(e)}")
                 return redirect('gentelella_page', page='editar_estimacion', editar=id_propiedad)
+
 
 
         return render(request, f'gentelella/{page}.html', context)
@@ -739,3 +793,4 @@ def gentelella_view(request, page):
         print(f"Error: {str(e)}")
         messages.error(request, f"Error inesperado: {str(e)}")
         return render(request, 'gentelella/page_404.html', status=404)
+    
