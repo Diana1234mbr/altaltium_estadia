@@ -1,4 +1,5 @@
 from fpdf import FPDF
+from django.contrib.auth.hashers import make_password
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.shortcuts import render, redirect
@@ -9,6 +10,7 @@ from django.db import IntegrityError
 from django.http import Http404, JsonResponse, HttpResponse
 from .models import Estados, Municipios, Colonias, CodigosPostales, AlcaldiaVistas, Propiedades
 from django.views.decorators.csrf import csrf_exempt
+from django.utils import timezone
 import json
 
 # Decorador para verificar si es admin
@@ -684,7 +686,7 @@ def gentelella_view(request, page):
                 except Exception as e:
                     messages.error(request, f"Error al crear la propiedad: {str(e)}")
 
-                return redirect('gentelella_page', page='cal_estimaciones')
+                return redirect('gentelella_page', page='cal_estimaciones')                        
             
 
             # Generar reporte PDF de todas las propiedades
@@ -786,6 +788,97 @@ def gentelella_view(request, page):
                 return redirect('gentelella_page', page='editar_estimacion', editar=id_propiedad)
 
 
+# ================= USUARIOS ====================
+        elif page == "cal_usuarios":
+            try:
+                usuarios = User.objects.all()
+                print(f"DEBUG: Usuarios recuperados: {list(usuarios)}")
+                print(f"DEBUG: Número de usuarios: {usuarios.count()}")
+            except Exception as e:
+                print(f"DEBUG: Error al recuperar usuarios: {str(e)}")
+                usuarios = []
+
+            if 'eliminar' in request.GET:
+                try:
+                    usuario = User.objects.get(id=request.GET['eliminar'])
+                    usuario.delete()
+                    messages.success(request, "Usuario eliminado correctamente.")
+                except User.DoesNotExist:
+                    messages.error(request, f"No se encontró el usuario con ID {request.GET['eliminar']}.")
+                return redirect('gentelella_page', page='cal_usuarios')
+
+            if request.method == 'POST' and 'editar' not in request.GET:
+                username = request.POST.get('username')
+                first_name = request.POST.get('nombre')
+                email = request.POST.get('email')
+                password1 = request.POST.get('password1')
+                password2 = request.POST.get('password2')
+
+                if username and first_name and email and password1 and password2:
+                    if password1 == password2:
+                        try:
+                            User.objects.create(
+                                username=username,
+                                first_name=first_name,
+                                email=email,
+                                password=make_password(password1),
+                                is_active=True,
+                                date_joined=timezone.now()
+                            )
+                            messages.success(request, "Usuario creado correctamente.")
+                        except IntegrityError:
+                            messages.error(request, "El nombre de usuario o correo ya existe.")
+                    else:
+                        messages.error(request, "Las contraseñas no coinciden.")
+                else:
+                    messages.error(request, "Faltan datos para crear el usuario.")
+
+                return redirect('gentelella_page', page='cal_usuarios')
+
+            context = {
+                'usuarios': usuarios,
+            }
+            print(f"DEBUG: Contexto enviado: {context}")
+
+        # ================= EDITAR USUARIO ====================
+        elif page == "editar_usuario":
+            if 'editar' in request.GET:
+                try:
+                    usuario_editar = User.objects.get(id=request.GET['editar'])
+                    context['usuario_editar'] = usuario_editar
+                except User.DoesNotExist:
+                    messages.error(request, f"No se encontró el usuario con ID {request.GET['editar']}.")
+                    return redirect('gentelella_page', page='cal_usuarios')
+
+            if request.method == 'POST':
+                id_usuario = request.POST.get('id_usuario')
+                try:
+                    usuario = User.objects.get(id=id_usuario)
+                    username = request.POST.get('username')
+                    first_name = request.POST.get('nombre')
+                    email = request.POST.get('email')
+                    password1 = request.POST.get('password1')
+                    password2 = request.POST.get('password2')
+
+                    if username and first_name and email:
+                        usuario.username = username
+                        usuario.first_name = first_name
+                        usuario.email = email
+                        if password1 and password2 and password1 == password2:
+                            usuario.password = make_password(password1)
+                        elif password1 or password2:
+                            messages.error(request, "Las contraseñas no coinciden o están incompletas.")
+                            return redirect('gentelella_page', page='editar_usuario', editar=id_usuario)
+                        usuario.save()
+                        messages.success(request, "Usuario actualizado correctamente.")
+                        return redirect('gentelella_page', page='cal_usuarios')
+                    else:
+                        messages.error(request, "Faltan datos para actualizar el usuario.")
+                except User.DoesNotExist:
+                    messages.error(request, f"No se encontró el usuario con ID {id_usuario}.")
+                except IntegrityError:
+                    messages.error(request, "El nombre de usuario o correo ya existe.")
+                return redirect('gentelella_page', page='editar_usuario', editar=id_usuario)
 
         return render(request, f'gentelella/{page}.html', context)
 
