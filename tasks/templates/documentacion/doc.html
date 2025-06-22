@@ -1,0 +1,605 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Documentación{% endblock %}
+
+{% block content %}
+  <style>
+    /* Fuentes y colores mejorados */
+    body {
+      font-family: 'Montserrat', sans-serif;
+    }
+    
+    /* Animaciones mejoradas */
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes slideIn {
+      from { transform: translateX(-30px); opacity: 0; }
+      to { transform: translateX(0); opacity: 1; }
+    }
+
+    /* Hero Section - Diseño mejorado */
+    .hero-section {
+      position: relative;
+      height: 100vh;
+      min-height: 700px;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      background-color: #002b30;
+    }
+
+    .hero-background {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(135deg, #003035 0%, #006064 100%);
+      z-index: 0;
+    }
+
+    .hero-images {
+      position: absolute;
+      top: 0;
+      right: 0;
+      width: 50%;
+      height: 100%;
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      opacity: 0;
+      transition: opacity 0.8s cubic-bezier(0.215, 0.61, 0.355, 1);
+    }
+
+    .hero-images::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, rgba(0,48,53,0.3) 0%, rgba(0,48,53,0) 100%);
+    }
+
+    .hero-images.active {
+      opacity: 1;
+    }
+
+  .hero-images:nth-child(1) {
+    background-image: url('{% static "images/altaltium4.png" %}');
+  }
+  .hero-images:nth-child(2) {
+    background-image: url('{% static "images/altaltium5.jpg" %}');
+  }
+  .hero-images:nth-child(3) {
+    background-image: url('{% static "images/altaltium3.jpg" %}');
+  }
+  .hero-images:nth-child(4) {
+    background-image: url('{% static "images/altaltium6.jpg" %}');
+  }
+  .hero-images:nth-child(5) {
+    background-image: url('{% static "images/altaltium7.jpg" %}');
+  }
+  .hero-images:nth-child(6) {
+    background-image: url('{% static "images/altaltium8.jpg" %}');
+  }
+
+    .hero-content {
+      position: relative;
+      z-index: 1;
+      width: 50%;
+      padding: 3rem;
+      color: #ffffff;
+    }
+
+    .hero-content h1 {
+      font-size: 3.5rem;
+      font-weight: 700;
+      color: #ffffff;
+      margin-bottom: 1.5rem;
+      line-height: 1.2;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      animation: slideIn 1s ease-out forwards;
+    }
+
+    .hero-content p {
+      font-size: 1.25rem;
+      color: rgba(255,255,255,0.9);
+      margin: 1.5rem 0;
+      max-width: 500px;
+      line-height: 1.6;
+      animation: slideIn 1s ease-out 0.3s forwards;
+    }
+
+    .hero-content a {
+      display: inline-block;
+      padding: 0.875rem 2rem;
+      background-color: #00cccc;
+      color: #0d1d1f;
+      text-decoration: none;
+      border-radius: 30px;
+      font-weight: 600;
+      font-size: 1.1rem;
+      transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+      animation: slideIn 1s ease-out 0.6s forwards;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+
+    .hero-content a:hover {
+      transform: translateY(-3px);
+      background-color: #00b4b4;
+      box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+    }
+
+    /* Carousel Controls - Diseño mejorado */
+    .carousel-controls {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 2;
+      display: flex;
+      gap: 1.5rem;
+    }
+
+    .carousel-btn {
+      width: 50px;
+      height: 50px;
+      background-color: rgba(82,179,192,0.8);
+      border: 2px solid #ffffff;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #ffffff;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      backdrop-filter: blur(5px);
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+
+    .carousel-btn:hover {
+      background-color: rgba(191,198,199,0.9);
+      transform: scale(1.1);
+    }
+
+    /* Sección de Documentos Corporativos */
+    .documents-carousel-section {
+      padding: 5rem 0;
+      background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 2rem;
+    }
+
+    .section-title {
+      text-align: center;
+      font-size: 2.5rem;
+      color: #003035;
+      margin-bottom: 1.5rem;
+    }
+
+    .section-subtitle {
+      text-align: center;
+      color: #666;
+      margin-bottom: 3rem;
+      font-size: 1.1rem;
+    }
+
+    .categories-nav {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      margin-bottom: 2rem;
+      flex-wrap: wrap;
+    }
+
+    .category-btn {
+      padding: 0.8rem 1.5rem;
+      background: white;
+      border: 2px solid #00cccc;
+      border-radius: 50px;
+      color: #00cccc;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .category-btn.active {
+      background: #00cccc;
+      color: white;
+    }
+
+    .category-btn:hover:not(.active) {
+      background: rgba(0, 204, 204, 0.1);
+    }
+
+    .modern-documents-carousel {
+      display: flex;
+      gap: 2rem;
+      scroll-snap-type: x mandatory;
+      overflow-x: auto;
+      scroll-behavior: smooth;
+      padding-bottom: 2rem;
+      scrollbar-width: none;
+    }
+
+    .modern-documents-carousel::-webkit-scrollbar {
+      display: none;
+    }
+
+    .document-slide {
+      min-width: 300px;
+      scroll-snap-align: start;
+      background: white;
+      border-radius: 15px;
+      overflow: hidden;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+      transition: all 0.3s ease;
+      display: none;
+    }
+
+    .document-slide.active {
+      display: block;
+      animation: fadeIn 0.5s ease-out;
+    }
+
+    .document-preview {
+      position: relative;
+      height: 200px;
+      overflow: hidden;
+    }
+
+    .document-thumbnail {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.5s ease;
+    }
+
+    .document-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 48, 53, 0.7);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .document-slide:hover .document-overlay {
+      opacity: 1;
+    }
+
+    .document-slide:hover .document-thumbnail {
+      transform: scale(1.05);
+    }
+
+    .preview-btn {
+      padding: 0.6rem 1.2rem;
+      background: white;
+      color: #003035;
+      border-radius: 50px;
+      text-decoration: none;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      transition: all 0.3s ease;
+    }
+
+    .preview-btn:hover {
+      background: #00cccc;
+      color: white;
+    }
+
+    .document-info {
+      padding: 1.5rem;
+    }
+
+    .document-info h3 {
+      font-size: 1.3rem;
+      color: #003035;
+      margin-bottom: 0.5rem;
+    }
+
+    .document-info p {
+      color: #666;
+      margin-bottom: 1rem;
+      font-size: 0.9rem;
+    }
+
+    .document-meta {
+      display: flex;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+      font-size: 0.8rem;
+      color: #888;
+    }
+
+    .download-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.6rem 1.5rem;
+      background: #00cccc;
+      color: white;
+      border-radius: 50px;
+      text-decoration: none;
+      font-weight: 600;
+      transition: all 0.3s ease;
+    }
+
+    .download-btn:hover {
+      background: #008a8a;
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(0, 204, 204, 0.3);
+    }
+
+    .carousel-controls {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 2rem;
+      margin-top: 2rem;
+    }
+
+    .carousel-prev,
+    .carousel-next {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      background: white;
+      border: none;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #00cccc;
+      font-size: 1.2rem;
+      transition: all 0.3s ease;
+    }
+
+    .carousel-prev:hover,
+    .carousel-next:hover {
+      background: #00cccc;
+      color: white;
+      transform: scale(1.1);
+    }
+
+    .carousel-dots {
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    .carousel-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: #ddd;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .carousel-dot.active {
+      background: #00cccc;
+      transform: scale(1.2);
+    }
+  </style>
+
+  <section class="hero-section">
+    <div class="hero-background"></div>
+    <div class="hero-content">
+      <h1>Documentación</h1>
+      <p>Esta es la sección de documentación. Aquí podrás encontrar todo sobre la documentación relacionado al tanteo. Haz clic para ver más.</p>
+      <a href="#section1">Ver más</a>
+    </div>
+    <div class="hero-images active">
+  <img src="/static/images/altaltium4.png" alt="Imagen 1" style="width: 100%; height: 100%; object-fit: cover;">
+</div>
+<div class="hero-images">
+  <img src="/static/images/altaltium5.jpg" alt="Imagen 2" style="width: 100%; height: 100%; object-fit: cover;">
+</div>
+<div class="hero-images">
+  <img src="/static/images/altaltium3.jpg" alt="Imagen 3" style="width: 100%; height: 100%; object-fit: cover;">
+</div>
+<div class="hero-images">
+  <img src="/static/images/altaltium6.jpg" alt="Imagen 4" style="width: 100%; height: 100%; object-fit: cover;">
+</div>
+<div class="hero-images">
+  <img src="/static/images/altaltium7.jpg" alt="Imagen 5" style="width: 100%; height: 100%; object-fit: cover;">
+</div>
+<div class="hero-images">
+  <img src="/static/images/altaltium8.jpg" alt="Imagen 6" style="width: 100%; height: 100%; object-fit: cover;">
+</div> 
+    <div class="carousel-controls">
+      <div class="carousel-btn" onclick="changeImage(-1)">❮</div>
+      <div class="carousel-btn" onclick="changeImage(1)">❯</div>
+    </div>
+  </section>
+
+  <section id="corporate-documents" class="documents-carousel-section">
+    <div class="container">
+      <h2 class="section-title">Documentos Corporativos</h2>
+      <p class="section-subtitle">Explora nuestros archivos institucionales en diferentes formatos</p>
+      
+      <div class="categories-nav">
+        <button class="category-btn active" data-category="presentation">Presentación</button>
+        <button class="category-btn" data-category="cv">CV Corporativo</button>
+        <button class="category-btn" data-category="english">Versión Inglés</button>
+      </div>
+      
+      <div class="modern-documents-carousel">
+        <!-- Documento 1 - Presentación Horizontal -->
+        <div class="document-slide active" data-category="presentation">
+          <div class="document-preview">
+            <img src="{% static 'images/document-thumbnail-horizontal.jpg' %}" alt="Presentación Horizontal" class="document-thumbnail">
+            <div class="document-overlay">
+              <a href="{% static 'docs/presentacion-horizontal.pdf' %}" class="preview-btn" target="_blank">
+                <i class="fas fa-eye"></i> Vista Previa
+              </a>
+            </div>
+          </div>
+          <div class="document-info">
+            <h3>Presentación Horizontal</h3>
+            <p>Formato estándar para proyección en pantallas</p>
+            <div class="document-meta">
+              <span><i class="far fa-file-pdf"></i> PDF</span>
+              <span><i class="far fa-file-alt"></i> 2.4 MB</span>
+            </div>
+            <a href="{% static 'docs/presentacion-horizontal.pdf' %}" class="download-btn" download>
+              <i class="fas fa-download"></i> Descargar
+            </a>
+          </div>
+        </div>
+        
+        <!-- Documento 2 - Presentación Vertical -->
+        <div class="document-slide" data-category="presentation">
+          <div class="document-preview">
+            <img src="{% static 'images/document-thumbnail-vertical.jpg' %}" alt="Presentación Vertical" class="document-thumbnail">
+            <div class="document-overlay">
+              <a href="{% static 'docs/presentacion-vertical.pdf' %}" class="preview-btn" target="_blank">
+                <i class="fas fa-eye"></i> Vista Previa
+              </a>
+            </div>
+          </div>
+          <div class="document-info">
+            <h3>Presentación Vertical</h3>
+            <p>Formato optimizado para móviles y redes sociales</p>
+            <div class="document-meta">
+              <span><i class="far fa-file-pdf"></i> PDF</span>
+              <span><i class="far fa-file-alt"></i> 1.8 MB</span>
+            </div>
+            <a href="{% static 'docs/presentacion-vertical.pdf' %}" class="download-btn" download>
+              <i class="fas fa-download"></i> Descargar
+            </a>
+          </div>
+        </div>
+        
+        <!-- Documento 3 - CV Corporativo -->
+        <div class="document-slide" data-category="cv">
+          <div class="document-preview">
+            <img src="{% static 'images/document-thumbnail-cv.jpg' %}" alt="CV Corporativo" class="document-thumbnail">
+            <div class="document-overlay">
+              <a href="{% static 'docs/cv-corporativo.pdf' %}" class="preview-btn" target="_blank">
+                <i class="fas fa-eye"></i> Vista Previa
+              </a>
+            </div>
+          </div>
+          <div class="document-info">
+            <h3>CV Corporativo</h3>
+            <p>Resumen detallado de nuestra experiencia y capacidades</p>
+            <div class="document-meta">
+              <span><i class="far fa-file-pdf"></i> PDF</span>
+              <span><i class="far fa-file-alt"></i> 1.5 MB</span>
+            </div>
+            <a href="{% static 'docs/cv-corporativo.pdf' %}" class="download-btn" download>
+              <i class="fas fa-download"></i> Descargar
+            </a>
+          </div>
+        </div>
+        
+        <!-- Documento 4 - Presentación en Inglés -->
+        <div class="document-slide" data-category="english">
+          <div class="document-preview">
+            <img src="{% static 'images/document-thumbnail-english.jpg' %}" alt="Presentación en Inglés" class="document-thumbnail">
+            <div class="document-overlay">
+              <a href="{% static 'docs/presentation-english.pdf' %}" class="preview-btn" target="_blank">
+                <i class="fas fa-eye"></i> Vista Previa
+              </a>
+            </div>
+          </div>
+          <div class="document-info">
+            <h3>Presentación en Inglés</h3>
+            <p>Versión internacional de nuestra presentación corporativa</p>
+            <div class="document-meta">
+              <span><i class="far fa-file-pdf"></i> PDF</span>
+              <span><i class="far fa-file-alt"></i> 2.0 MB</span>
+            </div>
+            <a href="{% static 'docs/presentation-english.pdf' %}" class="download-btn" download>
+              <i class="fas fa-download"></i> Descargar
+            </a>
+          </div>
+        </div>
+        
+        <!-- Documento 5 - CV en Inglés -->
+        <div class="document-slide" data-category="english">
+          <div class="document-preview">
+            <img src="{% static 'images/document-thumbnail-cv-english.jpg' %}" alt="CV en Inglés" class="document-thumbnail">
+            <div class="document-overlay">
+              <a href="{% static 'docs/cv-english.pdf' %}" class="preview-btn" target="_blank">
+                <i class="fas fa-eye"></i> Vista Previa
+              </a>
+            </div>
+          </div>
+          <div class="document-info">
+            <h3>CV en Inglés</h3>
+            <p>Versión internacional de nuestro CV corporativo</p>
+            <div class="document-meta">
+              <span><i class="far fa-file-pdf"></i> PDF</span>
+              <span><i class="far fa-file-alt"></i> 1.6 MB</span>
+            </div>
+            <a href="{% static 'docs/cv-english.pdf' %}" class="download-btn" download>
+              <i class="fas fa-download"></i> Descargar
+            </a>
+          </div>
+        </div>
+      </div>      
+  </section>
+
+  <style>
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes slideIn { from { transform: translateX(-30px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+    #section1 { height: auto; min-height: 300px; background-color: #f8fafc; padding: 4rem 2rem; color: #1e293b; }
+    #section1 h2 { font-size: 2.5rem; font-weight: 700; color: #003035; margin-bottom: 1.5rem; text-align: center; }
+    #section1 p { font-size: 1.25rem; line-height: 1.6; max-width: 800px; margin: 0 auto; text-align: center; color: #475569; }
+    @media (max-width: 1024px) { .hero-section { flex-direction: column; height: auto; min-height: 100vh; } .hero-content, .hero-images { width: 100%; position: relative; } .hero-images { height: 50vh; order: -1; } .hero-content { padding: 2rem; text-align: center; } .hero-content h1 { font-size: 2.5rem; } .carousel-controls { top: 25%; } }
+    @media (max-width: 768px) { .hero-content h1 { font-size: 2rem; } .hero-content p { font-size: 1.1rem; } #section1 h2 { font-size: 2rem; } }
+  </style>
+
+  <script>
+    const images = document.querySelectorAll('.hero-images');
+    let currentImage = 0;
+    let carouselInterval;
+    function changeImage(direction) { images[currentImage].classList.remove('active'); currentImage = (currentImage + direction + images.length) % images.length; images[currentImage].classList.add('active'); clearInterval(carouselInterval); startCarousel(); }
+    function startCarousel() { carouselInterval = setInterval(() => changeImage(1), 5000); }
+    document.addEventListener('DOMContentLoaded', () => { startCarousel(); const controls = document.querySelector('.carousel-controls'); controls.addEventListener('mouseenter', () => clearInterval(carouselInterval)); controls.addEventListener('mouseleave', startCarousel); });
+
+    // JavaScript para el carrusel de documentos (ejemplo básico)
+    const slides = document.querySelectorAll('.document-slide');
+    let currentSlide = 0;
+
+    function changeSlide(direction) {
+      slides[currentSlide].classList.remove('active');
+      currentSlide = (currentSlide + direction + slides.length) % slides.length;
+      slides[currentSlide].classList.add('active');
+      updateDots();
+    }
+
+    function updateDots() {
+      const dots = document.querySelectorAll('.carousel-dot');
+      dots.forEach((dot, index) => {
+        dot.classList.toggle('active', index === currentSlide);
+      });
+    }
+
+    document.querySelector('.carousel-prev').addEventListener('click', () => changeSlide(-1));
+    document.querySelector('.carousel-next').addEventListener('click', () => changeSlide(1));
+
+    // Iniciar con la primera diapositiva activa
+    slides[currentSlide].classList.add('active');
+    updateDots();
+  </script>
+{% endblock %}

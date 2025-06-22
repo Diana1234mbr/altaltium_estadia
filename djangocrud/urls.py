@@ -13,6 +13,7 @@ urlpatterns = [
     # Página de bienvenida y estimaciones
     path('', views.welcome, name='welcome'),
     path('estimaciones/', views.estimaciones, name='estimaciones'),
+    path('analisis/', views.analisis, name='analisis'),
 
 
     # Ajax para colonias y CP
@@ -40,6 +41,11 @@ urlpatterns = [
 
     # Panel admin Gentelella
     path('admin-panel/<str:page>/', views.gentelella_view, name='gentelella_page'),
+
+
+    # URL para el acceso de vista de la documentación 
+    path('doc/', views.vista_documentacion, name='documentacion'),
+
     
  
 ]

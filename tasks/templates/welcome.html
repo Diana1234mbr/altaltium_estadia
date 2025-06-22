@@ -321,15 +321,15 @@
     }
 
     .hero-section {
-      min-height: 80vh;
+      min-height: 100vh;
       display: flex;
       align-items: center;
       justify-content: center;
       background: var(--hero-gradient), url('/static/images/altaltium4.png') no-repeat center center/cover;
       position: relative;
-      overflow: hidden;
-      padding: 4rem 2rem;
-      clip-path: polygon(0 0, 100% 0, 100% 85%, 0 100%);
+      overflow: hidden;      
+      padding: 7rem 2rem 4rem 2rem;
+      /* clip-path: polygon(0 0, 100% 0, 100% 95%, 0 100%); */
       animation: zoomIn 12s ease-in-out infinite alternate;
     }
     .hero-content {
@@ -419,8 +419,8 @@
   <section class="hero-section">    
     <div class="hero-content">
       <h1 class="display-5 fw-bold">
-        <span style="color: #ffffff">Bienvenido a </span>
-        <span style="color: #00cccc">Inmo</span>valor
+        <span style="color: #ffffff">Bienvenido {{ request.user.username }} a </span>
+        <span style="color: #c1f30b">Inmo</span>valor
       </h1>
       <p>
         Aquí podrás obtener una estimación precisa del valor de propiedades y
@@ -562,7 +562,7 @@
             />
           </div>
         </div>
-        <div class="col-lg-6 pt-5 pb-lg-5">
+        <div id="Forbes" class="col-lg-6 pt-5 pb-lg-5">
           <div class="about-text bg-white p-4 p-lg-5 my-lg-5">
             <h6 class="text-primary text-uppercase">Sobre Altaltium</h6>
             <h1 class="mb-3">Inversión inteligente en bienes raíces</h1>
@@ -736,7 +736,7 @@
         </style>
 
         <!-- Destination Start -->
-        <div class="container-fluid py-5 destination-section" id="destinations">
+        <div id="CDMX" class="container-fluid py-5 destination-section" id="destinations">
           <div class="container pt-5 pb-3">
             <div class="text-center mb-5 section-title">
               <h6 class="text-uppercase">DESCUBRE LAS ALCALDÍAS</h6>

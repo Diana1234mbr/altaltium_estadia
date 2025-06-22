@@ -110,3 +110,22 @@ class Propiedades(models.Model):
 
     def __str__(self):
         return f'{self.tipo_propiedad} en {self.calle}'
+    
+
+class GraficaAlcaldia(models.Model):
+    id_grafica = models.AutoField(primary_key=True)
+    grafica_alcaldia = models.CharField(max_length=100, null=True)
+    grafica_nombre = models.CharField(max_length=100, null=True)
+    grafica_cp = models.IntegerField(null=True)
+    grafica_prom_prop = models.DecimalField(max_digits=10, decimal_places=2, null=True)
+    grafica_prom_hey = models.DecimalField(max_digits=10, decimal_places=2, null=True)
+    grafica_prom_clau = models.DecimalField(max_digits=10, decimal_places=2, null=True)
+    grafica_prom_mud = models.DecimalField(max_digits=10, decimal_places=2, null=True)
+    grafica_prom_altal = models.DecimalField(max_digits=10, decimal_places=2, null=True)
+    grafica_promedio = models.DecimalField(max_digits=10, decimal_places=2, null=True)
+
+    def __str__(self):
+        return f"{self.grafica_alcaldia} - {self.grafica_promedio}"
+
+    class Meta:
+        db_table = 'graficas_alcaldias'

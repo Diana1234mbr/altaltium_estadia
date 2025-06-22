@@ -52,6 +52,7 @@
   }
 
   .navbar {
+
     background-color: var(--nav-bg) !important; /* Aseguramos que el navbar use el fondo correcto */
     transition: background-color 0.3s ease;
   }
@@ -233,8 +234,8 @@
             <a href="https://wa.me/5215549065428" target="_blank"><i class="fab fa-whatsapp"></i></a>
             <a href="https://www.youtube.com/@altaltium" target="_blank"><i class="fab fa-youtube"></i></a>
             <button class="theme-toggle" aria-label="Cambiar tema">
-              <i class="fas fa-sun"></i>
-            </button>
+              <i class="fas fa-sun" ></i>
+            </button>            
           </div>
         </div>
       </div>
@@ -263,7 +264,30 @@
             {% endif %}
             {% if user.is_authenticated %}
               <a href="/estimaciones" class="nav-item nav-link {% if request.path == '/estimaciones' %}active{% endif %}">Estimación</a>
-              <a href="/logout" class="nav-item nav-link" style="color: #ff4d4d;">Cerrar sesión</a>
+              <a href="/analisis" class="nav-item nav-link {% if request.path == '/analisis' %}active{% endif %}">Analisis de datos</a>
+              <li class="nav-item dropdown">
+              <a href="#" class="nav-link dropdown-toggle {% if '/estimaciones' in request.path %}active{% endif %}" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                Ver más
+              </a>
+              <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                <li><a class="dropdown-item" href="/#Forbes">Forbes</a></li>
+                <li><a class="dropdown-item" href="/#CDMX">CDMX</a></li>   
+                <li><a class="dropdown-item" href="{% url 'documentacion' %}">Documentación</a></li>
+
+             
+                <!-- Puedes agregar más enlaces aquí -->
+              </ul>
+            </li>
+            <li class="nav-item dropdown">
+              <a href="#" class="nav-link dropdown-toggle" id="navbarDropdown" role="button" data-bs-toggle="dropdown">
+                <img src="{{ request.user.profile_picture }}" alt="Foto" class="rounded-circle me-2" width="30" height="30">
+                {{ request.user.username }}
+              </a>
+              <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                <li><a class="dropdown-item" href="/logout" style="color: #ff4d4d;">Cerrar sesión</a></li>                
+                <!-- Puedes agregar más enlaces aquí -->
+              </ul>
+            </li>              
             {% else %}
               <a href="/signin" class="nav-item nav-link {% if request.path == '/signin' %}active{% endif %}">Iniciar sesión</a>
             {% endif %}

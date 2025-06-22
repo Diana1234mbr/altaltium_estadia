@@ -1,4 +1,5 @@
 from fpdf import FPDF
+
 from django.contrib.auth.hashers import make_password
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required, user_passes_test
@@ -8,10 +9,13 @@ from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.models import User
 from django.db import IntegrityError
 from django.http import Http404, JsonResponse, HttpResponse
-from .models import Estados, Municipios, Colonias, CodigosPostales, AlcaldiaVistas, Propiedades
+from .models import Estados, Municipios, Colonias, CodigosPostales, AlcaldiaVistas, Propiedades, GraficaAlcaldia
 from django.views.decorators.csrf import csrf_exempt
 from django.utils import timezone
 import json
+import matplotlib.pyplot as plt
+import io
+import base64
 
 # Decorador para verificar si es admin
 def admin_required(user):
@@ -222,6 +226,50 @@ def signin(request):
 def signout(request):
     logout(request)
     return redirect('signin')
+
+import matplotlib.pyplot as plt
+import io
+import base64
+from django.shortcuts import render
+from .models import GraficaAlcaldia
+from django.db.models import Avg
+
+def analisis(request):
+    # Obtener todas las alcaldías únicas y sus promedios desde la base de datos
+    alcaldias = GraficaAlcaldia.objects.values('grafica_alcaldia').distinct()
+    promedios = []
+    labels = []
+
+    for alcaldia in alcaldias:
+        alcaldia_nombre = alcaldia['grafica_alcaldia']
+        if alcaldia_nombre:  # Asegurarse de que no sea None
+            # Calcular el promedio de grafica_promedio para esa alcaldía
+            promedio = GraficaAlcaldia.objects.filter(grafica_alcaldia=alcaldia_nombre).aggregate(promedio=Avg('grafica_promedio'))
+            if promedio['promedio'] is not None:
+                promedios.append(float(promedio['promedio']))
+                labels.append(alcaldia_nombre)
+
+    if not promedios:
+        return render(request, 'analisis.html', {'error': 'No hay datos disponibles para las alcaldías.'})
+
+    # Crear la gráfica de pastel
+    plt.figure(figsize=(10, 10))
+    plt.pie(promedios, labels=labels, autopct='%1.1f%%', startangle=90)
+    plt.axis('equal')
+    plt.title('Promedio de Datos por Alcaldía')
+
+    # Guardar la gráfica en un buffer
+    buffer = io.BytesIO()
+    plt.savefig(buffer, format='png')
+    buffer.seek(0)
+    plt.close()
+
+    # Convertir la gráfica a base64
+    grafica_base64 = base64.b64encode(buffer.getvalue()).decode()
+    buffer.close()
+
+    # Pasar la gráfica a la plantilla
+    return render(request, 'analisis.html', {'grafica': grafica_base64})
 
 # Olvidé contraseña
 def forgot_password(request):
@@ -887,3 +935,7 @@ def gentelella_view(request, page):
         messages.error(request, f"Error inesperado: {str(e)}")
         return render(request, 'gentelella/page_404.html', status=404)
     
+#Vista para la documentación 
+
+def vista_documentacion(request):
+    return render(request, 'documentacion/doc.html')
