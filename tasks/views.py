@@ -1,5 +1,6 @@
 from fpdf import FPDF
-
+from django.db.models import Count
+from io import BytesIO
 from django.contrib.auth.hashers import make_password
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required, user_passes_test
@@ -13,6 +14,8 @@ from .models import Estados, Municipios, Colonias, CodigosPostales, AlcaldiaVist
 from django.views.decorators.csrf import csrf_exempt
 from django.utils import timezone
 import json
+import matplotlib
+matplotlib.use('Agg')  # ← Usa un backend que NO requiere interfaz gráfica
 import matplotlib.pyplot as plt
 import io
 import base64
@@ -434,12 +437,13 @@ def gentelella_view(request, page):
 
                 return redirect('gentelella_page', page='cal_colonia')
 
-            context = {
+            context.update({
                 'colonias': colonias,
                 'municipios': municipios,
                 'estados': estados,
-            }
+            })
 
+        # ================= EDITAR COLONIA ===================
         elif page == "editar_colonia":
             context['municipios'] = Municipios.objects.all()
             context['estados'] = Estados.objects.all()
@@ -482,7 +486,7 @@ def gentelella_view(request, page):
                     messages.error(request, "El precio promedio debe ser un número válido.")
                 return redirect('gentelella_page', page='editar_colonia', editar=id_colonia)
 
-        # ================ ESTADOS ====================
+        # ================= ESTADOS ===================
         elif page == "cal_estado":
             estados = Estados.objects.all()
             context['estados'] = estados
@@ -508,6 +512,7 @@ def gentelella_view(request, page):
                     messages.error(request, "Faltan datos para crear el estado.")
                 return redirect('gentelella_page', page='cal_estado')
 
+        # ================= EDITAR ESTADO ===================
         elif page == "editar_estado":
             if 'editar' in request.GET:
                 try:
@@ -535,7 +540,7 @@ def gentelella_view(request, page):
                     messages.error(request, "Ya existe un estado con ese nombre.")
                 return redirect('gentelella_page', page='editar_estado', editar=id_estado)
 
-        # ================= MUNICIPIOS ====================
+        # ================= MUNICIPIOS ===================
         elif page == "cal_municipio":
             municipios = Municipios.objects.select_related('id_estado').all()
             estados = Estados.objects.all()
@@ -567,6 +572,7 @@ def gentelella_view(request, page):
                     messages.error(request, "Faltan datos para crear el municipio.")
                 return redirect('gentelella_page', page='cal_municipio')
 
+        # ================= EDITAR MUNICIPIO ===================
         elif page == "editar_municipio":
             context['estados'] = Estados.objects.all()
             if 'editar' in request.GET:
@@ -600,7 +606,7 @@ def gentelella_view(request, page):
                     messages.error(request, "Ya existe un municipio con ese nombre.")
                 return redirect('gentelella_page', page='editar_municipio', editar=id_municipio)
 
-        # ================= CÓDIGOS POSTALES ====================
+        # ================= CÓDIGOS POSTALES ===================
         elif page == "cal_cp":
             codigos = CodigosPostales.objects.select_related('id_colonia').all()
             colonias = Colonias.objects.all()
@@ -622,32 +628,52 @@ def gentelella_view(request, page):
                 return redirect('gentelella_page', page='cal_cp')
 
             if request.method == 'POST' and 'editar' not in request.GET:
-                codigo_valor = request.POST.get('nombre')  # Nombre del input para el código
+                codigo_valor = request.POST.get('codigo')  # Cambiado de 'nombre' a 'codigo'
                 id_colonia = request.POST.get('id_colonia')
                 id_municipio = request.POST.get('id_municipio')
                 id_estado = request.POST.get('id_estado')
 
-                if codigo_valor and id_colonia and id_municipio and id_estado:
-                    try:
-                        colonia = Colonias.objects.get(id_colonia=id_colonia)
-                        municipio = Municipios.objects.get(id_municipio=id_municipio)
-                        estado = Estados.objects.get(id_estado=id_estado)
-                        CodigosPostales.objects.create(
-                            codigo=codigo_valor,
-                            id_colonia=colonia,
-                            id_municipio=municipio,
-                            id_estado=estado
-                        )
-                        messages.success(request, "Código postal creado correctamente.")
-                    except (Colonias.DoesNotExist, Municipios.DoesNotExist, Estados.DoesNotExist):
-                        messages.error(request, "Datos inválidos. Verifica colonia, municipio o estado.")
-                    except IntegrityError:
-                        messages.error(request, "Ya existe un código con ese valor en la colonia seleccionada.")
-                else:
-                    messages.error(request, "Faltan datos para crear el código.")
+                # Validar campos obligatorios
+                errors = []
+                if not codigo_valor:
+                    errors.append("El código postal es obligatorio.")
+                if not id_colonia:
+                    errors.append("La colonia es obligatoria.")
+                if len(codigo_valor) > 5:
+                    errors.append("El código postal no puede exceder 5 caracteres.")
+
+                if errors:
+                    for error in errors:
+                        messages.error(request, error)
+                    return redirect('gentelella_page', page='cal_cp')
+
+                try:
+                    # Obtener instancias de modelos
+                    colonia = Colonias.objects.get(id_colonia=id_colonia)
+                    municipio = Municipios.objects.get(id_municipio=id_municipio) if id_municipio else None
+                    estado = Estados.objects.get(id_estado=id_estado) if id_estado else None
+
+                    # Crear el código postal
+                    CodigosPostales.objects.create(
+                        codigo=codigo_valor,
+                        id_colonia=colonia,
+                        id_municipio=municipio,
+                        id_estado=estado
+                    )
+                    messages.success(request, "Código postal creado correctamente.")
+                except Colonias.DoesNotExist:
+                    messages.error(request, "La colonia seleccionada no existe.")
+                except Municipios.DoesNotExist:
+                    messages.error(request, "El municipio seleccionado no existe.")
+                except Estados.DoesNotExist:
+                    messages.error(request, "El estado seleccionado no existe.")
+                except IntegrityError:
+                    messages.error(request, "Ya existe un código postal con ese valor para la colonia seleccionada.")
+                except ValueError as e:
+                    messages.error(request, f"Error en los datos proporcionados: {str(e)}")
                 return redirect('gentelella_page', page='cal_cp')
 
-
+        # ================= EDITAR CÓDIGO POSTAL ===================
         elif page == "editar_cp":
             context['colonias'] = Colonias.objects.all()
             context['municipios'] = Municipios.objects.all()
@@ -690,12 +716,14 @@ def gentelella_view(request, page):
                     messages.error(request, "Ya existe un código con ese valor.")
                 return redirect('gentelella_page', page='editar_cp', editar=id_codigo_postal)
 
-            
-            # ================ PROPIEDADES ====================
+        # ================= PROPIEDADES ===================
         elif page == "cal_estimaciones":
             propiedades = Propiedades.objects.select_related('id_estado', 'id_municipio', 'id_colonia', 'id_codigo_postal').all()
             context['propiedades'] = propiedades
-            
+            context['estados'] = Estados.objects.all()
+            context['municipios'] = Municipios.objects.all()
+            context['colonias'] = Colonias.objects.all()
+            context['codigos_postales'] = CodigosPostales.objects.all()
 
             # Eliminar propiedad
             if 'eliminar' in request.GET:
@@ -707,7 +735,7 @@ def gentelella_view(request, page):
                     messages.error(request, f"No se encontró la propiedad con ID {request.GET['eliminar']}.")
                 return redirect('gentelella_page', page='cal_estimaciones')
 
-            # Crear propiedad (simplificado: ajusta según tus campos obligatorios)
+            # Crear propiedad
             if request.method == 'POST' and 'editar' not in request.GET:
                 try:
                     nueva = Propiedades(
@@ -733,9 +761,7 @@ def gentelella_view(request, page):
                     messages.success(request, "Propiedad creada correctamente.")
                 except Exception as e:
                     messages.error(request, f"Error al crear la propiedad: {str(e)}")
-
-                return redirect('gentelella_page', page='cal_estimaciones')                        
-            
+                return redirect('gentelella_page', page='cal_estimaciones')
 
             # Generar reporte PDF de todas las propiedades
             if 'generar_reporte_todos' in request.GET:
@@ -748,8 +774,7 @@ def gentelella_view(request, page):
                 pdf.cell(200, 10, txt="Reporte de Todas las Propiedades", ln=True, align='C')
                 for prop in propiedades:
                     pdf.cell(200, 10, txt=f"ID: {prop.id_propiedad} - Tipo: {prop.tipo_propiedad} - Calle: {prop.calle}", ln=True)
-                # Cambia output para devolver el contenido como string
-                response.write(pdf.output(dest='S').encode('latin-1'))  # 'S' devuelve el PDF como string
+                response.write(pdf.output(dest='S').encode('latin-1'))
                 print("Reporte generado exitosamente.")
                 return response
 
@@ -767,15 +792,14 @@ def gentelella_view(request, page):
                     pdf.cell(200, 10, txt=f"Reporte de Propiedad ID: {propiedad.id_propiedad}", ln=True, align='C')
                     pdf.cell(200, 10, txt=f"Tipo: {propiedad.tipo_propiedad}", ln=True)
                     pdf.cell(200, 10, txt=f"Calle: {propiedad.calle}", ln=True)
-                    # Cambia output para devolver el contenido como string
-                    response.write(pdf.output(dest='S').encode('latin-1'))  # 'S' devuelve el PDF como string
+                    response.write(pdf.output(dest='S').encode('latin-1'))
                     print(f"Reporte individual generado para ID: {propiedad_id}")
                     return response
                 except Propiedades.DoesNotExist:
                     messages.error(request, f"No se encontró la propiedad con ID {propiedad_id}.")
                     return redirect('gentelella_page', page='cal_estimaciones')
 
-        #Funcion para editar estimacion
+        # ================= EDITAR ESTIMACIÓN ===================
         elif page == "editar_estimacion":
             if 'editar' in request.GET:
                 try:
@@ -835,8 +859,7 @@ def gentelella_view(request, page):
                     messages.error(request, f"Error al actualizar la propiedad: {str(e)}")
                 return redirect('gentelella_page', page='editar_estimacion', editar=id_propiedad)
 
-
-# ================= USUARIOS ====================
+        # ================= USUARIOS ===================
         elif page == "cal_usuarios":
             try:
                 usuarios = User.objects.all()
@@ -883,12 +906,12 @@ def gentelella_view(request, page):
 
                 return redirect('gentelella_page', page='cal_usuarios')
 
-            context = {
+            context.update({
                 'usuarios': usuarios,
-            }
+            })
             print(f"DEBUG: Contexto enviado: {context}")
 
-        # ================= EDITAR USUARIO ====================
+        # ================= EDITAR USUARIO ===================
         elif page == "editar_usuario":
             if 'editar' in request.GET:
                 try:
@@ -928,6 +951,53 @@ def gentelella_view(request, page):
                     messages.error(request, "El nombre de usuario o correo ya existe.")
                 return redirect('gentelella_page', page='editar_usuario', editar=id_usuario)
 
+        # ================= INDEX (Dashboard) ===================
+        elif page == 'index':
+            # Contadores para el dashboard
+            total_usuarios = User.objects.count()
+            total_estados = Estados.objects.count()
+            total_municipios = Municipios.objects.count()
+            total_colonias = Colonias.objects.count()
+            total_cp = CodigosPostales.objects.count()
+            total_propiedades = Propiedades.objects.count()
+
+            # Gráfico: Estados con más municipios
+            estados_municipios = Estados.objects.annotate(
+                total=Count('municipios')  # Usa 'municipios' si tienes related_name
+            ).order_by('-total')[:10]
+
+            estados = [e.nombre for e in estados_municipios]
+            totales = [e.total for e in estados_municipios]
+
+            # Generar gráfico con Matplotlib
+            plt.figure(figsize=(8, 4))
+            plt.barh(estados, totales, color='skyblue')
+            plt.title('Top Estados con Más Municipios')
+            plt.xlabel('Cantidad de Municipios')
+            plt.tight_layout()
+            plt.gca().invert_yaxis()
+
+            # Guardar gráfico en memoria
+            buffer = BytesIO()
+            plt.savefig(buffer, format='png')
+            buffer.seek(0)
+            image_png = buffer.getvalue()
+            buffer.close()
+            grafico_base64 = base64.b64encode(image_png).decode('utf-8')
+            plt.close()
+
+            # Actualizar contexto
+            context.update({
+                'total_usuarios': total_usuarios,
+                'total_estados': total_estados,
+                'total_municipios': total_municipios,
+                'total_colonias': total_colonias,
+                'total_cp': total_cp,
+                'total_propiedades': total_propiedades,
+                'grafico_base64': grafico_base64,
+            })
+
+        # Renderizar la plantilla correspondiente
         return render(request, f'gentelella/{page}.html', context)
 
     except Exception as e:

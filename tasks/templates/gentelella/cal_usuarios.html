@@ -242,10 +242,10 @@
                             <img src="{% static 'images/img.jpg' %}" alt="..." class="img-circle profile_img">
                         </div>
                         <div class="profile_info">
-                            <span>Welcome,</span>
-                            <h2>John Doe</h2>
-                        </div>
-                    </div>
+							<span>Bienvenido</span>
+							<h2>{{request.user.username}}</h2>
+						</div>
+					</div>
                     <br />
                     <!-- sidebar menu -->
                     <div id="sidebar-menu" class="main_menu_side hidden-print main_menu">
@@ -395,7 +395,7 @@
                             <li class="nav-item dropdown open" style="padding-left: 15px;">
                                 <a href="javascript:;" class="user-profile dropdown-toggle" aria-haspopup="true"
                                     id="navbarDropdown" data-toggle="dropdown" aria-expanded="false">
-                                    <img src="{% static 'images/img.jpg' %}" alt="">John Doe
+                                    <img src="images/img.jpg" alt="">{{ request.user.username }}
                                 </a>
                                 <div class="dropdown-menu dropdown-usermenu pull-right"
                                     aria-labelledby="navbarDropdown">
