@@ -129,7 +129,7 @@ STATIC_URL = 'static/'
 
 STATICFILES_DIRS = [BASE_DIR / 'static']
 
-
+STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 LOGIN_URL = '/signin'
 
@@ -138,3 +138,15 @@ LOGIN_URL = '/signin'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+# settings.py
+
+
+# settings.py
+AUTHENTICATION_BACKENDS = [
+    'tasks.auth_backend.PlainTextAuthBackend',    # Para compatibilidad
+]

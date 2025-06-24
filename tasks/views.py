@@ -1,3 +1,5 @@
+from django.db.models import Avg
+from django.urls import reverse
 from fpdf import FPDF
 from django.db.models import Count
 from io import BytesIO
@@ -5,12 +7,10 @@ from django.contrib.auth.hashers import make_password
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.shortcuts import render, redirect
-from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth import login, logout, authenticate
-from django.contrib.auth.models import User
 from django.db import IntegrityError
 from django.http import Http404, JsonResponse, HttpResponse
-from .models import Estados, Municipios, Colonias, CodigosPostales, AlcaldiaVistas, Propiedades, GraficaAlcaldia
+from .models import Estados, Municipios, Colonias, CodigosPostales, AlcaldiaVistas, Propiedades, GraficaAlcaldia, Usuarios
 from django.views.decorators.csrf import csrf_exempt
 from django.utils import timezone
 import json
@@ -21,37 +21,49 @@ import io
 import base64
 
 # Decorador para verificar si es admin
-def admin_required(user):
-    return user.is_staff or user.is_superuser
+def admin_required(usuario):
+    return usuario.is_staff or usuario.is_superuser
 
 # Registro de usuarios
 def signup(request):
     if request.method == 'GET':
-        return render(request, 'signup.html', {"form": UserCreationForm})
+        return render(request, 'signup.html')
     else:
         if request.POST["password1"] == request.POST["password2"]:
             try:
-                user = User.objects.create_user(
+                nuevo_usuario = Usuarios(
                     username=request.POST["username"],
-                    password=request.POST["password1"],
+                    password=request.POST["password1"],  # ⚠️ Texto plano
                     email=request.POST["email"],
-                    first_name=request.POST["nombre"]
+                    first_name=request.POST["nombre"],
+                    last_name=request.POST.get("apellido", ""),  # opcional
+                    is_staff=0,
+                    is_superuser=0,
+                    is_active=1
                 )
-                user.save()
-                login(request, user)
+                nuevo_usuario.save()
+                # Aquí puedes hacer login manual si lo deseas
                 return redirect('signin')
             except IntegrityError:
                 return render(request, 'signup.html', {
-                    "form": UserCreationForm,
                     "error": "El nombre de usuario ya existe."
                 })
         return render(request, 'signup.html', {
-            "form": UserCreationForm,
             "error": "Las contraseñas no coinciden."
         })
 
+
 # Estimaciones de propiedades
-def estimaciones(request):
+def estimaciones(request):    
+    usuario = None
+    usuario_id = request.session.get('usuario_id')
+    if usuario_id:
+        try:
+            usuario = Usuarios.objects.get(id=usuario_id)
+        except Usuarios.DoesNotExist:
+            usuario = None    
+    
+
     if request.method == 'POST':
         # Obtener los datos del formulario
         tipo_propiedad = request.POST.get('tipo_propiedad')
@@ -118,11 +130,11 @@ def estimaciones(request):
 
             # Coeficientes por estado de conservación
             coef_conservacion = {
-                'Muy bueno': 0.0625,
-                'Bueno': 0.0625,
-                'Regular': 0.01375,
-                'Malo': 0.01855,
-                'Muy malo': 1
+                'Muy bueno': 0.08500,
+                'Bueno': 1,
+                'Regular': 0.08500,
+                'Malo': 0.13000,
+                'Muy malo': 0.25000
             }
 
             # Cálculo 1: valor inicial
@@ -193,49 +205,47 @@ def estimaciones(request):
         'codigos_postales': CodigosPostales.objects.all(),
         'propiedades': Propiedades.objects.all(),
         'datos_alcaldia': AlcaldiaVistas.objects.all(),
+        'usuario': usuario,
     }
     return render(request, 'estimaciones.html', context)
 
 # Inicio de sesión
 def signin(request):
     if request.method == 'GET':
-        return render(request, 'signin.html', {"form": AuthenticationForm()})
-    else:
-        input_value = request.POST['username']
-        password = request.POST['password']
+        return render(request, 'signin.html')
 
-        user = authenticate(request, username=input_value, password=password)
+    input_value = request.POST.get('username', '').strip()
+    password = request.POST.get('password', '').strip()    
 
-        if user is None:
-            try:
-                user_obj = User.objects.get(email=input_value)
-                user = authenticate(request, username=user_obj.username, password=password)
-            except User.DoesNotExist:
-                user = None
+    user_obj = None
+    try:
+        user_obj = Usuarios.objects.get(username=input_value)
+    except Usuarios.DoesNotExist:
+        try:
+            user_obj = Usuarios.objects.get(email=input_value)
+        except Usuarios.DoesNotExist:
+            user_obj = None
 
-        if user is not None:
-            login(request, user)
-            if user.is_staff or user.is_superuser:
-                return redirect('gentelella_page', page='index')  # Dashboard admin
-            else:
-                return redirect('welcome')  # Usuario normal
+    if user_obj and user_obj.password == password and user_obj.is_active:
+        request.session['usuario_id'] = user_obj.id
+        
+
+        if user_obj.is_staff or user_obj.is_superuser:
+            return redirect('gentelella_page', page='index')  # Dashboard admin
         else:
-            return render(request, 'signin.html', {
-                "form": AuthenticationForm(),
-                "error": "Usuario o contraseña incorrectos."
-            })
+            return redirect('welcome')
+
+    return render(request, 'signin.html', {
+        "error": "Usuario o contraseña incorrectos."
+    })
+
+
 
 # Cerrar sesión
 def signout(request):
     logout(request)
     return redirect('signin')
 
-import matplotlib.pyplot as plt
-import io
-import base64
-from django.shortcuts import render
-from .models import GraficaAlcaldia
-from django.db.models import Avg
 
 def analisis(request):
     # Obtener todas las alcaldías únicas y sus promedios desde la base de datos
@@ -280,13 +290,27 @@ def forgot_password(request):
 
 # Página de bienvenida
 def welcome(request):
+    usuario_id = request.session.get('usuario_id')
+    usuario = None
+
+    if usuario_id:
+        try:                        
+            usuario = Usuarios.objects.get(id=usuario_id)
+        except Usuarios.DoesNotExist:
+            usuario = None
+
     images_auth = ["casa5.png", "casa6.png", "casa1.png", "casa2.png", "casa3.png", "casa4.png"]
     images_guest = ["Altatium.png", "forbes.png"]
+
     context = {
+        "usuario": usuario,
         "images_auth": images_auth,
-        "images_guest": images_guest
+        "images_guest": images_guest,
     }
+
     return render(request, "welcome.html", context)
+
+
 
 # Vistas de alcaldías
 def vista_benito_juarez(request):
@@ -389,11 +413,27 @@ def obtener_codigos_postales(request):
         return JsonResponse({'error': str(e)}, status=400)
 
 # Vista principal para panel admin
-@login_required
-@user_passes_test(admin_required)
+
 def gentelella_view(request, page):
-    try:
+        usuario_id = request.session.get('usuario_id')
+
+        if not usuario_id:
+            return redirect('signin')
+
         context = {}
+
+        try:
+            usuario = Usuarios.objects.get(id=usuario_id)
+            context['usuario'] = usuario
+        except Usuarios.DoesNotExist:
+            return redirect('signin')
+        except Exception as e:
+            print(f"Error: {str(e)}")
+            messages.error(request, f"Error inesperado: {str(e)}")
+            return render(request, 'gentelella/page_404.html', context, status=404)
+
+        if not (usuario.is_staff or usuario.is_superuser):
+            return HttpResponse("No tienes permisos para acceder al panel admin.", status=403)
 
         # ================= COLONIAS ===================
         if page == "cal_colonia":
@@ -501,7 +541,7 @@ def gentelella_view(request, page):
                 return redirect('gentelella_page', page='cal_estado')
 
             if request.method == 'POST' and 'editar' not in request.GET:
-                nombre = request.POST.get('nombre')
+                nombre = request.POST.get('nombre', '').strip()
                 if nombre:
                     try:
                         Estados.objects.create(nombre=nombre)
@@ -538,7 +578,7 @@ def gentelella_view(request, page):
                     messages.error(request, f"No se encontró el estado con ID {id_estado}.")
                 except IntegrityError:
                     messages.error(request, "Ya existe un estado con ese nombre.")
-                return redirect('gentelella_page', page='editar_estado', editar=id_estado)
+                return redirect(f"{reverse('gentelella_page', kwargs={'page': 'editar_estado'})}?editar={id_estado}")
 
         # ================= MUNICIPIOS ===================
         elif page == "cal_municipio":
@@ -862,7 +902,7 @@ def gentelella_view(request, page):
         # ================= USUARIOS ===================
         elif page == "cal_usuarios":
             try:
-                usuarios = User.objects.all()
+                usuarios = Usuarios.objects.all()
                 print(f"DEBUG: Usuarios recuperados: {list(usuarios)}")
                 print(f"DEBUG: Número de usuarios: {usuarios.count()}")
             except Exception as e:
@@ -871,10 +911,10 @@ def gentelella_view(request, page):
 
             if 'eliminar' in request.GET:
                 try:
-                    usuario = User.objects.get(id=request.GET['eliminar'])
+                    usuario = Usuarios.objects.get(id=request.GET['eliminar'])
                     usuario.delete()
                     messages.success(request, "Usuario eliminado correctamente.")
-                except User.DoesNotExist:
+                except Usuarios.DoesNotExist:
                     messages.error(request, f"No se encontró el usuario con ID {request.GET['eliminar']}.")
                 return redirect('gentelella_page', page='cal_usuarios')
 
@@ -888,11 +928,11 @@ def gentelella_view(request, page):
                 if username and first_name and email and password1 and password2:
                     if password1 == password2:
                         try:
-                            User.objects.create(
+                            Usuarios.objects.create(
                                 username=username,
                                 first_name=first_name,
                                 email=email,
-                                password=make_password(password1),
+                                password=password1,
                                 is_active=True,
                                 date_joined=timezone.now()
                             )
@@ -915,16 +955,16 @@ def gentelella_view(request, page):
         elif page == "editar_usuario":
             if 'editar' in request.GET:
                 try:
-                    usuario_editar = User.objects.get(id=request.GET['editar'])
+                    usuario_editar = Usuarios.objects.get(id=request.GET['editar'])
                     context['usuario_editar'] = usuario_editar
-                except User.DoesNotExist:
+                except Usuarios.DoesNotExist:
                     messages.error(request, f"No se encontró el usuario con ID {request.GET['editar']}.")
                     return redirect('gentelella_page', page='cal_usuarios')
 
             if request.method == 'POST':
                 id_usuario = request.POST.get('id_usuario')
                 try:
-                    usuario = User.objects.get(id=id_usuario)
+                    usuario = Usuarios.objects.get(id=id_usuario)
                     username = request.POST.get('username')
                     first_name = request.POST.get('nombre')
                     email = request.POST.get('email')
@@ -936,16 +976,20 @@ def gentelella_view(request, page):
                         usuario.first_name = first_name
                         usuario.email = email
                         if password1 and password2 and password1 == password2:
-                            usuario.password = make_password(password1)
+                            usuario.password = password1
                         elif password1 or password2:
                             messages.error(request, "Las contraseñas no coinciden o están incompletas.")
                             return redirect('gentelella_page', page='editar_usuario', editar=id_usuario)
+                        
+                        if 'profile_picture' in request.FILES:
+                            usuario.profile_picture = request.FILES['profile_picture']
+
                         usuario.save()
                         messages.success(request, "Usuario actualizado correctamente.")
                         return redirect('gentelella_page', page='cal_usuarios')
                     else:
                         messages.error(request, "Faltan datos para actualizar el usuario.")
-                except User.DoesNotExist:
+                except Usuarios.DoesNotExist:
                     messages.error(request, f"No se encontró el usuario con ID {id_usuario}.")
                 except IntegrityError:
                     messages.error(request, "El nombre de usuario o correo ya existe.")
@@ -954,7 +998,7 @@ def gentelella_view(request, page):
         # ================= INDEX (Dashboard) ===================
         elif page == 'index':
             # Contadores para el dashboard
-            total_usuarios = User.objects.count()
+            total_usuarios = Usuarios.objects.count()
             total_estados = Estados.objects.count()
             total_municipios = Municipios.objects.count()
             total_colonias = Colonias.objects.count()
@@ -1000,12 +1044,22 @@ def gentelella_view(request, page):
         # Renderizar la plantilla correspondiente
         return render(request, f'gentelella/{page}.html', context)
 
-    except Exception as e:
-        print(f"Error: {str(e)}")
-        messages.error(request, f"Error inesperado: {str(e)}")
-        return render(request, 'gentelella/page_404.html', status=404)
     
 #Vista para la documentación 
 
 def vista_documentacion(request):
-    return render(request, 'documentacion/doc.html')
+    usuario_id = request.session.get('usuario_id')
+    usuario = None
+
+    if usuario_id:
+        try:                        
+            usuario = Usuarios.objects.get(id=usuario_id)
+        except Usuarios.DoesNotExist:
+            usuario = None
+
+
+    context = {
+        'usuario': usuario,
+        # otros datos si tienes
+    }    
+    return render(request, 'documentacion/doc.html', context)

@@ -273,7 +273,7 @@
 <div class="animated-gradient"></div>
 
 <!-- Carrusel de fondo (solo para usuarios no autenticados) -->
-{% if not user.is_authenticated %}
+{% if not usuario %}
 <div
   id="carouselWelcome"
   class="carousel slide carousel-background"
@@ -293,7 +293,7 @@
 {% endif %}
 
 <!-- Contenido principal (según estado de autenticación) -->
-{% if user.is_authenticated %}
+{% if usuario %}
 <style>
     :root {
       --black: #000000;
@@ -419,8 +419,8 @@
   <section class="hero-section">    
     <div class="hero-content">
       <h1 class="display-5 fw-bold">
-        <span style="color: #ffffff">Bienvenido {{ request.user.username }} a </span>
-        <span style="color: #c1f30b">Inmo</span>valor
+        <span style="color: #ffffff">Bienvenido {{ usuario.username}} a </span>
+        <span style="color: #a1ebeb">Inmo</span>valor
       </h1>
       <p>
         Aquí podrás obtener una estimación precisa del valor de propiedades y
@@ -451,7 +451,7 @@
     </a>
   </div>
 </div>
-{% endif %} {% if user.is_authenticated %}
+{% endif %} {% if usuario %}
 <!-- Contenido extra -->
 <div class="extra-content">
   <!-- About Start -->

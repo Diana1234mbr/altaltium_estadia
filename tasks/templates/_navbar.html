@@ -257,12 +257,12 @@
         </button>
         <div class="collapse navbar-collapse justify-content-between px-3" id="navbarCollapse">
           <div class="navbar-nav ms-auto py-0">
-            {% if user.is_authenticated and user.is_staff %}
+            {% if usuario and usuario.is_staff %}
               <a href="{% url 'gentelella_page' page='index' %}" class="nav-item nav-link {% if '/admin-panel/index2/' in request.path %}active{% endif %}">Inicio</a>
             {% else %}
               <a href="/" class="nav-item nav-link {% if request.path == '/' %}active{% endif %}">Inicio</a>
             {% endif %}
-            {% if user.is_authenticated %}
+            {% if usuario %}
               <a href="/estimaciones" class="nav-item nav-link {% if request.path == '/estimaciones' %}active{% endif %}">Estimación</a>
               <a href="/analisis" class="nav-item nav-link {% if request.path == '/analisis' %}active{% endif %}">Analisis de datos</a>
               <li class="nav-item dropdown">
@@ -280,8 +280,10 @@
             </li>
             <li class="nav-item dropdown">
               <a href="#" class="nav-link dropdown-toggle" id="navbarDropdown" role="button" data-bs-toggle="dropdown">
-                <img src="{{ request.user.profile_picture }}" alt="Foto" class="rounded-circle me-2" width="30" height="30">
-                {{ request.user.username }}
+                {% if usuario %}
+                  <img src="{{ usuario.profile_picture.url }}" class="rounded-circle me-2" width="30" height="30" alt="Foto de perfil">
+                  {{ usuario.username }}
+                {% endif %}
               </a>
               <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
                 <li><a class="dropdown-item" href="/logout" style="color: #ff4d4d;">Cerrar sesión</a></li>                

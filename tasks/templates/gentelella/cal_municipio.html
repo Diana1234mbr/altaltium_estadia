@@ -233,17 +233,17 @@
                 <div class="left_col scroll-view">
                     <div class="navbar nav_title" style="border: 0;">
                         <a href="{% url 'gentelella_page' page='index' %}" class="site_title"><i class="fa fa-paw"></i>
-                            <span>Gentelella Alela!</span></a>
+                            <span>InmoValor!</span></a>
                     </div>
                     <div class="clearfix"></div>
                     <!-- menu profile quick info -->
                     <div class="profile clearfix">
                         <div class="profile_pic">
-                            <img src="{% static 'images/img.jpg' %}" alt="..." class="img-circle profile_img">
+                            <img src="{{ usuario.profile_picture.url }}" alt="Foto de perfil" class="img-circle profile_img">
                         </div>
                         <div class="profile_info">
 							<span>Bienvenido</span>
-							<h2>{{request.user.username}}</h2>
+							{{ usuario.username }}
 						</div>
 					</div>
                     <br />
@@ -395,7 +395,7 @@
                             <li class="nav-item dropdown open" style="padding-left: 15px;">
                                 <a href="javascript:;" class="user-profile dropdown-toggle" aria-haspopup="true"
                                     id="navbarDropdown" data-toggle="dropdown" aria-expanded="false">
-                                    <img src="images/img.jpg" alt="">{{ request.user.username }}
+                                    <img src="{{ usuario.profile_picture.url }}" alt="">{{ usuario.username }}
                                 </a>
                                 <div class="dropdown-menu dropdown-usermenu pull-right"
                                     aria-labelledby="navbarDropdown">
