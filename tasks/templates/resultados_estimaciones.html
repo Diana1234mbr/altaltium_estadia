@@ -1,418 +1,559 @@
 {% block content %}
 <!DOCTYPE html>
 <html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Inmovalor | Resultados de Evaluación</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        primary: '#003035',
-                        secondary: '#008a8a',
-                        accent: '#00cccc',
-                        lightaccent: '#52b3c0',
-                        dark: '#0d1d1f',
-                        black: '#000000',
-                        lightgray: '#bfc6c7',
-                        gray: '#949797',
-                        white: '#ffffff',
-                        offwhite: '#f8fafc',
-                        softgray: '#e5e7eb'
-                    },
-                    fontFamily: {
-                        sans: ['Montserrat', 'sans-serif']
-                    },
-                    boxShadow: {
-                        'custom': '0 6px 20px rgba(0,0,0,0.1)',
-                        'custom-hover': '0 12px 32px rgba(0,0,0,0.15)'
-                    },
-                    animation: {
-                        'fade-in': 'fadeIn 0.6s ease-out',
-                        'slide-up': 'slideUp 0.5s ease-out',
-                        'pulse-scale': 'pulseScale 1.5s infinite'
-                    },
-                    keyframes: {
-                        fadeIn: {
-                            '0%': { opacity: '0' },
-                            '100%': { opacity: '1' }
-                        },
-                        slideUp: {
-                            '0%': { transform: 'translateY(20px)', opacity: '0' },
-                            '100%': { transform: 'translateY(0)', opacity: '1' }
-                        },
-                        pulseScale: {
-                            '0%, 100%': { transform: 'scale(1)' },
-                            '50%': { transform: 'scale(1.05)' }
-                        }
-                    }
-                }
-            }
-        }
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              primary: "#003035",
+              secondary: "#008a8a",
+              accent: "#00cccc",
+              lightaccent: "#52b3c0",
+              dark: "#0d1d1f",
+              black: "#000000",
+              lightgray: "#bfc6c7",
+              gray: "#949797",
+              white: "#ffffff",
+              offwhite: "#f8fafc",
+              softgray: "#e5e7eb",
+            },
+            fontFamily: {
+              sans: ["Montserrat", "sans-serif"],
+            },
+            boxShadow: {
+              custom: "0 6px 20px rgba(0,0,0,0.1)",
+              "custom-hover": "0 12px 32px rgba(0,0,0,0.15)",
+            },
+            animation: {
+              "fade-in": "fadeIn 0.6s ease-out",
+              "slide-up": "slideUp 0.5s ease-out",
+              "pulse-scale": "pulseScale 1.5s infinite",
+            },
+            keyframes: {
+              fadeIn: {
+                "0%": { opacity: "0" },
+                "100%": { opacity: "1" },
+              },
+              slideUp: {
+                "0%": { transform: "translateY(20px)", opacity: "0" },
+                "100%": { transform: "translateY(0)", opacity: "1" },
+              },
+              pulseScale: {
+                "0%, 100%": { transform: "scale(1)" },
+                "50%": { transform: "scale(1.05)" },
+              },
+            },
+          },
+        },
+      };
     </script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
     <style>
-        body {
-            font-family: 'Montserrat', sans-serif;
-            background: linear-gradient(180deg, #ffffff 0%, #e5e7eb 100%);
-            color: #0d1d1f;
-            scroll-behavior: smooth;
-        }
+      body {
+        font-family: "Montserrat", sans-serif;
+        background: linear-gradient(180deg, #ffffff 0%, #e5e7eb 100%);
+        color: #0d1d1f;
+        scroll-behavior: smooth;
+      }
 
-        .gradient-bg {
-            background: linear-gradient(90deg, #003035 0%, #008a8a 100%);
-            position: relative;
-            overflow: hidden;
-        }
+      .gradient-bg {
+        background: linear-gradient(90deg, #003035 0%, #008a8a 100%);
+        position: relative;
+        overflow: hidden;
+      }
 
-        .gradient-bg::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: radial-gradient(circle, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0) 70%);
-            pointer-events: none;
-        }
+      .gradient-bg::after {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: radial-gradient(
+          circle,
+          rgba(255, 255, 255, 0.2) 0%,
+          rgba(255, 255, 255, 0) 70%
+        );
+        pointer-events: none;
+      }
 
-        .card {
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-            background: #ffffff;
-            border-radius: 16px;
-            border: 1px solid rgba(0,204,204,0.1);
-            overflow: hidden;
-        }
+      .card {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        background: #ffffff;
+        border-radius: 16px;
+        border: 1px solid rgba(0, 204, 204, 0.1);
+        overflow: hidden;
+      }
 
-        .card:hover {
-            transform: translateY(-6px);
-            box-shadow: 0 12px 32px rgba(0,0,0,0.15);
-        }
+      .card:hover {
+        transform: translateY(-6px);
+        box-shadow: 0 12px 32px rgba(0, 0, 0, 0.15);
+      }
 
+      .map-container {
+        height: 100%;
+        min-height: 320px;
+        border-radius: 16px;
+        overflow: hidden;
+        position: relative;
+      }
+
+      #map {
+        height: 100%;
+        width: 100%;
+      }
+
+      .map-overlay {
+        position: absolute;
+        inset: 0;
+        background: rgba(0, 204, 204, 0.15);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+      }
+
+      .map-container:hover .map-overlay {
+        opacity: 1;
+      }
+
+      .value-pill {
+        display: inline-block;
+        padding: 0.75rem 1.75rem;
+        border-radius: 9999px;
+        font-weight: 600;
+        font-size: 1.25rem;
+        background: linear-gradient(45deg, #00cccc 0%, #52b3c0 100%);
+        color: #ffffff;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+      }
+
+      .value-pill:hover {
+        transform: scale(1.05);
+        box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+      }
+
+      .button {
+        transition: background-color 0.3s ease, transform 0.2s ease,
+          box-shadow 0.2s ease;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      }
+
+      .button:hover {
+        transform: scale(1.05);
+        box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+      }
+
+      .detail-item {
+        transition: background-color 0.3s ease;
+      }
+
+      .detail-item:hover {
+        background-color: rgba(0, 204, 204, 0.05);
+      }
+
+      @media (min-width: 640px) {
         .map-container {
-            height: 100%;
-            min-height: 320px;
-            border-radius: 16px;
-            overflow: hidden;
-            position: relative;
+          min-height: 340px;
         }
-
-        #map {
-            height: 100%;
-            width: 100%;
-        }
-
-        .map-overlay {
-            position: absolute;
-            inset: 0;
-            background: rgba(0,204,204,0.15);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            opacity: 0;
-            transition: opacity 0.3s ease;
-        }
-
-        .map-container:hover .map-overlay {
-            opacity: 1;
-        }
-
         .value-pill {
-            display: inline-block;
-            padding: 0.75rem 1.75rem;
-            border-radius: 9999px;
-            font-weight: 600;
-            font-size: 1.25rem;
-            background: linear-gradient(45deg, #00cccc 0%, #52b3c0 100%);
-            color: #ffffff;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
+          font-size: 1.5rem;
         }
+      }
 
-        .value-pill:hover {
-            transform: scale(1.05);
-            box-shadow: 0 6px 16px rgba(0,0,0,0.15);
+      @media (min-width: 1024px) {
+        .map-container {
+          min-height: 380px;
         }
-
-        .button {
-            transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.2s ease;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        .value-pill {
+          font-size: 1.75rem;
         }
-
-        .button:hover {
-            transform: scale(1.05);
-            box-shadow: 0 6px 16px rgba(0,0,0,0.15);
-        }
-
-        .detail-item {
-            transition: background-color 0.3s ease;
-        }
-
-        .detail-item:hover {
-            background-color: rgba(0,204,204,0.05);
-        }
-
-        @media (min-width: 640px) {
-            .map-container {
-                min-height: 340px;
-            }
-            .value-pill {
-                font-size: 1.5rem;
-            }
-        }
-
-        @media (min-width: 1024px) {
-            .map-container {
-                min-height: 380px;
-            }
-            .value-pill {
-                font-size: 1.75rem;
-            }
-        }
+      }
     </style>
-</head>
-<body class="min-h-screen flex flex-col">
+  </head>
+  <body class="min-h-screen flex flex-col">
     <!-- Header -->
     <header class="gradient-bg text-white py-5 shadow-lg">
-        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
-            <h1 class="text-3xl md:text-4xl font-extrabold text-center animate-slide-up">
-                <i class="fas fa-home mr-3"></i> Inmovalor
-            </h1>
-        </div>
+      <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+        <h1
+          class="text-3xl md:text-4xl font-extrabold text-center animate-slide-up"
+        >
+          <i class="fas fa-home mr-3"></i> Inmovalor
+        </h1>
+      </div>
     </header>
 
     <!-- Banner de Dirección -->
-    <div class="bg-offwhite py-4 px-4 sm:px-6 lg:px-8 border-b border-softgray animate-slide-up">
-        <div class="container mx-auto">
-            <div class="flex items-center">
-                <i class="fas fa-map-marker-alt text-accent mr-4 text-xl"></i>
-                <div>
-                    <p class="font-semibold text-dark text-base">
-                        {{ propiedad.calle }}, {{ propiedad.id_colonia.nombre }}
-                    </p>
-                    <p class="text-gray text-sm">
-                        {{ propiedad.id_municipio.nombre }}, {{ propiedad.id_estado.nombre }} (CP: {{ propiedad.id_codigo_postal.codigo }})
-                    </p>
-                </div>
-            </div>
+    <div
+      class="bg-offwhite py-4 px-4 sm:px-6 lg:px-8 border-b border-softgray animate-slide-up"
+    >
+      <div class="container mx-auto">
+        <div class="flex items-center">
+          <i class="fas fa-map-marker-alt text-accent mr-4 text-xl"></i>
+          <div>
+            <p class="font-semibold text-dark text-base">
+              {{ propiedad.calle }}, {{ propiedad.id_colonia.nombre }}
+            </p>
+            <p class="text-gray text-sm">
+              {{ propiedad.id_municipio.nombre }}, {{ propiedad.id_estado.nombre
+              }} (CP: {{ propiedad.id_codigo_postal.codigo }})
+            </p>
+          </div>
         </div>
+      </div>
     </div>
 
     <!-- Sección Principal -->
     <section class="py-10 flex-grow">
-        <div class="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl">
-            <h2 class="text-3xl md:text-4xl font-bold text-primary text-center mb-10 animate-fade-in">
-                Resultados de Evaluación
-            </h2>
+      <div class="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl">
+        <h2
+          class="text-3xl md:text-4xl font-bold text-primary text-center mb-10 animate-fade-in"
+        >
+          Resultados de Evaluación
+        </h2>
 
-            {% if messages %}
-                {% for message in messages %}
-                    <div class="mb-8 p-5 rounded-xl bg-accent/10 border border-accent text-dark text-base max-w-md mx-auto animate-slide-up">
-                        <div class="flex items-center">
-                            <i class="fas fa-info-circle mr-3 text-accent text-lg"></i>
-                            <span>{{ message }}</span>
-                        </div>
-                    </div>
-                {% endfor %}
-            {% endif %}
-
-            {% if propiedad %}
-                <div class="grid grid-cols-1 lg:grid-cols-2 gap-10">
-                    <!-- Mapa -->
-                    <div class="card shadow-custom animate-slide-up">
-                        <div class="map-container">
-                            <div id="map"></div>
-                            <div class="map-overlay">
-                                <div class="text-center text-gray animate-pulse-scale">
-                                    <i class="fas fa-map text-4xl mb-3"></i>
-                                    <p class="text-base font-semibold">Mapa de la propiedad</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Valores -->
-                    <div class="card shadow-custom p-8 animate-slide-up">
-                        <div class="space-y-8">
-                            <div class="card bg-accent/10 border border-accent/20 rounded-xl p-6">
-                                <div class="flex items-center mb-4">
-                                    <i class="fas fa-dollar-sign text-accent mr-4 text-xl"></i>
-                                    <h4 class="font-bold text-dark text-lg">Valor Comercial</h4>
-                                </div>
-                                <span class="value-pill" data-value="{{ propiedad.valor_comercial|floatformat:2 }}">
-                                    ${{ propiedad.valor_comercial|floatformat:2 }}
-                                </span>
-                            </div>
-                            <div class="card bg-secondary/10 border border-secondary/20 rounded-xl p-6">
-                                <div class="flex items-center mb-4">
-                                    <i class="fas fa-gavel text-secondary mr-4 text-xl"></i>
-                                    <h4 class="font-bold text-dark text-lg">Valor Judicial</h4>
-                                </div>
-                                <span class="value-pill" data-value="{{ propiedad.valor_judicial|floatformat:2 }}">
-                                    ${{ propiedad.valor_judicial|floatformat:2 }}
-                                </span>
-                            </div>
-                        </div>
-                        <div class="text-center mt-8">
-                            <a href="#detalles" class="text-accent text-base font-semibold hover:underline inline-flex items-center animate-pulse-scale">
-                                Ver detalles completos <i class="fas fa-chevron-down ml-2"></i>
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            {% else %}
-                <div class="card shadow-custom p-8 text-center max-w-lg mx-auto animate-slide-up">
-                    <i class="fas fa-exclamation-circle text-accent text-3xl mb-4"></i>
-                    <h3 class="font-bold text-dark text-lg mb-3">
-                        Datos no disponibles
-                    </h3>
-                    <p class="text-gray text-base mb-6">
-                        No se encontraron datos de la propiedad solicitada.
-                    </p>
-                    <a href="{% url 'estimaciones' %}" class="button inline-flex items-center px-6 py-3 text-base font-semibold rounded-xl text-white bg-primary hover:bg-secondary">
-                        <i class="fas fa-arrow-left mr-2"></i> Volver
-                    </a>
-                </div>
-            {% endif %}
+        {% if messages %} {% for message in messages %}
+        <div
+          class="mb-8 p-5 rounded-xl bg-accent/10 border border-accent text-dark text-base max-w-md mx-auto animate-slide-up"
+        >
+          <div class="flex items-center">
+            <i class="fas fa-info-circle mr-3 text-accent text-lg"></i>
+            <span>{{ message }}</span>
+          </div>
         </div>
+        {% endfor %} {% endif %} {% if propiedad %}
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-10">
+          <!-- Mapa -->
+          <div class="card shadow-custom animate-slide-up">
+            <div class="map-container">
+              <div id="map"></div>
+              <div class="map-overlay">
+                <div class="text-center text-gray animate-pulse-scale">
+                  <i class="fas fa-map text-4xl mb-3"></i>
+                  <p class="text-base font-semibold">Mapa de la propiedad</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Valores -->
+          <div class="card shadow-custom p-8 animate-slide-up">
+            <div class="space-y-8">
+              <div
+                class="card bg-accent/10 border border-accent/20 rounded-xl p-6"
+              >
+                <div class="flex items-center mb-4">
+                  <i class="fas fa-dollar-sign text-accent mr-4 text-xl"></i>
+                  <h4 class="font-bold text-dark text-lg">
+                    Valor Comercial Aproximado
+                  </h4>
+                </div>
+                <div class="flex items-center">
+                  <span
+                    class="value-pill"
+                    data-value="{{ propiedad.valor_comercial|floatformat:2 }}"
+                  >
+                    ${{ propiedad.valor_comercial|floatformat:2 }}
+                  </span>
+                  <div class="relative copy-container">
+                    <i
+                      class="fas fa-copy copy-icon ml-4 cursor-pointer text-xl"
+                      style="color: #333333"
+                      data-target="comercial"
+                    ></i>
+                  </div>
+                </div>
+              </div>
+              <div
+                class="card bg-secondary/10 border border-secondary/20 rounded-xl p-6"
+              >
+                <div class="flex items-center mb-4">
+                  <i class="fas fa-gavel text-secondary mr-4 text-xl"></i>
+                  <h4 class="font-bold text-dark text-lg">
+                    Valor Judicial Aproximado
+                  </h4>
+                </div>
+                <div class="flex items-center">
+                  <span
+                    class="value-pill"
+                    data-value="{{ propiedad.valor_judicial|floatformat:2 }}"
+                  >
+                    ${{ propiedad.valor_judicial|floatformat:2 }}
+                  </span>
+                  <div class="relative copy-container">
+                    <i
+                      class="fas fa-copy copy-icon ml-4 cursor-pointer text-xl"
+                      style="color: #333333"
+                      data-target="judicial"
+                    ></i>
+                  </div>
+                </div>
+              </div>
+              <script>
+                document.querySelectorAll(".copy-icon").forEach((icon) => {
+                  icon.addEventListener("click", function () {
+                    const container = this.closest(".copy-container");
+                    const target = this.getAttribute("data-target");
+                    let value;
+                    if (target === "comercial") {
+                      value = document
+                        .querySelector("[data-value]")
+                        .getAttribute("data-value");
+                    } else if (target === "judicial") {
+                      value = document
+                        .querySelectorAll("[data-value]")[1]
+                        .getAttribute("data-value");
+                    }
+                    navigator.clipboard
+                      .writeText("$" + value)
+                      .then(() => {
+                        // Mostrar mensaje "Copiado"
+                        const message = document.createElement("span");
+                        message.textContent = "Copiado";
+                        message.style.cssText =
+                          "position: absolute; top: -25px; left: 50%; transform: translateX(-50%); background-color: #00a650; color: white; padding: 4px 8px; border-radius: 4px; font-size: 12px; z-index: 10;";
+                        container.appendChild(message);
+
+                        // Cambiar a palomita
+                        this.classList.remove("fa-copy");
+                        this.classList.add("fa-check");
+                        this.style.color = "#00a650";
+
+                        // Revertir después de 2 segundos
+                        setTimeout(() => {
+                          message.remove();
+                          this.classList.remove("fa-check");
+                          this.classList.add("fa-copy");
+                          this.style.color = "#333333";
+                        }, 2000);
+                      })
+                      .catch((err) => {
+                        console.error("Error al copiar: ", err);
+                      });
+                  });
+                });
+              </script>
+
+              <style>
+                .value-pill {
+                  padding: 8px 12px;
+                  background-color: #f0f0f0;
+                  border-radius: 16px;
+                  font-weight: bold;
+                }
+                .copy-icon {
+                  transition: color 0.3s, transform 0.3s;
+                }
+                .copy-icon:hover {
+                  color: #555;
+                  transform: scale(1.1);
+                }
+              </style>
+            </div>
+            <div class="text-center mt-8">
+              <a
+                href="#detalles"
+                class="text-accent text-base font-semibold hover:underline inline-flex items-center animate-pulse-scale"
+              >
+                Ver detalles completos <i class="fas fa-chevron-down ml-2"></i>
+              </a>
+            </div>
+          </div>
+        </div>
+        {% else %}
+        <div
+          class="card shadow-custom p-8 text-center max-w-lg mx-auto animate-slide-up"
+        >
+          <i class="fas fa-exclamation-circle text-accent text-3xl mb-4"></i>
+          <h3 class="font-bold text-dark text-lg mb-3">Datos no disponibles</h3>
+          <p class="text-gray text-base mb-6">
+            No se encontraron datos de la propiedad solicitada.
+          </p>
+          <a
+            href="{% url 'estimaciones' %}"
+            class="button inline-flex items-center px-6 py-3 text-base font-semibold rounded-xl text-white bg-primary hover:bg-secondary"
+          >
+            <i class="fas fa-arrow-left mr-2"></i> Volver
+          </a>
+        </div>
+        {% endif %}
+      </div>
     </section>
 
     <!-- Sección de Detalles -->
     <section id="detalles" class="bg-offwhite py-10 border-t border-softgray">
-        <div class="container mx-auto px-4 sm:px-6 lg:px-8 max-w-6xl">
-            {% if propiedad %}
-                <div class="card shadow-custom p-8 animate-fade-in">
-                    <h3 class="font-bold text-primary text-xl mb-8 flex items-center">
-                        <i class="fas fa-info-circle text-accent mr-4 text-lg"></i> Detalles Completos
-                    </h3>
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                        <div class="detail-item p-4 bg-accent/5 rounded-xl">
-                            <div class="flex items-center">
-                                <i class="fas fa-building text-accent mr-4 text-lg"></i>
-                                <h4 class="font-semibold text-dark text-base">Tipo</h4>
-                            </div>
-                            <p class="text-dark text-base mt-3 pl-10">{{ propiedad.tipo_propiedad }}</p>
-                        </div>
-                        <div class="detail-item p-4 bg-accent/5 rounded-xl">
-                            <div class="flex items-center">
-                                <i class="fas fa-bed text-accent mr-4 text-lg"></i>
-                                <h4 class="font-semibold text-dark text-base">Recámaras</h4>
-                            </div>
-                            <p class="text-dark text-base mt-3 pl-10">{{ propiedad.recamaras }}</p>
-                        </div>
-                        <div class="detail-item p-4 bg-accent/5 rounded-xl">
-                            <div class="flex items-center">
-                                <i class="fas fa-bath text-accent mr-4 text-lg"></i>
-                                <h4 class="font-semibold text-dark text-base">Sanitarios</h4>
-                            </div>
-                            <p class="text-dark text-base mt-3 pl-10">{{ propiedad.sanitarios }}</p>
-                        </div>
-                        <div class="detail-item p-4 bg-accent/5 rounded-xl">
-                            <div class="flex items-center">
-                                <i class="fas fa-car text-accent mr-4 text-lg"></i>
-                                <h4 class="font-semibold text-dark text-base">Estacionamiento</h4>
-                            </div>
-                            <p class="text-dark text-base mt-3 pl-10">{{ propiedad.estacionamiento }}</p>
-                        </div>
-                        <div class="detail-item p-4 bg-accent/5 rounded-xl sm:col-span-2">
-                            <div class="flex items-center">
-                                <i class="fas fa-vector-square text-accent mr-4 text-lg"></i>
-                                <h4 class="font-semibold text-dark text-base">Terreno</h4>
-                            </div>
-                            <p class="text-dark text-base mt-3 pl-10">{{ propiedad.terreno }} m²</p>
-                        </div>
-                        <div class="detail-item p-4 bg-accent/5 rounded-xl sm:col-span-2">
-                            <div class="flex items-center">
-                                <i class="fas fa-ruler-combined text-accent mr-4 text-lg"></i>
-                                <h4 class="font-semibold text-dark text-base">Construcción</h4>
-                            </div>
-                            <p class="text-dark text-base mt-3 pl-10">{{ propiedad.construccion }} m²</p>
-                        </div>
-                        <div class="detail-item p-4 bg-accent/5 rounded-xl sm:col-span-2">
-                            <div class="flex items-center">
-                                <i class="fas fa-comment text-accent mr-4 text-lg"></i>
-                                <h4 class="font-semibold text-dark text-base">Comentarios</h4>
-                            </div>
-                            <p class="text-dark text-base mt-3 pl-10">{{ propiedad.comentarios|default:"Sin comentarios adicionales." }}</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="text-center mt-8">
-                    <a href="{% url 'estimaciones' %}" class="button inline-flex items-center px-6 py-3 text-base font-semibold rounded-xl text-white bg-primary hover:bg-secondary">
-                        <i class="fas fa-arrow-left mr-2"></i> Nueva evaluación
-                    </a>
-                </div>
-            {% endif %}
+      <div class="container mx-auto px-4 sm:px-6 lg:px-8 max-w-6xl">
+        {% if propiedad %}
+        <div class="card shadow-custom p-8 animate-fade-in">
+          <h3 class="font-bold text-primary text-xl mb-8 flex items-center">
+            <i class="fas fa-info-circle text-accent mr-4 text-lg"></i> Detalles
+            Completos
+          </h3>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+            <div class="detail-item p-4 bg-accent/5 rounded-xl">
+              <div class="flex items-center">
+                <i class="fas fa-building text-accent mr-4 text-lg"></i>
+                <h4 class="font-semibold text-dark text-base">Tipo</h4>
+              </div>
+              <p class="text-dark text-base mt-3 pl-10">
+                {{ propiedad.tipo_propiedad }}
+              </p>
+            </div>
+            <div class="detail-item p-4 bg-accent/5 rounded-xl">
+              <div class="flex items-center">
+                <i class="fas fa-bed text-accent mr-4 text-lg"></i>
+                <h4 class="font-semibold text-dark text-base">Recámaras</h4>
+              </div>
+              <p class="text-dark text-base mt-3 pl-10">
+                {{ propiedad.recamaras }}
+              </p>
+            </div>
+            <div class="detail-item p-4 bg-accent/5 rounded-xl">
+              <div class="flex items-center">
+                <i class="fas fa-bath text-accent mr-4 text-lg"></i>
+                <h4 class="font-semibold text-dark text-base">Sanitarios</h4>
+              </div>
+              <p class="text-dark text-base mt-3 pl-10">
+                {{ propiedad.sanitarios }}
+              </p>
+            </div>
+            <div class="detail-item p-4 bg-accent/5 rounded-xl">
+              <div class="flex items-center">
+                <i class="fas fa-car text-accent mr-4 text-lg"></i>
+                <h4 class="font-semibold text-dark text-base">
+                  Estacionamiento
+                </h4>
+              </div>
+              <p class="text-dark text-base mt-3 pl-10">
+                {{ propiedad.estacionamiento }}
+              </p>
+            </div>
+            <div class="detail-item p-4 bg-accent/5 rounded-xl sm:col-span-2">
+              <div class="flex items-center">
+                <i class="fas fa-vector-square text-accent mr-4 text-lg"></i>
+                <h4 class="font-semibold text-dark text-base">Terreno</h4>
+              </div>
+              <p class="text-dark text-base mt-3 pl-10">
+                {{ propiedad.terreno }} m²
+              </p>
+            </div>
+            <div class="detail-item p-4 bg-accent/5 rounded-xl sm:col-span-2">
+              <div class="flex items-center">
+                <i class="fas fa-ruler-combined text-accent mr-4 text-lg"></i>
+                <h4 class="font-semibold text-dark text-base">Construcción</h4>
+              </div>
+              <p class="text-dark text-base mt-3 pl-10">
+                {{ propiedad.construccion }} m²
+              </p>
+            </div>
+            <div class="detail-item p-4 bg-accent/5 rounded-xl sm:col-span-2">
+              <div class="flex items-center">
+                <i class="fas fa-comment text-accent mr-4 text-lg"></i>
+                <h4 class="font-semibold text-dark text-base">Comentarios</h4>
+              </div>
+              <p class="text-dark text-base mt-3 pl-10">
+                {{ propiedad.comentarios|default:"Sin comentarios adicionales."}}
+              </p>
+            </div>
+          </div>
         </div>
+        <div class="text-center mt-8">
+          <a
+            href="{% url 'estimaciones' %}"
+            class="button inline-flex items-center px-6 py-3 text-base font-semibold rounded-xl text-white bg-primary hover:bg-secondary"
+          >
+            <i class="fas fa-arrow-left mr-2"></i> Nueva evaluación
+          </a>
+          
+        </div>
+        
+        {% endif %}
+      </div>
     </section>
 
     <!-- Footer -->
     <footer class="gradient-bg text-white py-5 mt-auto">
-        <div class="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <p class="text-base text-lightaccent animate-fade-in">
-                © 2025 Inmovalor. Todos los derechos reservados.
-            </p>
-        </div>
+      <div class="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <p class="text-base text-lightaccent animate-fade-in">
+          © 2025 Inmovalor. Todos los derechos reservados.
+        </p>
+      </div>
     </footer>
 
     <script>
-        // Función para formatear números con comas
-        function formatNumberWithCommas(number) {
-            return Number(number).toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-        }
+      // Función para formatear números con comas
+      function formatNumberWithCommas(number) {
+        return Number(number).toLocaleString("es-MX", {
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2,
+        });
+      }
 
-        // Aplicar formato a los valores en las píldoras
-        document.addEventListener('DOMContentLoaded', function() {
-            const valuePills = document.querySelectorAll('.value-pill');
-            valuePills.forEach(pill => {
-                const rawValue = pill.getAttribute('data-value');
-                if (rawValue) {
-                    pill.textContent = '$' + formatNumberWithCommas(rawValue);
-                }
-            });
+      // Aplicar formato a los valores en las píldoras
+      document.addEventListener("DOMContentLoaded", function () {
+        const valuePills = document.querySelectorAll(".value-pill");
+        valuePills.forEach((pill) => {
+          const rawValue = pill.getAttribute("data-value");
+          if (rawValue) {
+            pill.textContent = "$" + formatNumberWithCommas(rawValue);
+          }
+        });
+      });
+
+      // Inicialización del mapa de Google Maps
+      function initMap() {
+        const mapElement = document.getElementById("map");
+        const address =
+          "{{ propiedad.calle }}, {{ propiedad.id_colonia.nombre }}, {{ propiedad.id_municipio.nombre }}, {{ propiedad.id_estado.nombre }}";
+
+        // Crear mapa con opciones iniciales
+        const map = new google.maps.Map(mapElement, {
+          zoom: 15,
+          center: { lat: 19.432608, lng: -99.133209 }, // Centro por defecto (Ciudad de México)
         });
 
-        // Inicialización del mapa de Google Maps
-        function initMap() {
-            const mapElement = document.getElementById('map');
-            const address = "{{ propiedad.calle }}, {{ propiedad.id_colonia.nombre }}, {{ propiedad.id_municipio.nombre }}, {{ propiedad.id_estado.nombre }}";
-            
-            // Crear mapa con opciones iniciales
-            const map = new google.maps.Map(mapElement, {
-                zoom: 15,
-                center: { lat: 19.432608, lng: -99.133209 } // Centro por defecto (Ciudad de México)
+        // Geocodificar la dirección
+        const geocoder = new google.maps.Geocoder();
+        geocoder.geocode({ address: address }, function (results, status) {
+          if (status === google.maps.GeocoderStatus.OK) {
+            map.setCenter(results[0].geometry.location);
+            new google.maps.Marker({
+              map: map,
+              position: results[0].geometry.location,
+              title: address,
             });
-
-            // Geocodificar la dirección
-            const geocoder = new google.maps.Geocoder();
-            geocoder.geocode({ address: address }, function(results, status) {
-                if (status === google.maps.GeocoderStatus.OK) {
-                    map.setCenter(results[0].geometry.location);
-                    new google.maps.Marker({
-                        map: map,
-                        position: results[0].geometry.location,
-                        title: address
-                    });
-                } else {
-                    console.error('Geocode falló debido a: ' + status);
-                }
-            });
-        }
-
-        // Smooth scroll para los enlaces
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
-                e.preventDefault();
-                document.querySelector(this.getAttribute('href')).scrollIntoView({
-                    behavior: 'smooth'
-                });
-            });
+          } else {
+            console.error("Geocode falló debido a: " + status);
+          }
         });
+      }
+
+      // Smooth scroll para los enlaces
+      document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
+        anchor.addEventListener("click", function (e) {
+          e.preventDefault();
+          document.querySelector(this.getAttribute("href")).scrollIntoView({
+            behavior: "smooth",
+          });
+        });
+      });
     </script>
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDldEaEtV3NdG-fY-us0SmbBSh8RHibnpU&libraries=places,geometry&callback=initMap" async defer></script>
-</body>
+    <script
+      src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDldEaEtV3NdG-fY-us0SmbBSh8RHibnpU&libraries=places,geometry&callback=initMap"
+      async
+      defer
+    ></script>
+  </body>
 </html>
 {% endblock %}

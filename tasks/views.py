@@ -142,12 +142,12 @@ def estimaciones(request):
 
             # Cálculo 2: aplicar coeficiente
             coef = coef_conservacion.get(estado_conservacion, 1)
-            valor_aprox = valor_inicial * coef if estado_conservacion != 'Muy malo' else valor_inicial
+            valor_aprox = valor_inicial * coef if estado_conservacion != 'Bueno' else valor_inicial
 
             # Cálculo 3: valor comercial
             if estado_conservacion == 'Muy bueno':
                 valor_comercial = valor_inicial + valor_aprox
-            elif estado_conservacion == 'Bueno':
+            elif estado_conservacion == 'Muy malo':
                 valor_comercial = valor_inicial - valor_aprox
             elif estado_conservacion == 'Regular':
                 valor_comercial = valor_inicial - valor_aprox
