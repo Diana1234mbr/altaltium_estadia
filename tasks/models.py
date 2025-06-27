@@ -39,7 +39,8 @@ class AlcaldiaVistas(models.Model):
         managed = False
         db_table = 'alcaldia_vistas'
 
-
+def __str__(self):
+        return f"{self.alcaldia} - {self.colonia}"
 
 
 class Estados(models.Model):

@@ -99,42 +99,55 @@ function toggleForm(formId) {
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
-    $(document).ready(function () {
-        $('#estado').change(function () {
-            const estadoId = $(this).val();
-            $('#municipio').html('<option>Selecciona un municipio</option>');
-            $('#colonia').html('<option>Selecciona una colonia</option>');
-            $('#codigo').val('');
+                $(document).ready(function () {
+                    // Función para limpiar y agregar opción por defecto
+                    function clearAndAddDefault(selectId, defaultText) {
+                        $(selectId).empty().append(`<option value="">${defaultText}</option>`);
+                    }
 
-            $.get('{% url "obtener_municipios" %}', { estado_id: estadoId }, function (data) {
-                $.each(data, function (i, municipio) {
-                    $('#municipio').append(`<option value="${municipio.id_municipio}">${municipio.nombre}</option>`);
+                    // Evento cambio de estado
+                    $('#estado').change(function () {
+                        const estadoId = $(this).val();
+                        clearAndAddDefault('#municipio', 'Selecciona un municipio');
+                        clearAndAddDefault('#colonia', 'Selecciona una colonia');
+
+                        if (estadoId) {
+                            $.get('{% url "obtener_municipios" %}', { estado_id: estadoId }, function (data) {
+                                if (data && data.length > 0) {
+                                    $.each(data, function (i, municipio) {
+                                        $('#municipio').append(`<option value="${municipio.id_municipio}">${municipio.nombre}</option>`);
+                                    });
+                                } else {
+                                    console.log('No se encontraron municipios para este estado');
+                                }
+                            }).fail(function (xhr, status, error) {
+                                console.log('Error al cargar municipios: ' + error);
+                            });
+                        }
+                    });
+
+                    // Evento cambio de municipio
+                    $('#municipio').change(function () {
+                        const municipioId = $(this).val();
+                        clearAndAddDefault('#colonia', 'Selecciona una colonia');
+
+                        if (municipioId) {
+                            $.get('{% url "obtener_colonias" %}', { municipio_id: municipioId }, function (data) {
+                                if (data && data.length > 0) {
+                                    $.each(data, function (i, colonia) {
+                                        $('#colonia').append(`<option value="${colonia.id_colonia}">${colonia.nombre}</option>`);
+                                    });
+                                } else {
+                                    console.log('No se encontraron colonias para este municipio');
+                                }
+                            }).fail(function (xhr, status, error) {
+                                console.log('Error al cargar colonias: ' + error);
+                            });
+                        }
+                    });
+
+                    // Inicialización al cargar la página (opcional, si quieres simular un estado inicial)
+                    // Nota: Esto requeriría que pases un estado inicial desde la vista si es necesario
+                    // Por ahora, dejaremos que el usuario seleccione manualmente
                 });
-            });
-        });
-
-        $('#municipio').change(function () {
-            const municipioId = $(this).val();
-            $('#colonia').html('<option>Selecciona una colonia</option>');
-            $('#codigo').val('');
-
-            $.get('{% url "obtener_colonias" %}', { municipio_id: municipioId }, function (data) {
-                $.each(data, function (i, colonia) {
-                    $('#colonia').append(`<option value="${colonia.id_colonia}">${colonia.nombre}</option>`);
-                });
-            });
-        });
-
-        $('#colonia').change(function () {
-            const coloniaId = $(this).val();
-            $('#codigo').val('');
-
-            $.get('{% url "obtener_codigos_postales" %}', { colonia_id: coloniaId }, function (data) {
-                if (data.length > 0) {
-                    $('#codigo').val(data[0].codigo); // toma el primer código asociado
-                }
-            });
-        });
-    });
-</script>
-
+</script>                

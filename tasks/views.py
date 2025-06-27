@@ -8,7 +8,7 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.shortcuts import render, redirect
 from django.contrib.auth import login, logout, authenticate
-from django.db import IntegrityError
+from django.db import IntegrityError, connection
 from django.http import Http404, JsonResponse, HttpResponse
 from .models import Estados, Municipios, Colonias, CodigosPostales, AlcaldiaVistas, Propiedades, GraficaAlcaldia, Usuarios
 from django.views.decorators.csrf import csrf_exempt
@@ -54,6 +54,10 @@ def signup(request):
 
 
 # Estimaciones de propiedades
+from django.http import HttpResponse
+from fpdf import FPDF
+from django.db import connection
+
 def estimaciones(request):    
     usuario = None
     usuario_id = request.session.get('usuario_id')
@@ -63,7 +67,6 @@ def estimaciones(request):
         except Usuarios.DoesNotExist:
             usuario = None    
     
-
     if request.method == 'POST':
         # Obtener los datos del formulario
         tipo_propiedad = request.POST.get('tipo_propiedad')
@@ -196,6 +199,67 @@ def estimaciones(request):
                 'datos_alcaldia': AlcaldiaVistas.objects.all(),
             }
             return render(request, 'estimaciones.html', context)
+
+    # Generar reporte PDF de una propiedad individual
+    if 'generar_reporte_individual' in request.GET and 'id_propiedad' in request.GET:
+        print(f"Generando reporte individual para propiedad ID: {request.GET['id_propiedad']}")
+        try:
+            propiedad_id = request.GET['id_propiedad']
+            propiedad = Propiedades.objects.get(id_propiedad=propiedad_id)
+            response = HttpResponse(content_type='application/pdf')
+            response['Content-Disposition'] = f'attachment; filename="reporte_propiedad_{propiedad_id}.pdf"'
+            pdf = FPDF()
+            pdf.add_page()
+            pdf.set_font("Arial", size=12)
+
+            # Título centrado
+            pdf.set_font("Arial", 'B', size=14)  # 'B' para negrita
+            pdf.cell(200, 10, txt=f"Reporte de Propiedad ID: {propiedad.id_propiedad}", ln=True, align='C')
+            pdf.ln(10)  # Salto de línea
+
+            # Configuración de la tabla
+            pdf.set_font("Arial", size=10)
+            pdf.set_fill_color(200, 220, 255)  # Color de fondo para el encabezado
+            pdf.set_text_color(0, 0, 0)  # Color del texto (negro)
+
+            # Encabezados de la tabla
+            pdf.cell(50, 10, 'Campo', 1, 0, 'C', 1)  # Ancho 50, alto 10, borde 1, sin salto de línea, centrado, fondo relleno
+            pdf.cell(150, 10, 'Valor', 1, 1, 'C', 1)  # Ancho 150, salto de línea
+            pdf.set_fill_color(255, 255, 255)  # Color de fondo para las filas de datos (blanco)
+
+            # Datos de la tabla
+            pdf.cell(50, 10, 'Valor Comercial', 1, 0, 'L')
+            pdf.cell(150, 10, f'{propiedad.valor_comercial or "N/A"}', 1, 1, 'L')
+            pdf.cell(50, 10, 'Valor Judicial', 1, 0, 'L')
+            pdf.cell(150, 10, f'{propiedad.valor_judicial or "N/A"}', 1, 1, 'L')
+            pdf.cell(50, 10, 'Calle', 1, 0, 'L')
+            pdf.cell(150, 10, f'{propiedad.calle or "N/A"}', 1, 1, 'L')
+            pdf.cell(50, 10, 'Colonia', 1, 0, 'L')
+            pdf.cell(150, 10, f'{propiedad.id_colonia or "N/A"}', 1, 1, 'L')
+            pdf.cell(50, 10, 'Municipio', 1, 0, 'L')
+            pdf.cell(150, 10, f'{propiedad.id_municipio or "N/A"}', 1, 1, 'L')
+            pdf.cell(50, 10, 'Estado', 1, 0, 'L')
+            pdf.cell(150, 10, f'{propiedad.id_estado or "N/A"}', 1, 1, 'L')
+            pdf.cell(50, 10, 'Recámaras', 1, 0, 'L')
+            pdf.cell(150, 10, f'{propiedad.recamaras or "N/A"}', 1, 1, 'L')
+            pdf.cell(50, 10, 'Tipo de Propiedad', 1, 0, 'L')
+            pdf.cell(150, 10, f'{propiedad.tipo_propiedad or "N/A"}', 1, 1, 'L')
+            pdf.cell(50, 10, 'Sanitarios', 1, 0, 'L')
+            pdf.cell(150, 10, f'{propiedad.sanitarios or "N/A"}', 1, 1, 'L')
+            pdf.cell(50, 10, 'Valor Aproximado', 1, 0, 'L')
+            pdf.cell(150, 10, f'{propiedad.valor_aprox or "N/A"}', 1, 1, 'L')
+            
+
+            # Generar el PDF
+            response.write(pdf.output(dest='S').encode('latin-1'))
+            print(f"Reporte individual generado para ID: {propiedad_id}")
+            return response
+        except Propiedades.DoesNotExist:
+            print(f"No se encontró la propiedad con ID: {propiedad_id}")
+            return HttpResponse("Propiedad no encontrada", status=404)
+        except Exception as e:
+            print(f"Error al generar el reporte: {str(e)}")
+            return HttpResponse(f"Error: {str(e)}", status=500)
 
     # Si es GET, mostrar formulario
     context = {
@@ -376,6 +440,10 @@ def vista_tlalpan(request):
 def vista_venustiano(request):
     datos = AlcaldiaVistas.objects.filter(alcaldia__iexact='Venustiano Carranza')
     return render(request, 'alcaldias/venustiano.html', {'datos': datos})
+
+
+
+
 
 # Obtener colonias por municipio (AJAX)
 def obtener_colonias(request):
@@ -644,11 +712,12 @@ def gentelella_view(request, page):
                     messages.error(request, "Estado no encontrado.")
                 except IntegrityError:
                     messages.error(request, "Ya existe un municipio con ese nombre.")
-                return redirect('gentelella_page', page='editar_municipio', editar=id_municipio)
+                return redirect('gentelella_page', page='editar_municipio', editar=id_municipio)            
+            
 
         # ================= CÓDIGOS POSTALES ===================
         elif page == "cal_cp":
-            codigos = CodigosPostales.objects.select_related('id_colonia').all()
+            codigos = CodigosPostales.objects.select_related('id_colonia', 'id_municipio', 'id_estado').all()
             colonias = Colonias.objects.all()
             municipios = Municipios.objects.all()
             estados = Estados.objects.all()
@@ -668,12 +737,11 @@ def gentelella_view(request, page):
                 return redirect('gentelella_page', page='cal_cp')
 
             if request.method == 'POST' and 'editar' not in request.GET:
-                codigo_valor = request.POST.get('codigo')  # Cambiado de 'nombre' a 'codigo'
+                codigo_valor = request.POST.get('codigo')
                 id_colonia = request.POST.get('id_colonia')
                 id_municipio = request.POST.get('id_municipio')
                 id_estado = request.POST.get('id_estado')
 
-                # Validar campos obligatorios
                 errors = []
                 if not codigo_valor:
                     errors.append("El código postal es obligatorio.")
@@ -688,12 +756,10 @@ def gentelella_view(request, page):
                     return redirect('gentelella_page', page='cal_cp')
 
                 try:
-                    # Obtener instancias de modelos
                     colonia = Colonias.objects.get(id_colonia=id_colonia)
                     municipio = Municipios.objects.get(id_municipio=id_municipio) if id_municipio else None
                     estado = Estados.objects.get(id_estado=id_estado) if id_estado else None
 
-                    # Crear el código postal
                     CodigosPostales.objects.create(
                         codigo=codigo_valor,
                         id_colonia=colonia,
@@ -765,42 +831,30 @@ def gentelella_view(request, page):
             context['colonias'] = Colonias.objects.all()
             context['codigos_postales'] = CodigosPostales.objects.all()
 
-            # Eliminar propiedad
-            if 'eliminar' in request.GET:
+            # Eliminar una propiedad individual
+            if 'eliminar_individual' in request.GET and 'id_propiedad' in request.GET:
                 try:
-                    propiedad = Propiedades.objects.get(id_propiedad=request.GET['eliminar'])
+                    propiedad_id = request.GET['id_propiedad']
+                    propiedad = Propiedades.objects.get(id_propiedad=propiedad_id)
                     propiedad.delete()
-                    messages.success(request, "Propiedad eliminada correctamente.")
+                    messages.success(request, f"Propiedad con ID {propiedad_id} eliminada correctamente.")
                 except Propiedades.DoesNotExist:
-                    messages.error(request, f"No se encontró la propiedad con ID {request.GET['eliminar']}.")
+                    messages.error(request, f"No se encontró la propiedad con ID {propiedad_id}.")
+                except Exception as e:
+                    messages.error(request, f"Error al eliminar la propiedad: {str(e)}")
                 return redirect('gentelella_page', page='cal_estimaciones')
 
-            # Crear propiedad
-            if request.method == 'POST' and 'editar' not in request.GET:
+            # Eliminar todas las propiedades y reiniciar los IDs
+            if 'eliminar' in request.GET:
                 try:
-                    nueva = Propiedades(
-                        tipo_propiedad=request.POST.get('tipo_propiedad'),
-                        calle=request.POST.get('calle'),
-                        id_estado_id=request.POST.get('id_estado'),
-                        id_municipio_id=request.POST.get('id_municipio'),
-                        id_colonia_id=request.POST.get('id_colonia'),
-                        id_codigo_postal_id=request.POST.get('id_codigo_postal'),
-                        recamaras=int(request.POST.get('recamaras', 0)),
-                        sanitarios=float(request.POST.get('sanitarios', 0)),
-                        estacionamiento=int(request.POST.get('estacionamiento', 0)),
-                        terreno=request.POST.get('terreno') or 0,
-                        construccion=request.POST.get('construccion') or 0,
-                        estado_conservacion=request.POST.get('estado_conservacion') or "",
-                        comentarios=request.POST.get('comentarios') or "",
-                        valor_aprox=request.POST.get('valor_aprox') or None,
-                        valor_judicial=request.POST.get('valor_judicial') or None,
-                        valor_comercial=request.POST.get('valor_comercial') or None,
-                        valor_inicial=request.POST.get('valor_inicial') or None,
-                    )
-                    nueva.save()
-                    messages.success(request, "Propiedad creada correctamente.")
+                    # Eliminar todos los registros
+                    Propiedades.objects.all().delete()
+                    # Reiniciar la secuencia de IDs (esto depende de la base de datos)
+                    with connection.cursor() as cursor:
+                        cursor.execute("ALTER TABLE propiedades AUTO_INCREMENT = 1")
+                    messages.success(request, "Todas las propiedades han sido eliminadas y los IDs reiniciados a 1.")
                 except Exception as e:
-                    messages.error(request, f"Error al crear la propiedad: {str(e)}")
+                    messages.error(request, f"Error al eliminar propiedades o reiniciar IDs: {str(e)}")
                 return redirect('gentelella_page', page='cal_estimaciones')
 
             # Generar reporte PDF de todas las propiedades
@@ -829,75 +883,42 @@ def gentelella_view(request, page):
                     pdf = FPDF()
                     pdf.add_page()
                     pdf.set_font("Arial", size=12)
+
+                    # Título centrado
+                    pdf.set_font("Arial", 'B', size=14)  # 'B' para negrita
                     pdf.cell(200, 10, txt=f"Reporte de Propiedad ID: {propiedad.id_propiedad}", ln=True, align='C')
-                    pdf.cell(200, 10, txt=f"Tipo: {propiedad.tipo_propiedad}", ln=True)
-                    pdf.cell(200, 10, txt=f"Calle: {propiedad.calle}", ln=True)
+                    pdf.ln(10)  # Salto de línea
+
+                    # Configuración de la tabla
+                    pdf.set_font("Arial", size=12)
+                    pdf.set_fill_color(200, 220, 255)  # Color de fondo para el encabezado
+                    pdf.set_text_color(0, 0, 0)  # Color del texto (negro)
+
+                    # Encabezados de la tabla
+                    pdf.cell(50, 10, 'Campo', 1, 0, 'C', 1)  # Ancho 50, alto 10, borde 1, sin salto de línea, centrado, fondo relleno
+                    pdf.cell(150, 10, 'Valor', 1, 1, 'C', 1)  # Ancho 150, salto de línea
+                    pdf.set_fill_color(255, 255, 255)  # Color de fondo para las filas de datos (blanco)
+
+                    # Datos de la tabla
+                    pdf.cell(50, 10, 'Tipo de Propiedad', 1, 0, 'L')
+                    pdf.cell(150, 10, f'{propiedad.tipo_propiedad or "N/A"}', 1, 1, 'L')
+                    pdf.cell(50, 10, 'Calle', 1, 0, 'L')
+                    pdf.cell(150, 10, f'{propiedad.calle or "N/A"}', 1, 1, 'L')
+                    pdf.cell(50, 10, 'Recámaras', 1, 0, 'L')
+                    pdf.cell(150, 10, f'{propiedad.recamaras or "N/A"}', 1, 1, 'L')
+                    pdf.cell(50, 10, 'Sanitarios', 1, 0, 'L')
+                    pdf.cell(150, 10, f'{propiedad.sanitarios or "N/A"}', 1, 1, 'L')
+
+                    # Generar el PDF
                     response.write(pdf.output(dest='S').encode('latin-1'))
                     print(f"Reporte individual generado para ID: {propiedad_id}")
                     return response
                 except Propiedades.DoesNotExist:
-                    messages.error(request, f"No se encontró la propiedad con ID {propiedad_id}.")
-                    return redirect('gentelella_page', page='cal_estimaciones')
-
-        # ================= EDITAR ESTIMACIÓN ===================
-        elif page == "editar_estimacion":
-            if 'editar' in request.GET:
-                try:
-                    propiedad_editar = Propiedades.objects.get(id_propiedad=request.GET['editar'])
-                    context['propiedad_editar'] = propiedad_editar
-                    context['estados'] = Estados.objects.all()
-                    context['municipios'] = Municipios.objects.all()
-                    context['colonias'] = Colonias.objects.all()
-                    context['codigos_postales'] = CodigosPostales.objects.all()
-                except Propiedades.DoesNotExist:
-                    messages.error(request, f"No se encontró la propiedad con ID {request.GET['editar']}.")
-                    return redirect('gentelella_page', page='cal_estimaciones')
-
-            if request.method == 'POST':
-                try:
-                    id_propiedad = request.POST.get('id_propiedad')
-                    propiedad = Propiedades.objects.get(id_propiedad=id_propiedad)
-
-                    # Obtener instancias de los modelos relacionados usando los IDs
-                    id_estado = request.POST.get('id_estado')
-                    id_municipio = request.POST.get('id_municipio')
-                    id_colonia = request.POST.get('id_colonia')
-                    id_codigo_postal = request.POST.get('id_codigo_postal')
-
-                    propiedad.tipo_propiedad = request.POST.get('tipo_propiedad')
-                    propiedad.calle = request.POST.get('calle')
-                    propiedad.id_estado = Estados.objects.get(id_estado=id_estado) if id_estado else None
-                    propiedad.id_municipio = Municipios.objects.get(id_municipio=id_municipio) if id_municipio else None
-                    propiedad.id_colonia = Colonias.objects.get(id_colonia=id_colonia) if id_colonia else None
-                    propiedad.id_codigo_postal = CodigosPostales.objects.get(id_codigo_postal=id_codigo_postal) if id_codigo_postal else None
-                    propiedad.recamaras = int(request.POST.get('recamaras', 0))
-                    propiedad.sanitarios = float(request.POST.get('sanitarios', 0))
-                    propiedad.estacionamiento = int(request.POST.get('estacionamiento', 0))
-                    propiedad.terreno = request.POST.get('terreno') or 0
-                    propiedad.construccion = request.POST.get('construccion') or 0
-                    propiedad.estado_conservacion = request.POST.get('estado_conservacion') or ""
-                    propiedad.comentarios = request.POST.get('comentarios') or ""
-                    propiedad.valor_aprox = request.POST.get('valor_aprox') or None
-                    propiedad.valor_judicial = request.POST.get('valor_judicial') or None
-                    propiedad.valor_comercial = request.POST.get('valor_comercial') or None
-                    propiedad.valor_inicial = request.POST.get('valor_inicial') or None
-
-                    propiedad.save()
-                    messages.success(request, "Propiedad actualizada correctamente.")
-                    return redirect('gentelella_page', page='cal_estimaciones')
-                except Propiedades.DoesNotExist:
-                    messages.error(request, f"No se encontró la propiedad con ID {id_propiedad}.")
-                except Estados.DoesNotExist:
-                    messages.error(request, "Estado no encontrado.")
-                except Municipios.DoesNotExist:
-                    messages.error(request, "Municipio no encontrado.")
-                except Colonias.DoesNotExist:
-                    messages.error(request, "Colonia no encontrada.")
-                except CodigosPostales.DoesNotExist:
-                    messages.error(request, "Código postal no encontrado.")
+                    print(f"No se encontró la propiedad con ID: {propiedad_id}")
+                    return HttpResponse("Propiedad no encontrada", status=404)
                 except Exception as e:
-                    messages.error(request, f"Error al actualizar la propiedad: {str(e)}")
-                return redirect('gentelella_page', page='editar_estimacion', editar=id_propiedad)
+                    print(f"Error al generar el reporte: {str(e)}")
+                    return HttpResponse(f"Error: {str(e)}", status=500)
 
         # ================= USUARIOS ===================
         elif page == "cal_usuarios":
@@ -994,6 +1015,102 @@ def gentelella_view(request, page):
                 except IntegrityError:
                     messages.error(request, "El nombre de usuario o correo ya existe.")
                 return redirect('gentelella_page', page='editar_usuario', editar=id_usuario)
+            
+
+        # ---------VISTA ALCALDIAS--------- #
+        elif page == "cal_vista_usuarios":
+                try:
+                    vistas = AlcaldiaVistas.objects.all()
+                    print(f"DEBUG: Alcaldias recuperadas: {list(vistas)}")
+                    print(f"DEBUG: Número de vista alcaldías: {vistas.count()}")
+                except Exception as e:
+                    print(f"DEBUG: Error al recuperar vistas: {str(e)}")
+                    vistas = []
+                    messages.error(request, f"Error al recuperar vistas: {str(e)}")
+
+                if 'eliminar' in request.GET:
+                    try:
+                        vista = AlcaldiaVistas.objects.get(id=request.GET['eliminar'])
+                        vista.delete()
+                        messages.success(request, "Vista eliminada correctamente.")
+                    except AlcaldiaVistas.DoesNotExist:
+                        messages.error(request, f"No se encontró la vista con ID {request.GET['eliminar']}.")
+                    return redirect('gentelella_page', page='cal_vista_usuarios')
+
+                if request.method == 'POST' and 'editar' not in request.GET:
+                    estado = request.POST.get('estado')
+                    alcaldia = request.POST.get('alcaldia')
+                    colonia = request.POST.get('colonia')
+                    promedio_mxn = request.POST.get('promedio_mxn')
+                    zona = request.POST.get('zona')
+
+                    try:
+                        promedio_mxn = float(promedio_mxn.replace('$', '').replace(',', ''))
+                    except (ValueError, AttributeError):
+                        messages.error(request, "Formato de promedio inválido. Use formato: $26,301")
+                        return redirect('gentelella_page', page='cal_vista_usuarios')
+
+                    if estado and alcaldia and colonia and promedio_mxn:
+                        try:
+                            AlcaldiaVistas.objects.create(
+                                estado=estado,
+                                alcaldia=alcaldia,
+                                colonia=colonia,
+                                promedio_mxn=promedio_mxn,
+                                zona=zona if zona else None
+                            )
+                            messages.success(request, "Vista creada correctamente.")
+                        except Exception as e:
+                            messages.error(request, f"Error al crear vista: {str(e)}")
+                    else:
+                        messages.error(request, "Faltan datos obligatorios para crear la vista.")
+                    return redirect('gentelella_page', page='cal_vista_usuarios')
+
+                context.update({'vistas': vistas})
+                return render(request, 'gentelella/cal_vista_usuarios.html', context)
+
+            # ================= EDITAR VISTAS ALCALDÍAS ===================
+        elif page == "editar_vistas_alcaldia":
+                if 'editar' in request.GET:
+                    try:
+                        vista_editar = AlcaldiaVistas.objects.get(id=request.GET['editar'])
+                        context['vista_editar'] = vista_editar
+                    except AlcaldiaVistas.DoesNotExist:
+                        messages.error(request, f"No se encontró la vista con ID {request.GET['editar']}.")
+                        return redirect('gentelella_page', page='cal_vista_usuarios')
+
+                if request.method == 'POST':
+                    id_vista = request.POST.get('id')
+                    try:
+                        vista = AlcaldiaVistas.objects.get(id=id_vista)
+                        estado = request.POST.get('estado')
+                        alcaldia = request.POST.get('alcaldia')
+                        colonia = request.POST.get('colonia')
+                        promedio_mxn = request.POST.get('promedio_mxn')
+                        zona = request.POST.get('zona')
+
+                        try:
+                            promedio_mxn = float(promedio_mxn.replace('$', '').replace(',', ''))
+                        except (ValueError, AttributeError):
+                            messages.error(request, "Formato de promedio inválido. Use formato: $26,301")
+                            return redirect('gentelella_page', page='editar_vistas_alcaldia', editar=id_vista)
+
+                        if estado and alcaldia and colonia and promedio_mxn:
+                            vista.estado = estado
+                            vista.alcaldia = alcaldia
+                            vista.colonia = colonia
+                            vista.promedio_mxn = promedio_mxn
+                            vista.zona = zona if zona else None
+                            vista.save()
+                            messages.success(request, "Vista actualizada correctamente.")
+                            return redirect('gentelella_page', page='cal_vista_usuarios')
+                        else:
+                            messages.error(request, "Faltan datos obligatorios para actualizar la vista.")
+                    except AlcaldiaVistas.DoesNotExist:
+                        messages.error(request, f"No se encontró la vista con ID {id_vista}.")
+                    except Exception as e:
+                        messages.error(request, f"Error al actualizar vista: {str(e)}")
+                    return redirect('gentelella_page', page='editar_vistas_alcaldia', editar=id_vista)
 
         # ================= INDEX (Dashboard) ===================
         elif page == 'index':
@@ -1039,7 +1156,7 @@ def gentelella_view(request, page):
                 'total_cp': total_cp,
                 'total_propiedades': total_propiedades,
                 'grafico_base64': grafico_base64,
-            })
+            })            
 
         # Renderizar la plantilla correspondiente
         return render(request, f'gentelella/{page}.html', context)

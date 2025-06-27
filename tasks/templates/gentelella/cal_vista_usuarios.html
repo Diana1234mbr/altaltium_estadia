@@ -7,7 +7,7 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>InmoValor | Códigos Postales</title>
+    <title>InmoValor | Vistas Alcaldias</title>
 
     <!-- Bootstrap -->
     <link href="{% static 'vendors/bootstrap/dist/css/bootstrap.min.css' %}" rel="stylesheet">
@@ -404,14 +404,13 @@
                 </div>
             </div>
             <!-- /top navigation -->
-
             <!-- page content -->
 <div class="right_col" role="main">
     <div class="container">
         <!-- Encabezado y barra de búsqueda -->
         <div class="row" style="margin-bottom: 15px;">
             <div class="col-md-6 col-sm-12">
-                <h2 style="color: #003035; font-size: 24px; font-weight: 600; margin: 0;">Codigos Postales Registrados</h2>
+                <h2 style="color: #003035; font-size: 24px; font-weight: 600; margin: 0;">Vistas Alcaldias Registradas</h2>
             </div>
             <div class="col-md-6 col-sm-12 text-right">
                 <div class="search-bar">
@@ -430,81 +429,75 @@
         </div>
         {% endif %}
 
-        <!-- Formulario para agregar nuevo codigo -->
-        <div class="card">
-            <div class="collapsible-header" onclick="toggleForm('addForm')">
-                <h3 style="color: #008a8a; font-size: 18px; font-weight: 600; margin: 0;">Agregar Nuevo Codigo Postal</h3>
-                <i id="addFormIcon" class="fa fa-chevron-down"></i>
+<!-- Formulario para agregar nueva vista -->
+<div class="card">
+    <div class="collapsible-header" onclick="toggleForm('addForm')">
+        <h3 style="color: #008a8a; font-size: 18px; font-weight: 600; margin: 0;">Agregar Nueva Vista</h3>
+        <i id="addFormIcon" class="fa fa-chevron-down"></i>
+    </div>
+    <form method="post" id="addForm" style="display: none; margin-top: 15px;" class="form-horizontal">
+        {% csrf_token %}
+        <div class="form-row" style="display: flex; flex-wrap: wrap; gap: 20px;">
+            <div class="form-group" style="flex: 1; min-width: 300px;">
+                <label style="color: #003035; font-weight: 600;">Estado</label>
+                <input type="text" id="estado" name="estado" class="form-control" required maxlength="100" style="border: 1px solid #bfc6c7; border-radius: 4px; padding: 10px; color: #0d1d1f; background-color: #fefcef; transition: border-color 0.3s;">
             </div>
-            <form method="post" id="addForm" style="display: none; margin-top: 15px;" class="form-horizontal">
-                {% csrf_token %}
-                <div class="form-row">
-                    <div class="form-group" style="flex: 1; min-width: 300px;">
-                        <label style="color: #003035; font-weight: 600;">Estado</label>
-                        <select id="estado" name="id_estado" class="form-control" required style="border: 1px solid #bfc6c7; border-radius: 4px; padding: 10px; color: #0d1d1f; background-color: #fefcef; transition: border-color 0.3s;">
-                            {% for estado in estados %}
-                            <option value="{{ estado.id_estado }}">{{ estado.nombre }}</option>
-                            {% endfor %}
-                        </select>
-                    </div>
-                    <div class="form-group" style="flex: 1; min-width: 300px;">
-                        <label style="color: #003035; font-weight: 600;">Municipio</label>
-                        <select id="municipio" name="id_municipio" class="form-control" required style="border: 1px solid #bfc6c7; border-radius: 4px; padding: 10px; color: #0d1d1f; background-color: #fefcef; transition: border-color 0.3s;">
-                            {% for municipio in municipios %}
-                            <option value="{{ municipio.id_municipio }}">{{ municipio.nombre }}</option>
-                            {% endfor %}
-                        </select>
-                    </div>
-                    <div class="form-group" style="flex: 1; min-width: 300px;">
-                        <label style="color: #003035; font-weight: 600;">Colonia</label>
-                        <select id="colonia" name="id_colonia" class="form-control" required style="border: 1px solid #bfc6c7; border-radius: 4px; padding: 10px; color: #0d1d1f; background-color: #fefcef; transition: border-color 0.3s;">
-                            {% for colonia in colonias %}
-                            <option value="{{ colonia.id_colonia }}">{{ colonia.nombre }}</option>
-                            {% endfor %}
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label>Codigo postal</label>
-                        <input type="text" name="codigo" class="form-control" required placeholder="Codigo Postal">
-                    </div>                    
-                    <div class="form-group">
-                        <button type="submit" class="btn btn-add">Agregar</button>
-                        <button type="reset" class="btn btn-cancel">Limpiar</button>
-                    </div>
-                </div>
-            </form>
+            <div class="form-group" style="flex: 1; min-width: 300px;">
+                <label style="color: #003035; font-weight: 600;">Alcaldía</label>
+                <input type="text" id="alcaldia" name="alcaldia" class="form-control"  required maxlength="100" style="border: 1px solid #bfc6c7; border-radius: 4px; padding: 10px; color: #0d1d1f; background-color: #fefcef; transition: border-color 0.3s;">
+            </div>
+            <div class="form-group" style="flex: 1; min-width: 300px;">
+                <label style="color: #003035; font-weight: 600;">Colonia</label>
+                <input type="text" id="colonia" name="colonia" class="form-control" required maxlength="100" placeholder="Ingrese Colonia" style="border: 1px solid #bfc6c7; border-radius: 4px; padding: 10px; color: #0d1d1f; background-color: #fefcef; transition: border-color 0.3s;">
+            </div>
+            <div class="form-group" style="flex: 1; min-width: 300px;">
+                <label style="color: #003035; font-weight: 600;">Promedio (MXN)</label>
+                <input type="text" id="promedio_mxn" name="promedio_mxn" class="form-control" required maxlength="30" placeholder="Ingrese Promedio (ej. $26,301)" style="border: 1px solid #bfc6c7; border-radius: 4px; padding: 10px; color: #0d1d1f; background-color: #fefcef; transition: border-color 0.3s;">
+            </div>
+            <div class="form-group" style="flex: 1; min-width: 300px;">
+                <label style="color: #003035; font-weight: 600;">Zona</label>
+                <input type="text" id="zona" name="zona" class="form-control" maxlength="50" placeholder="Ingrese Zona (opcional)" style="border: 1px solid #bfc6c7; border-radius: 4px; padding: 10px; color: #0d1d1f; background-color: #fefcef; transition: border-color 0.3s;">
+            </div>
+            <div class="form-group" style="flex: 1; min-width: 300px; display: flex; gap: 10px;">
+                <button type="submit" class="btn btn-add">Agregar</button>
+                <button type="reset" class="btn btn-cancel">Limpiar</button>
+            </div>
         </div>
+    </form>
+</div>
+        
 
-        <!-- Tabla de Codigos -->
         <!-- Tabla de Codigos -->
         <div class="card table-container">
             <table class="table" id="municipioTable">
                 <thead>
                     <tr>
                         <th>ID</th>
-                        <th>Codigo</th>
                         <th>Estado</th>
-                        <th>Municipio</th>
+                        <th>Alcaldía</th>
                         <th>Colonia</th>
+                        <th>Promedio (MXN)</th>
+                        <th>Zona</th>
                         <th>Acciones</th>
                     </tr>
                 </thead>
                 <tbody>
-                    {% for codigo in codigos %}
+                    {% for vista in vistas %}
                     <tr>
-                        <td>{{ codigo.id_codigo_postal }}</td>
-                        <td>{{ codigo.codigo }}</td>
-                        <td>{{ codigo.id_estado.nombre|default:"Sin estado" }}</td>
-                        <td>{{ codigo.id_municipio.nombre|default:"Sin municipio" }}</td>
-                        <td>{{ codigo.id_colonia.nombre|default:"Sin colonia" }}</td>
+                        <td>{{ vista.id }}</td>
+                        <td>{{ vista.estado }}</td>
+                        <td>{{ vista.alcaldia }}</td>
+                        <td>{{ vista.colonia }}</td>
+                        <td>${{ vista.promedio_mxn }}</td>
+                        <td>{{ vista.zona }}</td>
                         <td>
-                            <a href="{% url 'gentelella_page' page='editar_cp' %}?editar={{ codigo.id_codigo_postal }}" class="btn btn-edit btn-sm">Editar</a>
-                            <a href="{% url 'gentelella_page' page='cal_cp' %}?eliminar={{ codigo.id_codigo_postal }}" class="btn btn-delete btn-sm" onclick="return confirm('¿Deseas eliminar este código postal?');">Eliminar</a>
+                            <a href="{% url 'gentelella_page' page='editar_vistas_alcaldia' %}?editar={{ vista.id }}" class="btn btn-edit btn-sm">Editar</a>
+                            <a href="{% url 'gentelella_page' page='cal_vista_usuarios' %}?eliminar={{ vista.id }}" class="btn btn-delete btn-sm" onclick="return confirm('¿Deseas eliminar esta vista?');">Eliminar</a>
                         </td>
                     </tr>
                     {% empty %}
                     <tr>
-                        <td colspan="6" style="text-align: center; color: #949797;">No hay códigos postales registrados.</td>
+                        <td colspan="6" style="text-align: center; color: #949797;">No hay vistas de alcaldías registradas.</td>
                     </tr>
                     {% endfor %}
                 </tbody>
@@ -562,7 +555,7 @@ document.getElementById('searchInput').addEventListener('input', function() {
 
                 document.getElementById('searchInput').addEventListener('keyup', function () {
                     let searchValue = this.value.toLowerCase();
-                    let table = document.getElementById('coloniasTable');
+                    let table = document.getElementById('municipioTable');
                     let rows = table.getElementsByTagName('tr');
 
                     for (let i = 1; i < rows.length; i++) {
@@ -618,55 +611,41 @@ document.getElementById('searchInput').addEventListener('input', function() {
 
             <script>
                 $(document).ready(function () {
-                    // Función para limpiar y agregar opción por defecto
-                    function clearAndAddDefault(selectId, defaultText) {
-                        $(selectId).empty().append(`<option value="">${defaultText}</option>`);
-                    }
-
-                    // Evento cambio de estado
                     $('#estado').change(function () {
                         const estadoId = $(this).val();
-                        clearAndAddDefault('#municipio', 'Selecciona un municipio');
-                        clearAndAddDefault('#colonia', 'Selecciona una colonia');
+                        $('#municipio').html('<option>Selecciona un municipio</option>');
+                        $('#colonia').html('<option>Selecciona una colonia</option>');
+                        $('#codigo').val('');
 
-                        if (estadoId) {
-                            $.get('{% url "obtener_municipios" %}', { estado_id: estadoId }, function (data) {
-                                if (data && data.length > 0) {
-                                    $.each(data, function (i, municipio) {
-                                        $('#municipio').append(`<option value="${municipio.id_municipio}">${municipio.nombre}</option>`);
-                                    });
-                                } else {
-                                    console.log('No se encontraron municipios para este estado');
-                                }
-                            }).fail(function (xhr, status, error) {
-                                console.log('Error al cargar municipios: ' + error);
+                        $.get('{% url "obtener_municipios" %}', { estado_id: estadoId }, function (data) {
+                            $.each(data, function (i, municipio) {
+                                $('#municipio').append(`<option value="${municipio.id_municipio}">${municipio.nombre}</option>`);
                             });
-                        }
+                        });
                     });
 
-                    // Evento cambio de municipio
                     $('#municipio').change(function () {
                         const municipioId = $(this).val();
-                        clearAndAddDefault('#colonia', 'Selecciona una colonia');
+                        $('#colonia').html('<option>Selecciona una colonia</option>');
+                        $('#codigo').val('');
 
-                        if (municipioId) {
-                            $.get('{% url "obtener_colonias" %}', { municipio_id: municipioId }, function (data) {
-                                if (data && data.length > 0) {
-                                    $.each(data, function (i, colonia) {
-                                        $('#colonia').append(`<option value="${colonia.id_colonia}">${colonia.nombre}</option>`);
-                                    });
-                                } else {
-                                    console.log('No se encontraron colonias para este municipio');
-                                }
-                            }).fail(function (xhr, status, error) {
-                                console.log('Error al cargar colonias: ' + error);
+                        $.get('{% url "obtener_colonias" %}', { municipio_id: municipioId }, function (data) {
+                            $.each(data, function (i, colonia) {
+                                $('#colonia').append(`<option value="${colonia.id_colonia}">${colonia.nombre}</option>`);
                             });
-                        }
+                        });
                     });
 
-                    // Inicialización al cargar la página (opcional, si quieres simular un estado inicial)
-                    // Nota: Esto requeriría que pases un estado inicial desde la vista si es necesario
-                    // Por ahora, dejaremos que el usuario seleccione manualmente
+                    $('#colonia').change(function () {
+                        const coloniaId = $(this).val();
+                        $('#codigo').val('');
+
+                        $.get('{% url "obtener_codigos_postales" %}', { colonia_id: coloniaId }, function (data) {
+                            if (data.length > 0) {
+                                $('#codigo').val(data[0].codigo); // toma el primer código asociado
+                            }
+                        });
+                    });
                 });
             </script>
         </div>
