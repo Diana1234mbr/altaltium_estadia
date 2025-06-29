@@ -3,9 +3,8 @@ from django.urls import reverse
 from fpdf import FPDF
 from django.db.models import Count
 from io import BytesIO
-from django.contrib.auth.hashers import make_password
+from django.conf import settings
 from django.contrib import messages
-from django.contrib.auth.decorators import login_required, user_passes_test
 from django.shortcuts import render, redirect
 from django.contrib.auth import login, logout, authenticate
 from django.db import IntegrityError, connection
@@ -13,18 +12,21 @@ from django.http import Http404, JsonResponse, HttpResponse
 from .models import Estados, Municipios, Colonias, CodigosPostales, AlcaldiaVistas, Propiedades, GraficaAlcaldia, Usuarios
 from django.views.decorators.csrf import csrf_exempt
 from django.utils import timezone
+from django.views.decorators.cache import never_cache
 import json
 import matplotlib
 matplotlib.use('Agg')  # ← Usa un backend que NO requiere interfaz gráfica
 import matplotlib.pyplot as plt
-import io
+import os
 import base64
 
 # Decorador para verificar si es admin
+@never_cache
 def admin_required(usuario):
     return usuario.is_staff or usuario.is_superuser
 
 # Registro de usuarios
+@never_cache
 def signup(request):
     if request.method == 'GET':
         return render(request, 'signup.html')
@@ -54,10 +56,7 @@ def signup(request):
 
 
 # Estimaciones de propiedades
-from django.http import HttpResponse
-from fpdf import FPDF
-from django.db import connection
-
+@never_cache
 def estimaciones(request):    
     usuario = None
     usuario_id = request.session.get('usuario_id')
@@ -186,7 +185,8 @@ def estimaciones(request):
 
             # Redirigir a la vista de resultados con los datos de la propiedad
             messages.success(request, f"Propiedad registrada y calculada exitosamente.")
-            return render(request, 'resultados_estimaciones.html', {'propiedad': propiedad})
+            return redirect('mostrar_resultado', propiedad_id=propiedad.id_propiedad)
+
 
         except Exception as e:
             messages.error(request, f"Ocurrió un error: {str(e)}")
@@ -198,7 +198,8 @@ def estimaciones(request):
                 'propiedades': Propiedades.objects.all(),
                 'datos_alcaldia': AlcaldiaVistas.objects.all(),
             }
-            return render(request, 'estimaciones.html', context)
+            return render(request, 'estimaciones.html', context)    
+
 
     # Generar reporte PDF de una propiedad individual
     if 'generar_reporte_individual' in request.GET and 'id_propiedad' in request.GET:
@@ -261,6 +262,12 @@ def estimaciones(request):
             print(f"Error al generar el reporte: {str(e)}")
             return HttpResponse(f"Error: {str(e)}", status=500)
 
+
+
+
+
+
+
     # Si es GET, mostrar formulario
     context = {
         'estados': Estados.objects.all(),
@@ -273,7 +280,19 @@ def estimaciones(request):
     }
     return render(request, 'estimaciones.html', context)
 
+
+
+def mostrar_resultado(request, propiedad_id):
+    try:
+        propiedad = Propiedades.objects.get(id_propiedad=propiedad_id)
+        return render(request, 'resultados_estimaciones.html', {'propiedad': propiedad})
+    except Propiedades.DoesNotExist:
+        messages.error(request, "La propiedad no existe.")
+        return redirect('estimaciones')  # O a donde necesites
+
+
 # Inicio de sesión
+@never_cache
 def signin(request):
     if request.method == 'GET':
         return render(request, 'signin.html')
@@ -306,11 +325,13 @@ def signin(request):
 
 
 # Cerrar sesión
+@never_cache
 def signout(request):
     logout(request)
     return redirect('signin')
 
 
+@never_cache
 def analisis(request):
     # Obtener todas las alcaldías únicas y sus promedios desde la base de datos
     alcaldias = GraficaAlcaldia.objects.values('grafica_alcaldia').distinct()
@@ -349,10 +370,12 @@ def analisis(request):
     return render(request, 'analisis.html', {'grafica': grafica_base64})
 
 # Olvidé contraseña
+@never_cache
 def forgot_password(request):
     return render(request, 'forgotpassword.html')
 
 # Página de bienvenida
+@never_cache
 def welcome(request):
     usuario_id = request.session.get('usuario_id')
     usuario = None
@@ -377,66 +400,82 @@ def welcome(request):
 
 
 # Vistas de alcaldías
+@never_cache
 def vista_benito_juarez(request):
     datos = AlcaldiaVistas.objects.filter(alcaldia__iexact='Benito Juárez')
     return render(request, 'alcaldias/benito.html', {'datos': datos})
 
+@never_cache
 def vista_alvaro(request):
     datos = AlcaldiaVistas.objects.filter(alcaldia__iexact='Álvaro Obregón')
     return render(request, 'alcaldias/alvaro.html', {'datos': datos})
 
+@never_cache
 def vista_coyoacan(request):
     datos = AlcaldiaVistas.objects.filter(alcaldia__iexact='Coyoacán')
     return render(request, 'alcaldias/coyoacan.html', {'datos': datos})
 
+@never_cache
 def vista_xochimilco(request):
     datos = AlcaldiaVistas.objects.filter(alcaldia__iexact='Xochimilco')
     return render(request, 'alcaldias/xochimilco.html', {'datos': datos})
 
+@never_cache
 def vista_azcapotzalco(request):
     datos = AlcaldiaVistas.objects.filter(alcaldia__iexact='Azcapotzalco')
     return render(request, 'alcaldias/azcapotzalco.html', {'datos': datos})
 
+@never_cache
 def vista_cuajimalpa(request):
     datos = AlcaldiaVistas.objects.filter(alcaldia__iexact='Cuajimalpa de Morelos')
     return render(request, 'alcaldias/cuajimalpa.html', {'datos': datos})
 
+@never_cache
 def vista_cuauhtemoc(request):
     datos = AlcaldiaVistas.objects.filter(alcaldia__iexact='Cuauhtémoc')
     return render(request, 'alcaldias/cuauhtemoc.html', {'datos': datos})
 
+@never_cache
 def vista_miguel(request):
     datos = AlcaldiaVistas.objects.filter(alcaldia__iexact='Miguel Hidalgo')
     return render(request, 'alcaldias/miguel.html', {'datos': datos})
 
+@never_cache
 def vista_gustavo(request):
     datos = AlcaldiaVistas.objects.filter(alcaldia__iexact='Gustavo A. Madero')
     return render(request, 'alcaldias/gustavo.html', {'datos': datos})
 
+@never_cache
 def vista_iztacalco(request):
     datos = AlcaldiaVistas.objects.filter(alcaldia__iexact='Iztacalco')
     return render(request, 'alcaldias/iztacalco.html', {'datos': datos})
 
+@never_cache
 def vista_iztapalapa(request):
     datos = AlcaldiaVistas.objects.filter(alcaldia__iexact='Iztapalapa')
     return render(request, 'alcaldias/iztapalapa.html', {'datos': datos})
 
+@never_cache
 def vista_magda(request):
     datos = AlcaldiaVistas.objects.filter(alcaldia__iexact='La Magdalena Contreras')
     return render(request, 'alcaldias/magda.html', {'datos': datos})
 
+@never_cache
 def vista_milpa(request):
     datos = AlcaldiaVistas.objects.filter(alcaldia__iexact='Milpa Alta')
     return render(request, 'alcaldias/milpa.html', {'datos': datos})
 
+@never_cache
 def vista_tlahuac(request):
     datos = AlcaldiaVistas.objects.filter(alcaldia__iexact='Tláhuac')
     return render(request, 'alcaldias/tlahuac.html', {'datos': datos})
 
+@never_cache
 def vista_tlalpan(request):
     datos = AlcaldiaVistas.objects.filter(alcaldia__iexact='Tlalpan')
     return render(request, 'alcaldias/tlalpan.html', {'datos': datos})
 
+@never_cache
 def vista_venustiano(request):
     datos = AlcaldiaVistas.objects.filter(alcaldia__iexact='Venustiano Carranza')
     return render(request, 'alcaldias/venustiano.html', {'datos': datos})
@@ -446,6 +485,7 @@ def vista_venustiano(request):
 
 
 # Obtener colonias por municipio (AJAX)
+@never_cache
 def obtener_colonias(request):
     municipio_id = request.GET.get('municipio_id')
     if not municipio_id:
@@ -457,7 +497,7 @@ def obtener_colonias(request):
         return JsonResponse({'error': str(e)}, status=400)
 
 # Obtener códigos postales por municipio (AJAX)
-
+@never_cache
 def obtener_municipios(request):
     estado_id = request.GET.get('estado_id')
     if not estado_id:
@@ -469,7 +509,7 @@ def obtener_municipios(request):
         return JsonResponse({'error': str(e)}, status=400)
 
 
-
+@never_cache
 def obtener_codigos_postales(request):
     colonia_id = request.GET.get('colonia_id')
     if not colonia_id:
@@ -481,7 +521,7 @@ def obtener_codigos_postales(request):
         return JsonResponse({'error': str(e)}, status=400)
 
 # Vista principal para panel admin
-
+@never_cache
 def gentelella_view(request, page):
         usuario_id = request.session.get('usuario_id')
 
@@ -857,68 +897,107 @@ def gentelella_view(request, page):
                     messages.error(request, f"Error al eliminar propiedades o reiniciar IDs: {str(e)}")
                 return redirect('gentelella_page', page='cal_estimaciones')
 
-            # Generar reporte PDF de todas las propiedades
-            if 'generar_reporte_todos' in request.GET:
-                print("Generando reporte de todas las propiedades...")
+
+
+
+
+
+# Generar reporte PDF de una propiedad individual con diseño limpio y completo
+        if 'generar_reporte_individual' in request.GET and 'id_propiedad' in request.GET:
+            print(f"Generando reporte individual para propiedad ID: {request.GET['id_propiedad']}")
+            try:
+                propiedad_id = request.GET['id_propiedad']
+                propiedad = Propiedades.objects.get(id_propiedad=propiedad_id)
+
+                usuario = request.user if request.user.is_authenticated else None
+                usuario_nombre = usuario.username if usuario else "Usuario invitado"
+                usuario_correo = usuario.email if usuario else "correo@invitado.com"
+
                 response = HttpResponse(content_type='application/pdf')
-                response['Content-Disposition'] = 'attachment; filename="reporte_todas_propiedades.pdf"'
+                response['Content-Disposition'] = f'attachment; filename="reporte_propiedad_{propiedad_id}.pdf"'
+
                 pdf = FPDF()
                 pdf.add_page()
-                pdf.set_font("Arial", size=12)
-                pdf.cell(200, 10, txt="Reporte de Todas las Propiedades", ln=True, align='C')
-                for prop in propiedades:
-                    pdf.cell(200, 10, txt=f"ID: {prop.id_propiedad} - Tipo: {prop.tipo_propiedad} - Calle: {prop.calle}", ln=True)
+
+                # Logo
+                logo_path = os.path.join(settings.BASE_DIR, 'static', 'images', 'logo.png')
+                if os.path.exists(logo_path):
+                    pdf.image(logo_path, x=80, y=10, w=50)
+                pdf.ln(40)
+
+                # Empresa y Usuario
+                pdf.set_font("Arial", 'B', 14)
+                pdf.cell(0, 10, "Altaltium Real Estate Solutions", ln=True, align='C')
+                pdf.set_font("Arial", '', 12)
+                pdf.cell(0, 8, f"Nombre de usuario: {usuario_nombre}", ln=True, align='C')
+                pdf.cell(0, 8, f"Correo: {usuario_correo}", ln=True, align='C')
+                pdf.ln(10)
+
+                # Título del reporte
+                pdf.set_font("Arial", 'B', 16)
+                pdf.cell(0, 10, "Reporte de Estimación de Propiedad", ln=True, align='C')
+                pdf.ln(10)
+
+                # Mapa
+                mapa_path = os.path.join(settings.BASE_DIR, 'static', 'images', 'mapa.png')
+                if os.path.exists(mapa_path):
+                    pdf.image(mapa_path, x=30, w=150)
+                pdf.ln(10)
+
+                # Información de la propiedad
+                pdf.set_font("Arial", 'B', 14)
+                pdf.cell(0, 10, "Descripción del Inmueble", ln=True)
+
+                pdf.set_font("Arial", '', 12)
+                pdf.cell(0, 8, f"Calle: {propiedad.calle or 'N/A'}", ln=True)
+                pdf.cell(0, 8, f"Colonia: {propiedad.id_colonia.nombre if propiedad.id_colonia else 'N/A'}", ln=True)
+                pdf.cell(0, 8, f"Delegación: {propiedad.id_municipio.nombre if propiedad.id_municipio else 'N/A'}", ln=True)
+                pdf.cell(0, 8, f"Estado: {propiedad.id_estado.nombre if propiedad.id_estado else 'N/A'}", ln=True)
+                pdf.ln(5)
+
+                pdf.set_font("Arial", 'B', 14)
+                pdf.cell(0, 10, "Características", ln=True)
+
+                pdf.set_font("Arial", '', 12)
+                pdf.cell(0, 8, f"Recámaras: {propiedad.recamaras or 'N/A'}", ln=True)
+                pdf.cell(0, 8, f"Sanitarios: {propiedad.sanitarios or 'N/A'}", ln=True)
+                pdf.cell(0, 8, f"Estacionamiento: {propiedad.estacionamiento or 'N/A'}", ln=True)
+                pdf.cell(0, 8, f"Terreno: {propiedad.terreno or 'N/A'} m2", ln=True)
+                pdf.cell(0, 8, f"Construcción: {propiedad.construccion or 'N/A'} m2", ln=True)
+                pdf.cell(0, 8, f"Estado de conservación: {propiedad.estado_conservacion or 'N/A'}", ln=True)
+                pdf.ln(5)
+
+                pdf.set_font("Arial", 'B', 14)
+                pdf.cell(0, 10, "Información adicional", ln=True)
+
+                pdf.set_font("Arial", '', 12)
+                pdf.multi_cell(0, 8, f"{propiedad.comentarios or 'Sin comentarios adicionales'}")
+                pdf.ln(5)
+
+                pdf.set_font("Arial", 'B', 14)
+                pdf.cell(0, 10, "Valores de Referencia", ln=True)
+
+                pdf.set_font("Arial", '', 12)
+                pdf.cell(0, 8, f"Valor Comercial Aproximado: ${propiedad.valor_comercial or 'N/A'}", ln=True)
+                pdf.cell(0, 8, f"Valor Judicial Aproximado: ${propiedad.valor_judicial or 'N/A'}", ln=True)
+
                 response.write(pdf.output(dest='S').encode('latin-1'))
-                print("Reporte generado exitosamente.")
+                print(f"Reporte individual generado para ID: {propiedad_id}")
                 return response
 
-            # Generar reporte PDF de una propiedad individual
-            if 'generar_reporte_individual' in request.GET and 'id_propiedad' in request.GET:
-                print(f"Generando reporte individual para propiedad ID: {request.GET['id_propiedad']}")
-                try:
-                    propiedad_id = request.GET['id_propiedad']
-                    propiedad = Propiedades.objects.get(id_propiedad=propiedad_id)
-                    response = HttpResponse(content_type='application/pdf')
-                    response['Content-Disposition'] = f'attachment; filename="reporte_propiedad_{propiedad_id}.pdf"'
-                    pdf = FPDF()
-                    pdf.add_page()
-                    pdf.set_font("Arial", size=12)
+            except Propiedades.DoesNotExist:
+                print(f"No se encontró la propiedad con ID: {propiedad_id}")
+                return HttpResponse("Propiedad no encontrada", status=404)
 
-                    # Título centrado
-                    pdf.set_font("Arial", 'B', size=14)  # 'B' para negrita
-                    pdf.cell(200, 10, txt=f"Reporte de Propiedad ID: {propiedad.id_propiedad}", ln=True, align='C')
-                    pdf.ln(10)  # Salto de línea
+            except Exception as e:
+                print(f"Error al generar el reporte: {str(e)}")
+                return HttpResponse(f"Error: {str(e)}", status=500)
+                
 
-                    # Configuración de la tabla
-                    pdf.set_font("Arial", size=12)
-                    pdf.set_fill_color(200, 220, 255)  # Color de fondo para el encabezado
-                    pdf.set_text_color(0, 0, 0)  # Color del texto (negro)
 
-                    # Encabezados de la tabla
-                    pdf.cell(50, 10, 'Campo', 1, 0, 'C', 1)  # Ancho 50, alto 10, borde 1, sin salto de línea, centrado, fondo relleno
-                    pdf.cell(150, 10, 'Valor', 1, 1, 'C', 1)  # Ancho 150, salto de línea
-                    pdf.set_fill_color(255, 255, 255)  # Color de fondo para las filas de datos (blanco)
 
-                    # Datos de la tabla
-                    pdf.cell(50, 10, 'Tipo de Propiedad', 1, 0, 'L')
-                    pdf.cell(150, 10, f'{propiedad.tipo_propiedad or "N/A"}', 1, 1, 'L')
-                    pdf.cell(50, 10, 'Calle', 1, 0, 'L')
-                    pdf.cell(150, 10, f'{propiedad.calle or "N/A"}', 1, 1, 'L')
-                    pdf.cell(50, 10, 'Recámaras', 1, 0, 'L')
-                    pdf.cell(150, 10, f'{propiedad.recamaras or "N/A"}', 1, 1, 'L')
-                    pdf.cell(50, 10, 'Sanitarios', 1, 0, 'L')
-                    pdf.cell(150, 10, f'{propiedad.sanitarios or "N/A"}', 1, 1, 'L')
 
-                    # Generar el PDF
-                    response.write(pdf.output(dest='S').encode('latin-1'))
-                    print(f"Reporte individual generado para ID: {propiedad_id}")
-                    return response
-                except Propiedades.DoesNotExist:
-                    print(f"No se encontró la propiedad con ID: {propiedad_id}")
-                    return HttpResponse("Propiedad no encontrada", status=404)
-                except Exception as e:
-                    print(f"Error al generar el reporte: {str(e)}")
-                    return HttpResponse(f"Error: {str(e)}", status=500)
+
 
         # ================= USUARIOS ===================
         elif page == "cal_usuarios":
@@ -1163,7 +1242,7 @@ def gentelella_view(request, page):
 
     
 #Vista para la documentación 
-
+@never_cache
 def vista_documentacion(request):
     usuario_id = request.session.get('usuario_id')
     usuario = None
