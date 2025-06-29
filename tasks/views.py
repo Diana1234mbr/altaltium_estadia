@@ -896,13 +896,8 @@ def gentelella_view(request, page):
                 except Exception as e:
                     messages.error(request, f"Error al eliminar propiedades o reiniciar IDs: {str(e)}")
                 return redirect('gentelella_page', page='cal_estimaciones')
-
-
-
-
-
-
-# Generar reporte PDF de una propiedad individual con diseño limpio y completo
+                
+                # Generar reporte PDF de una propiedad individual con diseño limpio y completo
         if 'generar_reporte_individual' in request.GET and 'id_propiedad' in request.GET:
             print(f"Generando reporte individual para propiedad ID: {request.GET['id_propiedad']}")
             try:
@@ -916,70 +911,95 @@ def gentelella_view(request, page):
                 response = HttpResponse(content_type='application/pdf')
                 response['Content-Disposition'] = f'attachment; filename="reporte_propiedad_{propiedad_id}.pdf"'
 
-                pdf = FPDF()
+                pdf = FPDF(orientation='L')  # Orientación horizontal (Landscape)
                 pdf.add_page()
+                pdf.set_auto_page_break(False)  # Desactivar salto de página automático
 
-                # Logo
+                # Encabezado con logo, empresa, usuario y correo
                 logo_path = os.path.join(settings.BASE_DIR, 'static', 'images', 'logo.png')
                 if os.path.exists(logo_path):
-                    pdf.image(logo_path, x=80, y=10, w=50)
-                pdf.ln(40)
+                    pdf.image(logo_path, x=120, y=10, w=40)  # Logo a la derecha
+                pdf.set_xy(10, 10)
+                pdf.set_font("Arial", 'B', 12)
+                pdf.cell(100, 8, "Altaltium Real Estate Solutions", ln=True, align='L')
+                pdf.set_font("Arial", '', 10)
+                pdf.cell(100, 6, f"Usuario: {usuario_nombre}", ln=True, align='L')
+                pdf.cell(100, 6, f"Correo: {usuario_correo}", ln=True, align='L')
+                pdf.ln(5)
 
-                # Empresa y Usuario
-                pdf.set_font("Arial", 'B', 14)
-                pdf.cell(0, 10, "Altaltium Real Estate Solutions", ln=True, align='C')
-                pdf.set_font("Arial", '', 12)
-                pdf.cell(0, 8, f"Nombre de usuario: {usuario_nombre}", ln=True, align='C')
-                pdf.cell(0, 8, f"Correo: {usuario_correo}", ln=True, align='C')
-                pdf.ln(10)
+                # Valores aproximados a la izquierda
+                pdf.set_xy(10, 40)
+                pdf.set_font("Arial", '', 10)
+                pdf.cell(90, 6, f"Valor Comercial Aproximado: ${propiedad.valor_comercial or 'N/A'}", ln=True, align='L')
+                pdf.cell(90, 6, f"Valor Judicial Aproximado: ${propiedad.valor_judicial or 'N/A'}", ln=True, align='L')
 
-                # Título del reporte
-                pdf.set_font("Arial", 'B', 16)
-                pdf.cell(0, 10, "Reporte de Estimación de Propiedad", ln=True, align='C')
-                pdf.ln(10)
-
-                # Mapa
+                # Mapa a la derecha
                 mapa_path = os.path.join(settings.BASE_DIR, 'static', 'images', 'mapa.png')
                 if os.path.exists(mapa_path):
-                    pdf.image(mapa_path, x=30, w=150)
+                    pdf.image(mapa_path, x=110, y=30, w=180)  # Mapa a la derecha, ajustado
+
+                # Título principal (arriba de los valores)
+                pdf.set_xy(10, 25)
+                pdf.set_text_color(0, 66, 156)  # Azul rey
+                pdf.set_font("Arial", 'B', 14)
+                pdf.cell(0, 10, "Resultados de Estimación de Propiedad", ln=True, align='C')
+                pdf.ln(15)
+
+                # Descripción del Inmueble
+                pdf.set_xy(10, 90)
+                pdf.set_text_color(0, 66, 156)  # Azul rey
+                pdf.set_font("Arial", 'B', 12)
+                pdf.cell(0, 10, "Descripción del Inmueble", ln=True)
                 pdf.ln(10)
 
-                # Información de la propiedad
-                pdf.set_font("Arial", 'B', 14)
-                pdf.cell(0, 10, "Descripción del Inmueble", ln=True)
+                # Dirección
+                pdf.set_xy(10, 110)
+                pdf.set_text_color(0, 66, 156)  # Azul rey
+                pdf.set_font("Arial", 'B', 10)
+                pdf.cell(90, 8, "Dirección", ln=True, align='L')
+                pdf.set_text_color(0, 0, 0)  # Volver a negro
+                pdf.set_font("Arial", '', 10)
+                pdf.set_x(10)
+                pdf.cell(90, 6, "Calle:", ln=True)
+                pdf.cell(90, 6, f"{propiedad.calle or 'ww'}", ln=True)
+                pdf.cell(90, 6, "Colonia:", ln=True)
+                pdf.cell(90, 6, f"{propiedad.id_colonia.nombre if propiedad.id_colonia else 'Sin colonia'}", ln=True)
+                pdf.cell(90, 6, "Delegación:", ln=True)
+                pdf.cell(90, 6, f"{propiedad.id_municipio.nombre if propiedad.id_municipio else 'Sin municipio'}", ln=True)
+                pdf.cell(90, 6, "Estado:", ln=True)
+                pdf.cell(90, 6, f"{propiedad.id_estado.nombre if propiedad.id_estado else 'Sin estado'}", ln=True)
 
-                pdf.set_font("Arial", '', 12)
-                pdf.cell(0, 8, f"Calle: {propiedad.calle or 'N/A'}", ln=True)
-                pdf.cell(0, 8, f"Colonia: {propiedad.id_colonia.nombre if propiedad.id_colonia else 'N/A'}", ln=True)
-                pdf.cell(0, 8, f"Delegación: {propiedad.id_municipio.nombre if propiedad.id_municipio else 'N/A'}", ln=True)
-                pdf.cell(0, 8, f"Estado: {propiedad.id_estado.nombre if propiedad.id_estado else 'N/A'}", ln=True)
-                pdf.ln(5)
+                # Características
+                pdf.set_xy(110, 110)
+                pdf.set_text_color(0, 66, 156)  # Azul rey
+                pdf.set_font("Arial", 'B', 10)
+                pdf.cell(90, 8, "Características", ln=True, align='L')
+                pdf.set_text_color(0, 0, 0)  # Volver a negro
+                pdf.set_font("Arial", '', 10)
+                pdf.set_x(110)
+                pdf.cell(90, 6, "Terreno:", ln=True)
+                pdf.cell(90, 6, f"{propiedad.terreno or '12.00'} m2", ln=True)
+                pdf.cell(90, 6, "Construcción:", ln=True)
+                pdf.cell(90, 6, f"{propiedad.construccion or 'N/A'} m2", ln=True)
+                pdf.cell(90, 6, "Recámaras:", ln=True)
+                pdf.cell(90, 6, f"{propiedad.recamaras or 'N/A'}", ln=True)
+                pdf.cell(90, 6, "Sanitarios:", ln=True)
+                pdf.cell(90, 6, f"{propiedad.sanitarios or 'N/A'}", ln=True)
+                pdf.cell(90, 6, "Estacionamiento:", ln=True)
+                pdf.cell(90, 6, f"{propiedad.estacionamiento or 'N/A'}", ln=True)
 
-                pdf.set_font("Arial", 'B', 14)
-                pdf.cell(0, 10, "Características", ln=True)
-
-                pdf.set_font("Arial", '', 12)
-                pdf.cell(0, 8, f"Recámaras: {propiedad.recamaras or 'N/A'}", ln=True)
-                pdf.cell(0, 8, f"Sanitarios: {propiedad.sanitarios or 'N/A'}", ln=True)
-                pdf.cell(0, 8, f"Estacionamiento: {propiedad.estacionamiento or 'N/A'}", ln=True)
-                pdf.cell(0, 8, f"Terreno: {propiedad.terreno or 'N/A'} m2", ln=True)
-                pdf.cell(0, 8, f"Construcción: {propiedad.construccion or 'N/A'} m2", ln=True)
-                pdf.cell(0, 8, f"Estado de conservación: {propiedad.estado_conservacion or 'N/A'}", ln=True)
-                pdf.ln(5)
-
-                pdf.set_font("Arial", 'B', 14)
-                pdf.cell(0, 10, "Información adicional", ln=True)
-
-                pdf.set_font("Arial", '', 12)
-                pdf.multi_cell(0, 8, f"{propiedad.comentarios or 'Sin comentarios adicionales'}")
-                pdf.ln(5)
-
-                pdf.set_font("Arial", 'B', 14)
-                pdf.cell(0, 10, "Valores de Referencia", ln=True)
-
-                pdf.set_font("Arial", '', 12)
-                pdf.cell(0, 8, f"Valor Comercial Aproximado: ${propiedad.valor_comercial or 'N/A'}", ln=True)
-                pdf.cell(0, 8, f"Valor Judicial Aproximado: ${propiedad.valor_judicial or 'N/A'}", ln=True)
+                # Información adicional
+                pdf.set_xy(210, 110)
+                pdf.set_text_color(0, 66, 156)  # Azul rey
+                pdf.set_font("Arial", 'B', 10)
+                pdf.cell(90, 8, "Información adicional", ln=True, align='L')
+                pdf.set_text_color(0, 0, 0)  # Volver a negro
+                pdf.set_font("Arial", '', 10)
+                pdf.set_x(210)
+                pdf.cell(90, 6, "Comentarios:", ln=True)
+                pdf.cell(90, 6, f"{propiedad.comentarios or 'N/A'}", ln=True)
+                pdf.cell(90, 6, "Estado de conservación:", ln=True)
+                pdf.cell(90, 6, f"{propiedad.estado_conservacion or 'Muy bueno'}", ln=True)
 
                 response.write(pdf.output(dest='S').encode('latin-1'))
                 print(f"Reporte individual generado para ID: {propiedad_id}")
@@ -992,12 +1012,6 @@ def gentelella_view(request, page):
             except Exception as e:
                 print(f"Error al generar el reporte: {str(e)}")
                 return HttpResponse(f"Error: {str(e)}", status=500)
-                
-
-
-
-
-
 
         # ================= USUARIOS ===================
         elif page == "cal_usuarios":
@@ -1021,6 +1035,7 @@ def gentelella_view(request, page):
             if request.method == 'POST' and 'editar' not in request.GET:
                 username = request.POST.get('username')
                 first_name = request.POST.get('nombre')
+                roles = request.POST.get('roles')
                 email = request.POST.get('email')
                 password1 = request.POST.get('password1')
                 password2 = request.POST.get('password2')
@@ -1032,6 +1047,7 @@ def gentelella_view(request, page):
                                 username=username,
                                 first_name=first_name,
                                 email=email,
+                                roles=roles,
                                 password=password1,
                                 is_active=True,
                                 date_joined=timezone.now()
@@ -1068,6 +1084,7 @@ def gentelella_view(request, page):
                     username = request.POST.get('username')
                     first_name = request.POST.get('nombre')
                     email = request.POST.get('email')
+                    roles = request.POST.get('roles')  # ← campo roles aquí
                     password1 = request.POST.get('password1')
                     password2 = request.POST.get('password2')
 
@@ -1075,18 +1092,24 @@ def gentelella_view(request, page):
                         usuario.username = username
                         usuario.first_name = first_name
                         usuario.email = email
+
+                        # Guardar roles si se proporciona
+                        if roles:
+                            usuario.roles = roles
+
                         if password1 and password2 and password1 == password2:
                             usuario.password = password1
                         elif password1 or password2:
                             messages.error(request, "Las contraseñas no coinciden o están incompletas.")
                             return redirect('gentelella_page', page='editar_usuario', editar=id_usuario)
-                        
+
                         if 'profile_picture' in request.FILES:
                             usuario.profile_picture = request.FILES['profile_picture']
 
                         usuario.save()
                         messages.success(request, "Usuario actualizado correctamente.")
                         return redirect('gentelella_page', page='cal_usuarios')
+            
                     else:
                         messages.error(request, "Faltan datos para actualizar el usuario.")
                 except Usuarios.DoesNotExist:

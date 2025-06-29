@@ -20,6 +20,7 @@ class Usuarios(models.Model):
     is_active = models.BooleanField(default=True)
     date_joined = models.DateTimeField(auto_now_add=True)
     profile_picture = models.ImageField(upload_to='profile_pics/', null=True, blank=True)
+    roles = models.CharField(max_length=50)
 
     class Meta:
         db_table = 'usuarios'  # Asegura que Django use tu tabla ya creada
