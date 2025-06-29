@@ -23,7 +23,8 @@ class Usuarios(models.Model):
     roles = models.CharField(max_length=50)
 
     class Meta:
-        db_table = 'usuarios'  # Asegura que Django use tu tabla ya creada
+        db_table = 'usuarios' # Asegura que Django use tu tabla ya creada
+        managed = True 
 
     def __str__(self):
         return self.username
@@ -37,7 +38,7 @@ class AlcaldiaVistas(models.Model):
     zona = models.CharField(db_column='Zona', max_length=50, blank=True, null=True)  # Field name made lowercase.
 
     class Meta:
-        managed = False
+        managed = True
         db_table = 'alcaldia_vistas'
 
 def __str__(self):
@@ -64,7 +65,7 @@ class Municipios(models.Model):
     class Meta:
         db_table = 'municipios'
         unique_together = (('nombre', 'id_estado'),)
-        managed = False
+        managed = True
 
     def __str__(self):
         return self.nombre
@@ -150,3 +151,4 @@ class GraficaAlcaldia(models.Model):
 
     class Meta:
         db_table = 'graficas_alcaldias'
+        managed = True
