@@ -281,7 +281,11 @@
             <li class="nav-item dropdown">
               <a href="#" class="nav-link dropdown-toggle" id="navbarDropdown" role="button" data-bs-toggle="dropdown">
                 {% if usuario %}
-                  <img src="{{ usuario.profile_picture.url }}" class="rounded-circle me-2" width="30" height="30" alt="Foto de perfil">
+                  {% if usuario.profile_picture %}
+                    <img src="{{ usuario.profile_picture.url }}" class="rounded-circle me-2" width="30" height="30" alt="Foto de perfil">
+                  {% else %}
+                    <img src="{% static 'img/default_profile.png' %}" class="rounded-circle me-2" width="30" height="30" alt="Foto de perfil por defecto">
+                  {% endif %}
                   {{ usuario.username }}
                 {% endif %}
               </a>
