@@ -78,13 +78,15 @@ WSGI_APPLICATION = 'djangocrud.wsgi.application'
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
 
 DATABASES = {
-    'default': dj_database_url.config(
-        default=os.environ.get('DATABASE_URL'),  # ← Render define esta variable automáticamente
-        conn_max_age=600,
-        conn_health_checks=True
-    )
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'djangodatabase_rnwv',
+        'USER': 'djangodatabase_rnwv_user',
+        'PASSWORD': 'mu9FuhrglctJoEuVXDSDyg7amIaLq9LE',
+        'HOST': 'dpg-d1gtb0qli9vc73b3bf9g-a.oregon-postgres.render.com',
+        'PORT': '5432',
+    }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/4.1/ref/settings/#auth-password-validators
