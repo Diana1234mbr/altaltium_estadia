@@ -298,29 +298,36 @@ def signin(request):
         return render(request, 'signin.html')
 
     input_value = request.POST.get('username', '').strip()
-    password = request.POST.get('password', '').strip()    
+    password = request.POST.get('password', '').strip()
 
-    user_obj = None
+    if not input_value or not password:
+        return render(request, 'signin.html', {"error": "Todos los campos son obligatorios."})
+
     try:
-        user_obj = Usuarios.objects.get(username=input_value)
-    except Usuarios.DoesNotExist:
-        try:
-            user_obj = Usuarios.objects.get(email=input_value)
-        except Usuarios.DoesNotExist:
-            user_obj = None
+        # Buscar por username o email
+        user_obj = Usuarios.objects.filter(username=input_value).first() or \
+                   Usuarios.objects.filter(email=input_value).first()
 
-    if user_obj and user_obj.password == password and user_obj.is_active:
-        request.session['usuario_id'] = user_obj.id
-        
+        if user_obj:
+            if user_obj.password == password:
+                if user_obj.is_active:
+                    request.session['usuario_id'] = user_obj.id
 
-        if user_obj.is_staff or user_obj.is_superuser:
-            return redirect('gentelella_page', page='index')  # Dashboard admin
+                    if user_obj.is_staff or user_obj.is_superuser:
+                        return redirect('gentelella_page', page='index')
+                    else:
+                        return redirect('welcome')
+                else:
+                    return render(request, 'signin.html', {"error": "Tu cuenta está desactivada."})
+            else:
+                return render(request, 'signin.html', {"error": "Contraseña incorrecta."})
         else:
-            return redirect('welcome')
+            return render(request, 'signin.html', {"error": "Usuario no encontrado."})
 
-    return render(request, 'signin.html', {
-        "error": "Usuario o contraseña incorrectos."
-    })
+    except Exception as e:
+        # Esto te ayudará a ver el error en los logs de Render
+        print("Error en login:", e)
+        return render(request, 'signin.html', {"error": "Error interno. Revisa los logs."})
 
 
 
