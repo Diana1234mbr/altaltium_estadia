@@ -3,7 +3,6 @@
 import django.db.models.deletion
 from django.db import migrations, models
 
-
 class Migration(migrations.Migration):
 
     dependencies = [
@@ -23,7 +22,7 @@ class Migration(migrations.Migration):
             ],
             options={
                 'db_table': 'alcaldia_vistas',
-                'managed': False,
+                'managed': True,  # ← CAMBIADO
             },
         ),
         migrations.CreateModel(
@@ -34,7 +33,7 @@ class Migration(migrations.Migration):
             ],
             options={
                 'db_table': 'codigos_postales',
-                'managed': False,
+                'managed': True,  # ← CAMBIADO
             },
         ),
         migrations.CreateModel(
@@ -45,7 +44,7 @@ class Migration(migrations.Migration):
             ],
             options={
                 'db_table': 'estados',
-                'managed': False,
+                'managed': True,  # ← CAMBIADO
             },
         ),
         migrations.CreateModel(
@@ -56,7 +55,7 @@ class Migration(migrations.Migration):
             ],
             options={
                 'db_table': 'municipios',
-                'managed': False,
+                'managed': True,  # ← CAMBIADO
             },
         ),
         migrations.CreateModel(
