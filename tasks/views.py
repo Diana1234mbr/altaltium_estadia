@@ -1000,14 +1000,13 @@ def gentelella_view(request, page):
                 pdf.cell(90, 6, "Estado de conservación:", ln=True)
                 pdf.cell(90, 6, f"{propiedad.estado_conservacion or 'Muy bueno'}", ln=True)
 
-                    # Obtener el PDF generado como bytes
-            pdf_output = pdf.output(dest='S')
+                 # Obtener el PDF generado como bytes
+                pdf_output = pdf.output(dest='S')
 
-            # Crear la respuesta HTTP con el PDF
-            response = HttpResponse(pdf_output, content_type='application/pdf')
-            response['Content-Disposition'] = f'attachment; filename="reporte_propiedad_{propiedad_id}.pdf"'
-
-                response.write(pdf.output(dest='S'))
+                # Crear la respuesta HTTP con el PDF
+                response = HttpResponse(pdf_output, content_type='application/pdf')
+                response['Content-Disposition'] = f'attachment; filename="reporte_propiedad_{propiedad_id}.pdf"'
+                
                 print(f"Reporte individual generado para ID: {propiedad_id}")
                 return response
 

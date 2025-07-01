@@ -436,52 +436,7 @@
                         {% endfor %}
                     </div>
                     {% endif %}
-                    <!-- Formulario para agregar nueva colonia -->
-                    <div class="card">
-                        <div class="collapsible-header" onclick="toggleForm('addForm')">
-                            <h3 style="color: #008a8a; font-size: 18px; font-weight: 600; margin: 0;">Agregar Nueva
-                                Colonia</h3>
-                            <i id="addFormIcon" class="fa fa-chevron-down"></i>
-                        </div>
-                        <form method="post" id="addForm" style="display: none; margin-top: 15px;"
-                            class="form-horizontal">
-                            {% csrf_token %}
-                            <div class="form-row">
-                                <div class="form-group" style="flex: 1; min-width: 300px;">
-                                    <label style="color: #003035; font-weight: 600;">Estado</label>
-                                    <select id="estado" name="id_estado" class="form-control" required
-                                        style="border: 1px solid #bfc6c7; border-radius: 4px; padding: 10px; color: #0d1d1f; background-color: #fefcef; transition: border-color 0.3s;">
-                                        {% for estado in estados %}
-                                        <option value="{{ estado.id_estado }}">{{ estado.nombre }}</option>
-                                        {% endfor %}
-                                    </select>
-                                </div>
-                                <div class="form-group" style="flex: 1; min-width: 300px;">
-                                    <label style="color: #003035; font-weight: 600;">Municipio</label>
-                                    <select id="municipio" name="id_municipio" class="form-control" required
-                                        style="border: 1px solid #bfc6c7; border-radius: 4px; padding: 10px; color: #0d1d1f; background-color: #fefcef; transition: border-color 0.3s;">
-                                        {% for municipio in municipios %}
-                                        <option value="{{ municipio.id_municipio }}">{{ municipio.nombre }}</option>
-                                        {% endfor %}
-                                    </select>
-                                </div>
-                                <div class="form-group">
-                                    <label>Nombre</label>
-                                    <input type="text" name="nombre" class="form-control" required
-                                        placeholder="Nombre de la colonia">
-                                </div>
-                                <div class="form-group">
-                                    <label>Promedio Precio (m²)</label>
-                                    <input type="number" name="promedio_precio" class="form-control" required
-                                        placeholder="Precio por m²">
-                                </div>
-                                <div class="form-group">
-                                    <button type="submit" class="btn btn-add">Agregar</button>
-                                    <button type="reset" class="btn btn-cancel">Limpiar</button>
-                                </div>
-                            </div>
-                        </form>
-                    </div>
+
                     <!-- Tabla de colonias -->
                     <div class="card table-container">
                         <table class="table" id="coloniasTable">
