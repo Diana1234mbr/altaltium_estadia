@@ -472,9 +472,9 @@
                         <label for="roles" class="form-label">Rol del usuario:</label>
                         <select name="roles" id="roles" class="form-control"  border-radius: 4px; padding: 10px; color: #0d1d1f; background-color: #fefcef; transition: border-color 0.3s;">
                             <option value="">Selecciona un rol</option>                            
-                            <option value="Vendedor" {% if usuario_editar.roles == "Vendedor" %}selected{% endif %}>Vendedor</option>
-                            <option value="Cliente" {% if usuario_editar.roles == "Cliente" %}selected{% endif %}>Cliente</option>
-                            <option value="Invitado" {% if usuario_editar.roles == "Invitado" %}selected{% endif %}>Invitado</option>
+                            <option value="Vendedor" {% if usuario_editar.roles == "Vendedor" %}selected{% endif %}>Gerente</option>
+                            <option value="Cliente" {% if usuario_editar.roles == "Cliente" %}selected{% endif %}>Asesor</option>
+                            <option value="Invitado" {% if usuario_editar.roles == "Invitado" %}selected{% endif %}>Cliente</option>
                         </select>
                     </div>
 
