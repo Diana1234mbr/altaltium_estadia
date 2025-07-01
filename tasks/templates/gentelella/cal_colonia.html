@@ -502,8 +502,20 @@
                                 <tr>
                                     <td>{{ colonia.id_colonia }}</td>
                                     <td>{{ colonia.nombre }}</td>
-                                    <td>{{ colonia.id_municipio.nombre }}</td>
-                                    <td>{{ colonia.id_estado.nombre }}</td>
+                                    <td>
+                                        {% if colonia.id_municipio %}
+                                            {{ colonia.id_municipio.nombre }}
+                                        {% else %}
+                                            <span style="color: #b03a2e;">Sin municipio</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if colonia.id_estado %}
+                                            {{ colonia.id_estado.nombre }}
+                                        {% else %}
+                                            <span style="color: #b03a2e;">Sin estado</span>
+                                        {% endif %}
+                                    </td>
                                     <td>{{ colonia.promedio_precio|default:'-' }}</td>
                                     <td>
                                         <a href="{% url 'gentelella_page' page='editar_colonia' %}?editar={{ colonia.id_colonia }}"
