@@ -52,6 +52,7 @@ class Estados(models.Model):
     class Meta:
         db_table = 'estados'
         managed = True
+        ordering = ['nombre']  # 👈 Esto aplica el orden alfabético SIEMPRE
 
     def __str__(self):
         return self.nombre
@@ -66,6 +67,7 @@ class Municipios(models.Model):
         db_table = 'municipios'
         unique_together = (('nombre', 'id_estado'),)
         managed = True
+         ordering = ['nombre']  # 👈 Esto aplica el orden alfabético SIEMPRE
 
     def __str__(self):
         return self.nombre
@@ -82,6 +84,7 @@ class Colonias(models.Model):
         db_table = 'colonias'
         unique_together = (('nombre', 'id_municipio'),)
         managed = True
+         ordering = ['nombre']  # 👈 Esto aplica el orden alfabético SIEMPRE
 
     def __str__(self):
         return self.nombre
