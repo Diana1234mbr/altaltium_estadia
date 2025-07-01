@@ -546,56 +546,52 @@ def gentelella_view(request, page):
             return HttpResponse("No tienes permisos para acceder al panel admin.", status=403)
 
         # ================= COLONIAS ===================
-if page == "cal_colonia":
-    context = {}  # Inicializa context
-    colonias = Colonias.objects.all()
-    municipios = Municipios.objects.all()
-    estados = Estados.objects.all()
+        if page == "cal_colonia":
+            colonias = Colonias.objects.all()
+            municipios = Municipios.objects.all()
+            estados = Estados.objects.all()
 
-    if 'eliminar' in request.GET:
-        eliminar_id = request.GET.get('eliminar')  # Usa .get() para evitar KeyError
-        if eliminar_id:
-            try:
-                Colonias.objects.filter(id_colonia=eliminar_id).delete()
-                messages.success(request, "Colonia eliminada correctamente.")
-            except Colonias.DoesNotExist:
-                messages.error(request, f"No se encontró la colonia con ID {eliminar_id}.")
-        return redirect('gentelella_page', page='cal_colonia')
-
-    if request.method == 'POST' and 'editar' not in request.GET:
-        nombre = request.POST.get('nombre')
-        id_municipio = request.POST.get('id_municipio')
-        id_estado = request.POST.get('id_estado')
-        promedio_precio = request.POST.get('promedio_precio', None)
-
-        if nombre and id_municipio and id_estado:
-            if Colonias.objects.filter(nombre=nombre, id_municipio=id_municipio).exists():
-                messages.error(request, "Ya existe una colonia con ese nombre en el municipio seleccionado.")
-            else:
+            if 'eliminar' in request.GET:
                 try:
-                    municipio = Municipios.objects.get(id_municipio=id_municipio)
-                    estado = Estados.objects.get(id_estado=id_estado)
-                    Colonias.objects.create(
-                        nombre=nombre,
-                        id_municipio=municipio,
-                        id_estado=estado,
-                        promedio_precio=promedio_precio
-                    )
-                    messages.success(request, "Colonia creada correctamente.")
-                except Municipios.DoesNotExist:
-                    messages.error(request, "Municipio no encontrado.")
-                except Estados.DoesNotExist:
-                    messages.error(request, "Estado no encontrado.")
-        else:
-            messages.error(request, "Faltan datos para crear la colonia.")
+                    Colonias.objects.filter(id_colonia=request.GET['eliminar']).delete()
+                    messages.success(request, "Colonia eliminada correctamente.")
+                except Colonias.DoesNotExist:
+                    messages.error(request, f"No se encontró la colonia con ID {request.GET['eliminar']}.")
+                return redirect('gentelella_page', page='cal_colonia')
 
-        return redirect('gentelella_page', page='cal_colonia')
+            if request.method == 'POST' and 'editar' not in request.GET:
+                nombre = request.POST.get('nombre')
+                id_municipio = request.POST.get('id_municipio')
+                id_estado = request.POST.get('id_estado')
+                promedio_precio = request.POST.get('promedio_precio', None)
 
-    context.update({
-        'colonias': colonias,
-        'municipios': municipios,
-        'estados': estados,
-    })
+                if nombre and id_municipio and id_estado:
+                    try:
+                        municipio = Municipios.objects.get(id_municipio=id_municipio)
+                        estado = Estados.objects.get(id_estado=id_estado)
+                        Colonias.objects.create(
+                            nombre=nombre,
+                            id_municipio=municipio,
+                            id_estado=estado,
+                            promedio_precio=promedio_precio
+                        )
+                        messages.success(request, "Colonia creada correctamente.")
+                    except Municipios.DoesNotExist:
+                        messages.error(request, "Municipio no encontrado.")
+                    except Estados.DoesNotExist:
+                        messages.error(request, "Estado no encontrado.")
+                    except IntegrityError:
+                        messages.error(request, "Ya existe una colonia con ese nombre en el municipio seleccionado.")
+                else:
+                    messages.error(request, "Faltan datos para crear la colonia.")
+
+                return redirect('gentelella_page', page='cal_colonia')
+
+            context.update({
+                'colonias': colonias,
+                'municipios': municipios,
+                'estados': estados,
+            })
 
         # ================= EDITAR COLONIA ===================
         elif page == "editar_colonia":
@@ -1004,13 +1000,14 @@ if page == "cal_colonia":
                 pdf.cell(90, 6, "Estado de conservación:", ln=True)
                 pdf.cell(90, 6, f"{propiedad.estado_conservacion or 'Muy bueno'}", ln=True)
 
-                 # Obtener el PDF generado como bytes
-                pdf_output = pdf.output(dest='S')
+                    # Obtener el PDF generado como bytes
+            pdf_output = pdf.output(dest='S')
 
-                # Crear la respuesta HTTP con el PDF
-                response = HttpResponse(pdf_output, content_type='application/pdf')
-                response['Content-Disposition'] = f'attachment; filename="reporte_propiedad_{propiedad_id}.pdf"'
-                
+            # Crear la respuesta HTTP con el PDF
+            response = HttpResponse(pdf_output, content_type='application/pdf')
+            response['Content-Disposition'] = f'attachment; filename="reporte_propiedad_{propiedad_id}.pdf"'
+
+                response.write(pdf.output(dest='S'))
                 print(f"Reporte individual generado para ID: {propiedad_id}")
                 return response
 
