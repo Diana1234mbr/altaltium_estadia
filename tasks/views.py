@@ -204,113 +204,57 @@ def estimaciones(request):
 
     # Generar reporte PDF de una propiedad individual
     if 'generar_reporte_individual' in request.GET and 'id_propiedad' in request.GET:
-    print(f"Generando reporte individual para propiedad ID: {request.GET['id_propiedad']}")
-    try:
-        propiedad_id = request.GET['id_propiedad']
-        propiedad = Propiedades.objects.get(id_propiedad=propiedad_id)
+        print(f"Generando reporte individual para propiedad ID: {request.GET['id_propiedad']}")
+        try:            
+            propiedad_id = request.GET['id_propiedad']
+            propiedad = Propiedades.objects.get(id_propiedad=propiedad_id)
 
-        usuario = request.user if request.user.is_authenticated else None
-        usuario_nombre = usuario.username if usuario else "Usuario invitado"
-        usuario_correo = usuario.email if usuario else "correo@invitado.com"
+            response = HttpResponse(pdf_output, content_type='application/pdf')
+            response['Content-Disposition'] = f'attachment; filename="reporte_propiedad_{propiedad_id}.pdf"'
+            pdf = FPDF()
+            pdf.add_page()
+            pdf.set_font("Arial", size=12)
 
-        pdf = FPDF(orientation='L')  # Orientación horizontal (Landscape)
-        pdf.add_page()
-        pdf.set_auto_page_break(False)  # Desactivar salto de página automático
+            # Título centrado
+            pdf.set_font("Arial", 'B', size=14)  # 'B' para negrita
+            pdf.cell(200, 10, txt=f"Reporte de Propiedad ID: {propiedad.id_propiedad}", ln=True, align='C')
+            pdf.ln(10)  # Salto de línea
 
-        # Encabezado con logo, empresa, usuario y correo
-        logo_path = os.path.join(settings.BASE_DIR, 'static', 'images', 'logo.png')
-        if os.path.exists(logo_path):
-            pdf.image(logo_path, x=120, y=10, w=40)  # Logo a la derecha
-        pdf.set_xy(10, 10)
-        pdf.set_font("Arial", 'B', 12)
-        pdf.cell(100, 8, "Altaltium Real Estate Solutions", ln=True, align='L')
-        pdf.set_font("Arial", '', 10)
-        pdf.cell(100, 6, f"Usuario: {usuario_nombre}", ln=True, align='L')
-        pdf.cell(100, 6, f"Correo: {usuario_correo}", ln=True, align='L')
-        pdf.ln(5)
+            # Configuración de la tabla
+            pdf.set_font("Arial", size=10)
+            pdf.set_fill_color(200, 220, 255)  # Color de fondo para el encabezado
+            pdf.set_text_color(0, 0, 0)  # Color del texto (negro)
 
-        # Valores aproximados a la izquierda
-        pdf.set_xy(10, 40)
-        pdf.set_font("Arial", '', 10)
-        pdf.cell(90, 6, f"Valor Comercial Aproximado: ${propiedad.valor_comercial or 'N/A'}", ln=True, align='L')
-        pdf.cell(90, 6, f"Valor Judicial Aproximado: ${propiedad.valor_judicial or 'N/A'}", ln=True, align='L')
+            # Encabezados de la tabla
+            pdf.cell(50, 10, 'Campo', 1, 0, 'C', 1)  # Ancho 50, alto 10, borde 1, sin salto de línea, centrado, fondo relleno
+            pdf.cell(150, 10, 'Valor', 1, 1, 'C', 1)  # Ancho 150, salto de línea
+            pdf.set_fill_color(255, 255, 255)  # Color de fondo para las filas de datos (blanco)
 
-        # Mapa a la derecha
-        mapa_path = os.path.join(settings.BASE_DIR, 'static', 'images', 'mapa.png')
-        if os.path.exists(mapa_path):
-            pdf.image(mapa_path, x=110, y=30, w=180)  # Mapa a la derecha, ajustado
+            # Datos de la tabla
+            pdf.cell(50, 10, 'Valor Comercial', 1, 0, 'L')
+            pdf.cell(150, 10, f'{propiedad.valor_comercial or "N/A"}', 1, 1, 'L')
+            pdf.cell(50, 10, 'Valor Judicial', 1, 0, 'L')
+            pdf.cell(150, 10, f'{propiedad.valor_judicial or "N/A"}', 1, 1, 'L')
+            pdf.cell(50, 10, 'Calle', 1, 0, 'L')
+            pdf.cell(150, 10, f'{propiedad.calle or "N/A"}', 1, 1, 'L')
+            pdf.cell(50, 10, 'Colonia', 1, 0, 'L')
+            pdf.cell(150, 10, f'{propiedad.id_colonia or "N/A"}', 1, 1, 'L')
+            pdf.cell(50, 10, 'Municipio', 1, 0, 'L')
+            pdf.cell(150, 10, f'{propiedad.id_municipio or "N/A"}', 1, 1, 'L')
+            pdf.cell(50, 10, 'Estado', 1, 0, 'L')
+            pdf.cell(150, 10, f'{propiedad.id_estado or "N/A"}', 1, 1, 'L')
+            pdf.cell(50, 10, 'Recámaras', 1, 0, 'L')
+            pdf.cell(150, 10, f'{propiedad.recamaras or "N/A"}', 1, 1, 'L')
+            pdf.cell(50, 10, 'Tipo de Propiedad', 1, 0, 'L')
+            pdf.cell(150, 10, f'{propiedad.tipo_propiedad or "N/A"}', 1, 1, 'L')
+            pdf.cell(50, 10, 'Sanitarios', 1, 0, 'L')
+            pdf.cell(150, 10, f'{propiedad.sanitarios or "N/A"}', 1, 1, 'L')
+            pdf.cell(50, 10, 'Valor Aproximado', 1, 0, 'L')
+            pdf.cell(150, 10, f'{propiedad.valor_aprox or "N/A"}', 1, 1, 'L')
+            
 
-        # Título principal (arriba de los valores)
-        pdf.set_xy(10, 25)
-        pdf.set_text_color(0, 66, 156)  # Azul rey
-        pdf.set_font("Arial", 'B', 14)
-        pdf.cell(0, 10, "Resultados de Estimación de Propiedad", ln=True, align='C')
-        pdf.ln(15)
-
-        # Descripción del Inmueble
-        pdf.set_xy(10, 90)
-        pdf.set_text_color(0, 66, 156)  # Azul rey
-        pdf.set_font("Arial", 'B', 12)
-        pdf.cell(0, 10, "Descripción del Inmueble", ln=True)
-        pdf.ln(10)
-
-        # Dirección
-        pdf.set_xy(10, 110)
-        pdf.set_text_color(0, 66, 156)  # Azul rey
-        pdf.set_font("Arial", 'B', 10)
-        pdf.cell(90, 8, "Dirección", ln=True, align='L')
-        pdf.set_text_color(0, 0, 0)  # Volver a negro
-        pdf.set_font("Arial", '', 10)
-        pdf.set_x(10)
-        pdf.cell(90, 6, "Calle:", ln=True)
-        pdf.cell(90, 6, f"{propiedad.calle or 'ww'}", ln=True)
-        pdf.cell(90, 6, "Colonia:", ln=True)
-        pdf.cell(90, 6, f"{propiedad.id_colonia.nombre if propiedad.id_colonia else 'Sin colonia'}", ln=True)
-        pdf.cell(90, 6, "Delegación:", ln=True)
-        pdf.cell(90, 6, f"{propiedad.id_municipio.nombre if propiedad.id_municipio else 'Sin municipio'}", ln=True)
-        pdf.cell(90, 6, "Estado:", ln=True)
-        pdf.cell(90, 6, f"{propiedad.id_estado.nombre if propiedad.id_estado else 'Sin estado'}", ln=True)
-
-        # Características
-        pdf.set_xy(110, 110)
-        pdf.set_text_color(0, 66, 156)  # Azul rey
-        pdf.set_font("Arial", 'B', 10)
-        pdf.cell(90, 8, "Características", ln=True, align='L')
-        pdf.set_text_color(0, 0, 0)  # Volver a negro
-        pdf.set_font("Arial", '', 10)
-        pdf.set_x(110)
-        pdf.cell(90, 6, "Terreno:", ln=True)
-        pdf.cell(90, 6, f"{propiedad.terreno or '12.00'} m2", ln=True)
-        pdf.cell(90, 6, "Construcción:", ln=True)
-        pdf.cell(90, 6, f"{propiedad.construccion or 'N/A'} m2", ln=True)
-        pdf.cell(90, 6, "Recámaras:", ln=True)
-        pdf.cell(90, 6, f"{propiedad.recamaras or 'N/A'}", ln=True)
-        pdf.cell(90, 6, "Sanitarios:", ln=True)
-        pdf.cell(90, 6, f"{propiedad.sanitarios or 'N/A'}", ln=True)
-        pdf.cell(90, 6, "Estacionamiento:", ln=True)
-        pdf.cell(90, 6, f"{propiedad.estacionamiento or 'N/A'}", ln=True)
-
-        # Información adicional
-        pdf.set_xy(210, 110)
-        pdf.set_text_color(0, 66, 156)  # Azul rey
-        pdf.set_font("Arial", 'B', 10)
-        pdf.cell(90, 8, "Información adicional", ln=True, align='L')
-        pdf.set_text_color(0, 0, 0)  # Volver a negro
-        pdf.set_font("Arial", '', 10)
-        pdf.set_x(210)
-        pdf.cell(90, 6, "Comentarios:", ln=True)
-        pdf.cell(90, 6, f"{propiedad.comentarios or 'N/A'}", ln=True)
-        pdf.cell(90, 6, "Estado de conservación:", ln=True)
-        pdf.cell(90, 6, f"{propiedad.estado_conservacion or 'Muy bueno'}", ln=True)
-
-        # Obtener el PDF generado como bytes
-        pdf_output = pdf.output(dest='S')
-
-        # Crear la respuesta HTTP con el PDF
-        response = HttpResponse(pdf_output, content_type='application/pdf')
-        response['Content-Disposition'] = f'attachment; filename="reporte_propiedad_{propiedad_id}.pdf"'        
-
-            # Generar el PDF            
+            # Generar el PDF
+            response.write(pdf.output(dest='S'))
             print(f"Reporte individual generado para ID: {propiedad_id}")
             return response
         except Propiedades.DoesNotExist:
@@ -966,9 +910,6 @@ def gentelella_view(request, page):
                 usuario_nombre = usuario.username if usuario else "Usuario invitado"
                 usuario_correo = usuario.email if usuario else "correo@invitado.com"
 
-                response = HttpResponse(content_type='application/pdf')
-                response['Content-Disposition'] = f'attachment; filename="reporte_propiedad_{propiedad_id}.pdf"'
-
                 pdf = FPDF(orientation='L')  # Orientación horizontal (Landscape)
                 pdf.add_page()
                 pdf.set_auto_page_break(False)  # Desactivar salto de página automático
@@ -1059,7 +1000,13 @@ def gentelella_view(request, page):
                 pdf.cell(90, 6, "Estado de conservación:", ln=True)
                 pdf.cell(90, 6, f"{propiedad.estado_conservacion or 'Muy bueno'}", ln=True)
 
-                response.write(pdf.output(dest='S'))
+                 # Obtener el PDF generado como bytes
+                pdf_output = pdf.output(dest='S')
+
+                # Crear la respuesta HTTP con el PDF
+                response = HttpResponse(pdf_output, content_type='application/pdf')
+                response['Content-Disposition'] = f'attachment; filename="reporte_propiedad_{propiedad_id}.pdf"'
+                
                 print(f"Reporte individual generado para ID: {propiedad_id}")
                 return response
 
