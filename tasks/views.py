@@ -206,9 +206,10 @@ def estimaciones(request):
     if 'generar_reporte_individual' in request.GET and 'id_propiedad' in request.GET:
         print(f"Generando reporte individual para propiedad ID: {request.GET['id_propiedad']}")
         try:
+            pdf_output = pdf.output(dest='S')
             propiedad_id = request.GET['id_propiedad']
             propiedad = Propiedades.objects.get(id_propiedad=propiedad_id)
-            response = HttpResponse(content_type='application/pdf')
+            response = HttpResponse(pdf_output, content_type='application/pdf')
             response['Content-Disposition'] = f'attachment; filename="reporte_propiedad_{propiedad_id}.pdf"'
             pdf = FPDF()
             pdf.add_page()
@@ -252,8 +253,7 @@ def estimaciones(request):
             pdf.cell(150, 10, f'{propiedad.valor_aprox or "N/A"}', 1, 1, 'L')
             
 
-            # Generar el PDF
-            response.write(pdf.output(dest='S'))
+            # Generar el PDF            
             print(f"Reporte individual generado para ID: {propiedad_id}")
             return response
         except Propiedades.DoesNotExist:
