@@ -253,7 +253,7 @@ def estimaciones(request):
             
 
             # Generar el PDF
-            response.write(pdf.output(dest='S').encode('latin-1'))
+            response.write(pdf.output(dest='S'))
             print(f"Reporte individual generado para ID: {propiedad_id}")
             return response
         except Propiedades.DoesNotExist:
@@ -1002,7 +1002,7 @@ def gentelella_view(request, page):
                 pdf.cell(90, 6, "Estado de conservación:", ln=True)
                 pdf.cell(90, 6, f"{propiedad.estado_conservacion or 'Muy bueno'}", ln=True)
 
-                response.write(pdf.output(dest='S').encode('latin-1'))
+                response.write(pdf.output(dest='S'))
                 print(f"Reporte individual generado para ID: {propiedad_id}")
                 return response
 
