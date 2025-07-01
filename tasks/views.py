@@ -547,16 +547,19 @@ def gentelella_view(request, page):
 
         # ================= COLONIAS ===================
 if page == "cal_colonia":
+    context = {}  # Inicializa context
     colonias = Colonias.objects.all()
     municipios = Municipios.objects.all()
     estados = Estados.objects.all()
 
     if 'eliminar' in request.GET:
-        try:
-            Colonias.objects.filter(id_colonia=request.GET['eliminar']).delete()
-            messages.success(request, "Colonia eliminada correctamente.")
-        except Colonias.DoesNotExist:
-            messages.error(request, f"No se encontró la colonia con ID {request.GET['eliminar']}.")
+        eliminar_id = request.GET.get('eliminar')  # Usa .get() para evitar KeyError
+        if eliminar_id:
+            try:
+                Colonias.objects.filter(id_colonia=eliminar_id).delete()
+                messages.success(request, "Colonia eliminada correctamente.")
+            except Colonias.DoesNotExist:
+                messages.error(request, f"No se encontró la colonia con ID {eliminar_id}.")
         return redirect('gentelella_page', page='cal_colonia')
 
     if request.method == 'POST' and 'editar' not in request.GET:
