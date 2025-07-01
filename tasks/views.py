@@ -19,6 +19,7 @@ matplotlib.use('Agg')  # ← Usa un backend que NO requiere interfaz gráfica
 import matplotlib.pyplot as plt
 import os
 import base64
+import io
 
 # Decorador para verificar si es admin
 @never_cache
