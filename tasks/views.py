@@ -1075,7 +1075,7 @@ def gentelella_view(request, page):
                 password1 = request.POST.get('password1')
                 password2 = request.POST.get('password2')
 
-                if username and first_name and email and password1 and password2:
+             if username and first_name and email and password1 and password2:
                     if password1 == password2:
                         try:
                             Usuarios.objects.create(
