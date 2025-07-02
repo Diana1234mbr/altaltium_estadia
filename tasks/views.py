@@ -705,8 +705,7 @@ def gentelella_view(request, page):
                     messages.error(request, f"No se encontró el estado con ID {id_estado}.")
                 except IntegrityError:
                     messages.error(request, "Error de integridad al actualizar el estado.")
-                return redirect(f"{reverse('gentelella_page', kwargs={'page': 'editar_estado'})}?editar={id_estado}")
-
+                return redirect(f"{reverse('gentelella_page', kwargs={'page': 'editar_usuario'})}?editar={id_usuario}")
 
 
 # ================= MUNICIPIOS ===================
@@ -925,9 +924,9 @@ def gentelella_view(request, page):
                     with connection.cursor() as cursor:
                         cursor.execute("ALTER TABLE propiedades AUTO_INCREMENT = 1")
                     messages.success(request, "Todas las propiedades han sido eliminadas y los IDs reiniciados a 1.")
-                except Exception as e:
-                    messages.error(request, f"Error al eliminar propiedades o reiniciar IDs: {str(e)}")
-                return redirect('gentelella_page', page='cal_estimaciones')
+                    except Exception as e:
+                        messages.error(request, f"Error al eliminar propiedades o reiniciar IDs: {str(e)}")
+                    return redirect('gentelella_page', page='cal_estimaciones')
                 
                 # Generar reporte PDF de una propiedad individual con diseño limpio y completo
         if 'generar_reporte_individual' in request.GET and 'id_propiedad' in request.GET:
