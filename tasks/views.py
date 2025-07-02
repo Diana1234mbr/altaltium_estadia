@@ -812,6 +812,12 @@ def gentelella_view(request, page):
                     municipio = Municipios.objects.get(id_municipio=id_municipio) if id_municipio else None
                     estado = Estados.objects.get(id_estado=id_estado) if id_estado else None
 
+                    # 🔐 Validación para evitar duplicados
+                    if CodigosPostales.objects.filter(codigo=codigo_valor, id_colonia=colonia).exists():
+                        messages.error(request, "Ya existe un código postal con ese valor para la colonia seleccionada.")
+                        return redirect('gentelella_page', page='cal_cp')
+
+                    # ✅ Si no existe, lo crea
                     CodigosPostales.objects.create(
                         codigo=codigo_valor,
                         id_colonia=colonia,
@@ -819,17 +825,18 @@ def gentelella_view(request, page):
                         id_estado=estado
                     )
                     messages.success(request, "Código postal creado correctamente.")
+
                 except Colonias.DoesNotExist:
                     messages.error(request, "La colonia seleccionada no existe.")
                 except Municipios.DoesNotExist:
                     messages.error(request, "El municipio seleccionado no existe.")
                 except Estados.DoesNotExist:
                     messages.error(request, "El estado seleccionado no existe.")
-                except IntegrityError:
-                    messages.error(request, "Ya existe un código postal con ese valor para la colonia seleccionada.")
                 except ValueError as e:
                     messages.error(request, f"Error en los datos proporcionados: {str(e)}")
+
                 return redirect('gentelella_page', page='cal_cp')
+
 
         # ================= EDITAR CÓDIGO POSTAL ===================
         elif page == "editar_cp":
