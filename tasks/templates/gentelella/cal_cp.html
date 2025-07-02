@@ -442,6 +442,7 @@
                     <div class="form-group" style="flex: 1; min-width: 300px;">
                         <label style="color: #003035; font-weight: 600;">Estado</label>
                         <select id="estado" name="id_estado" class="form-control" required style="border: 1px solid #bfc6c7; border-radius: 4px; padding: 10px; color: #0d1d1f; background-color: #fefcef; transition: border-color 0.3s;">
+                            <option value="">Selecciona un estado</option>
                             {% for estado in estados %}
                             <option value="{{ estado.id_estado }}">{{ estado.nombre }}</option>
                             {% endfor %}
@@ -450,6 +451,7 @@
                     <div class="form-group" style="flex: 1; min-width: 300px;">
                         <label style="color: #003035; font-weight: 600;">Municipio</label>
                         <select id="municipio" name="id_municipio" class="form-control" required style="border: 1px solid #bfc6c7; border-radius: 4px; padding: 10px; color: #0d1d1f; background-color: #fefcef; transition: border-color 0.3s;">
+                            <option value="">Selecciona un municipio</option>
                             {% for municipio in municipios %}
                             <option value="{{ municipio.id_municipio }}">{{ municipio.nombre }}</option>
                             {% endfor %}
@@ -458,6 +460,7 @@
                     <div class="form-group" style="flex: 1; min-width: 300px;">
                         <label style="color: #003035; font-weight: 600;">Colonia</label>
                         <select id="colonia" name="id_colonia" class="form-control" required style="border: 1px solid #bfc6c7; border-radius: 4px; padding: 10px; color: #0d1d1f; background-color: #fefcef; transition: border-color 0.3s;">
+                            <option value="">Selecciona una colonia</option>
                             {% for colonia in colonias %}
                             <option value="{{ colonia.id_colonia }}">{{ colonia.nombre }}</option>
                             {% endfor %}
