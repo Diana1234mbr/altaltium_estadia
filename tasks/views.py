@@ -569,19 +569,22 @@ def gentelella_view(request, page):
                     try:
                         municipio = Municipios.objects.get(id_municipio=id_municipio)
                         estado = Estados.objects.get(id_estado=id_estado)
-                        Colonias.objects.create(
-                            nombre=nombre,
-                            id_municipio=municipio,
-                            id_estado=estado,
-                            promedio_precio=promedio_precio
-                        )
-                        messages.success(request, "Colonia creada correctamente.")
+
+                        # Verificar si ya existe una colonia con ese nombre y municipio
+                        if Colonias.objects.filter(nombre=nombre, id_municipio=municipio).exists():
+                            messages.error(request, "Ya existe una colonia con ese nombre en el municipio seleccionado.")
+                        else:
+                            Colonias.objects.create(
+                                nombre=nombre,
+                                id_municipio=municipio,
+                                id_estado=estado,
+                                promedio_precio=promedio_precio
+                            )
+                            messages.success(request, "Colonia creada correctamente.")
                     except Municipios.DoesNotExist:
                         messages.error(request, "Municipio no encontrado.")
                     except Estados.DoesNotExist:
                         messages.error(request, "Estado no encontrado.")
-                    except IntegrityError:
-                        messages.error(request, "Ya existe una colonia con ese nombre en el municipio seleccionado.")
                 else:
                     messages.error(request, "Faltan datos para crear la colonia.")
 
@@ -593,7 +596,6 @@ def gentelella_view(request, page):
                 'estados': estados,
             })
 
-        # ================= EDITAR COLONIA ===================
         elif page == "editar_colonia":
             context['municipios'] = Municipios.objects.all()
             context['estados'] = Estados.objects.all()
@@ -614,27 +616,35 @@ def gentelella_view(request, page):
                     id_municipio = request.POST.get('id_municipio')
                     id_estado = request.POST.get('id_estado')
                     promedio_precio = request.POST.get('promedio_precio', None)
+
                     if nombre and id_municipio and id_estado:
                         municipio = Municipios.objects.get(id_municipio=id_municipio)
                         estado = Estados.objects.get(id_estado=id_estado)
-                        colonia.nombre = nombre
-                        colonia.id_municipio = municipio
-                        colonia.id_estado = estado
-                        colonia.promedio_precio = promedio_precio if promedio_precio else None
-                        colonia.save()
-                        messages.success(request, "Colonia actualizada correctamente.")
-                        return redirect('gentelella_page', page='cal_colonia')
+
+                        # Verificar si ya existe otra colonia con ese nombre y municipio
+                        if Colonias.objects.filter(nombre=nombre, id_municipio=municipio).exclude(id_colonia=colonia.id_colonia).exists():
+                            messages.error(request, "Ya existe una colonia con ese nombre en el municipio seleccionado.")
+                        else:
+                            colonia.nombre = nombre
+                            colonia.id_municipio = municipio
+                            colonia.id_estado = estado
+                            colonia.promedio_precio = promedio_precio if promedio_precio else None
+                            colonia.save()
+                            messages.success(request, "Colonia actualizada correctamente.")
+                            return redirect('gentelella_page', page='cal_colonia')
                     else:
                         messages.error(request, "Faltan datos para actualizar la colonia.")
                 except Colonias.DoesNotExist:
                     messages.error(request, f"No se encontró la colonia con ID {id_colonia}.")
                 except Municipios.DoesNotExist:
                     messages.error(request, "Municipio no encontrado.")
-                except IntegrityError:
-                    messages.error(request, "Ya existe una colonia con ese nombre.")
+                except Estados.DoesNotExist:
+                    messages.error(request, "Estado no encontrado.")
                 except ValueError:
                     messages.error(request, "El precio promedio debe ser un número válido.")
+
                 return redirect('gentelella_page', page='editar_colonia', editar=id_colonia)
+
 
         # ================= ESTADOS ===================
         elif page == "cal_estado":
