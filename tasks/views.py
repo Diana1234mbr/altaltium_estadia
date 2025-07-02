@@ -645,43 +645,37 @@ def gentelella_view(request, page):
 
                 return redirect('gentelella_page', page='editar_colonia', editar=id_colonia)
 
-
-
-
-
-
         # ================= ESTADOS ===================
-        # ================= ESTADOS ===================
-elif page == "cal_estado":
-    estados = Estados.objects.all()
-    context['estados'] = estados
+        elif page == "cal_estado":
+            estados = Estados.objects.all()
+            context['estados'] = estados
 
-    if 'eliminar' in request.GET:
-        try:
-            estado = Estados.objects.get(id_estado=request.GET['eliminar'])
-            estado.delete()
-            messages.success(request, "Estado eliminado correctamente.")
-        except Estados.DoesNotExist:
-            messages.error(request, f"No se encontró el estado con ID {request.GET['eliminar']}.")
-        return redirect('gentelella_page', page='cal_estado')
+            if 'eliminar' in request.GET:
+                try:
+                    estado = Estados.objects.get(id_estado=request.GET['eliminar'])
+                    estado.delete()
+                    messages.success(request, "Estado eliminado correctamente.")
+                except Estados.DoesNotExist:
+                    messages.error(request, f"No se encontró el estado con ID {request.GET['eliminar']}.")
+                return redirect('gentelella_page', page='cal_estado')
 
-    if request.method == 'POST' and 'editar' not in request.GET:
-        nombre = request.POST.get('nombre', '').strip()
-        if nombre:
-            try:
-                # Validación manual de duplicado
-                if Estados.objects.filter(nombre__iexact=nombre).exists():
-                    messages.error(request, "Ya existe un estado con ese nombre.")
+            if request.method == 'POST' and 'editar' not in request.GET:
+                nombre = request.POST.get('nombre', '').strip()
+                if nombre:
+                    try:
+                        # Validación manual de duplicado
+                        if Estados.objects.filter(nombre__iexact=nombre).exists():
+                            messages.error(request, "Ya existe un estado con ese nombre.")
+                        else:
+                            Estados.objects.create(nombre=nombre)
+                            messages.success(request, "Estado creado correctamente.")
+                    except IntegrityError:
+                        messages.error(request, "Error de integridad al crear el estado.")
                 else:
-                    Estados.objects.create(nombre=nombre)
-                    messages.success(request, "Estado creado correctamente.")
-            except IntegrityError:
-                messages.error(request, "Error de integridad al crear el estado.")
-        else:
-            messages.error(request, "Faltan datos para crear el estado.")
-        return redirect('gentelella_page', page='cal_estado')
+                    messages.error(request, "Faltan datos para crear el estado.")
+                return redirect('gentelella_page', page='cal_estado')
 
-# ================= EDITAR ESTADO ===================
+        # ================= EDITAR ESTADO ===================
         elif page == "editar_estado":
             if 'editar' in request.GET:
                 try:
@@ -712,6 +706,8 @@ elif page == "cal_estado":
                 except IntegrityError:
                     messages.error(request, "Error de integridad al actualizar el estado.")
                 return redirect(f"{reverse('gentelella_page', kwargs={'page': 'editar_estado'})}?editar={id_estado}")
+
+
 
 # ================= MUNICIPIOS ===================
         elif page == "cal_municipio":
