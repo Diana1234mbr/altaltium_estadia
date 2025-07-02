@@ -1075,7 +1075,32 @@ def gentelella_view(request, page):
                 password1 = request.POST.get('password1')
                 password2 = request.POST.get('password2')
 
-            
+                if username and first_name and email and password1 and password2:
+                    if password1 == password2:
+                        try:
+                            Usuarios.objects.create(
+                                username=username,
+                                first_name=first_name,
+                                email=email,
+                                roles=roles,
+                                password=password1,
+                                is_active=True,
+                                date_joined=timezone.now()
+                            )
+                            messages.success(request, "Usuario creado correctamente.")
+                        except IntegrityError:
+                            messages.error(request, "El nombre de usuario o correo ya existe.")
+                    else:
+                        messages.error(request, "Las contraseñas no coinciden.")
+                else:
+                    messages.error(request, "Faltan datos para crear el usuario.")
+
+                    return redirect('gentelella_page', page='cal_usuarios')
+
+                        context.update({
+                            'usuarios': usuarios,
+                        })
+                        print(f"DEBUG: Contexto enviado: {context}")
 
         # ================= EDITAR USUARIO ===================
         elif page == "editar_usuario":
