@@ -916,6 +916,7 @@ def gentelella_view(request, page):
                 return redirect('gentelella_page', page='cal_estimaciones')
 
             # Eliminar todas las propiedades y reiniciar los IDs
+           # Eliminar todas las propiedades y reiniciar los IDs
             if 'eliminar' in request.GET:
                 try:
                     # Eliminar todos los registros
@@ -923,10 +924,10 @@ def gentelella_view(request, page):
                     # Reiniciar la secuencia de IDs (esto depende de la base de datos)
                     with connection.cursor() as cursor:
                         cursor.execute("ALTER TABLE propiedades AUTO_INCREMENT = 1")
-                    messages.success(request, "Todas las propiedades han sido eliminadas y los IDs reiniciados a 1.")
-                    except Exception as e:
-                        messages.error(request, f"Error al eliminar propiedades o reiniciar IDs: {str(e)}")
-                    return redirect('gentelella_page', page='cal_estimaciones')
+                    messages.success(request, "Todas las propiedades han sido eliminadas y los IDs reiniciados a 1")
+                except Exception as e:
+                    messages.error(request, f"Error al eliminar propiedades o reiniciar IDs: {str(e)}")
+                return redirect('gentella_page', page='cal_estimaciones')   
                 
                 # Generar reporte PDF de una propiedad individual con diseño limpio y completo
         if 'generar_reporte_individual' in request.GET and 'id_propiedad' in request.GET:
