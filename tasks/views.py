@@ -771,78 +771,75 @@ def gentelella_view(request, page):
                 except Estados.DoesNotExist:
                     messages.error(request, "Estado no encontrado.")
                 return redirect('gentelella_page', page='editar_municipio', editar=id_municipio)
-                    
-                    
+        # ================= CÓDIGOS POSTALES ===================
+        elif page == "cal_cp":
+            codigos = CodigosPostales.objects.select_related('id_colonia', 'id_municipio', 'id_estado').all()
+            colonias = Colonias.objects.all()
+            municipios = Municipios.objects.all()
+            estados = Estados.objects.all()
 
-                # ================= CÓDIGOS POSTALES ===================
-                elif page == "cal_cp":
-                    codigos = CodigosPostales.objects.select_related('id_colonia', 'id_municipio', 'id_estado').all()
-                    colonias = Colonias.objects.all()
-                    municipios = Municipios.objects.all()
-                    estados = Estados.objects.all()
+            context['codigos'] = codigos
+            context['colonias'] = colonias
+            context['municipios'] = municipios
+            context['estados'] = estados
 
-                    context['codigos'] = codigos
-                    context['colonias'] = colonias
-                    context['municipios'] = municipios
-                    context['estados'] = estados
+            if 'eliminar' in request.GET:
+                try:
+                    codigo = CodigosPostales.objects.get(id_codigo_postal=request.GET['eliminar'])
+                    codigo.delete()
+                    messages.success(request, "Código eliminado correctamente.")
+                except CodigosPostales.DoesNotExist:
+                    messages.error(request, f"No se encontró el código con ID {request.GET['eliminar']}.")
+                return redirect('gentelella_page', page='cal_cp')
 
-                    if 'eliminar' in request.GET:
-                        try:
-                            codigo = CodigosPostales.objects.get(id_codigo_postal=request.GET['eliminar'])
-                            codigo.delete()
-                            messages.success(request, "Código eliminado correctamente.")
-                        except CodigosPostales.DoesNotExist:
-                            messages.error(request, f"No se encontró el código con ID {request.GET['eliminar']}.")
+            if request.method == 'POST' and 'editar' not in request.GET:
+                codigo_valor = request.POST.get('codigo')
+                id_colonia = request.POST.get('id_colonia')
+                id_municipio = request.POST.get('id_municipio')
+                id_estado = request.POST.get('id_estado')
+
+                errors = []
+                if not codigo_valor:
+                    errors.append("El código postal es obligatorio.")
+                if not id_colonia:
+                    errors.append("La colonia es obligatoria.")
+                if len(codigo_valor) > 5:
+                    errors.append("El código postal no puede exceder 5 caracteres.")
+
+                if errors:
+                    for error in errors:
+                        messages.error(request, error)
+                    return redirect('gentelella_page', page='cal_cp')
+
+                try:
+                    colonia = Colonias.objects.get(id_colonia=id_colonia)
+                    municipio = Municipios.objects.get(id_municipio=id_municipio) if id_municipio else None
+                    estado = Estados.objects.get(id_estado=id_estado) if id_estado else None
+
+                    # 🔐 Validación para evitar duplicados
+                    if CodigosPostales.objects.filter(codigo=codigo_valor, id_colonia=colonia).exists():
+                        messages.error(request, "Ya existe un código postal con ese valor para la colonia seleccionada.")
                         return redirect('gentelella_page', page='cal_cp')
 
-                    if request.method == 'POST' and 'editar' not in request.GET:
-                        codigo_valor = request.POST.get('codigo')
-                        id_colonia = request.POST.get('id_colonia')
-                        id_municipio = request.POST.get('id_municipio')
-                        id_estado = request.POST.get('id_estado')
+                    # ✅ Si no existe, lo crea
+                    CodigosPostales.objects.create(
+                        codigo=codigo_valor,
+                        id_colonia=colonia,
+                        id_municipio=municipio,
+                        id_estado=estado
+                    )
+                    messages.success(request, "Código postal creado correctamente.")
 
-                        errors = []
-                        if not codigo_valor:
-                            errors.append("El código postal es obligatorio.")
-                        if not id_colonia:
-                            errors.append("La colonia es obligatoria.")
-                        if len(codigo_valor) > 5:
-                            errors.append("El código postal no puede exceder 5 caracteres.")
+                except Colonias.DoesNotExist:
+                    messages.error(request, "La colonia seleccionada no existe.")
+                except Municipios.DoesNotExist:
+                    messages.error(request, "El municipio seleccionado no existe.")
+                except Estados.DoesNotExist:
+                    messages.error(request, "El estado seleccionado no existe.")
+                except ValueError as e:
+                    messages.error(request, f"Error en los datos proporcionados: {str(e)}")
 
-                        if errors:
-                            for error in errors:
-                                messages.error(request, error)
-                            return redirect('gentelella_page', page='cal_cp')
-
-                        try:
-                            colonia = Colonias.objects.get(id_colonia=id_colonia)
-                            municipio = Municipios.objects.get(id_municipio=id_municipio) if id_municipio else None
-                            estado = Estados.objects.get(id_estado=id_estado) if id_estado else None
-
-                            # 🔐 Validación para evitar duplicados
-                            if CodigosPostales.objects.filter(codigo=codigo_valor, id_colonia=colonia).exists():
-                                messages.error(request, "Ya existe un código postal con ese valor para la colonia seleccionada.")
-                                return redirect('gentelella_page', page='cal_cp')
-
-                            # ✅ Si no existe, lo crea
-                            CodigosPostales.objects.create(
-                                codigo=codigo_valor,
-                                id_colonia=colonia,
-                                id_municipio=municipio,
-                                id_estado=estado
-                            )
-                            messages.success(request, "Código postal creado correctamente.")
-
-                        except Colonias.DoesNotExist:
-                            messages.error(request, "La colonia seleccionada no existe.")
-                        except Municipios.DoesNotExist:
-                            messages.error(request, "El municipio seleccionado no existe.")
-                        except Estados.DoesNotExist:
-                            messages.error(request, "El estado seleccionado no existe.")
-                        except ValueError as e:
-                            messages.error(request, f"Error en los datos proporcionados: {str(e)}")
-
-                        return redirect('gentelella_page', page='cal_cp')
+                return redirect('gentelella_page', page='cal_cp')
 
 
         # ================= EDITAR CÓDIGO POSTAL ===================
