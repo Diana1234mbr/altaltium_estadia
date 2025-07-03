@@ -222,6 +222,17 @@
                 font-size: 16px;
             }
         }
+
+        /* Estilos para imágenes */
+        .profile_img, .user-profile img {
+            width: 40px;
+            height: 40px;
+            object-fit: cover;
+            border-radius: 50%;
+        }
+        .profile_img[src=""], .user-profile img[src=""] {
+            display: none; /* Ocultar si no hay imagen */
+        }
     </style>
 </head>
 
@@ -239,13 +250,17 @@
                     <!-- menu profile quick info -->
                     <div class="profile clearfix">
                         <div class="profile_pic">
-                            <img src="{{ usuario.profile_picture.url }}" alt="Foto de perfil" class="img-circle profile_img">
+                            {% if usuario.profile_picture %}
+                                <img src="{{ usuario.profile_picture.url }}" alt="Foto de perfil" class="img-circle profile_img">
+                            {% else %}
+                                <img src="{% static 'images/default-profile.png' %}" alt="Foto de perfil por defecto" class="img-circle profile_img">
+                            {% endif %}
                         </div>
                         <div class="profile_info">
-							<span>Bienvenido</span>
-							{{ usuario.username }}
-						</div>
-					</div>
+                            <span>Bienvenido</span>
+                            {{ usuario.username }}
+                        </div>
+                    </div>
                     <br />
                     <!-- sidebar menu -->
                     <div id="sidebar-menu" class="main_menu_side hidden-print main_menu">
@@ -256,7 +271,6 @@
                                     <ul class="nav child_menu">
                                         <li><a href="{% url 'gentelella_page' page='index' %}">Dashboard</a></li>
                                         <li><a href="{% url 'estimaciones' %}">Calculadora de estimaciones</a></li>
-                                        
                                     </ul>
                                 </li>
                                 <li><a><i class="fa fa-edit"></i> Formulario <span
@@ -266,23 +280,18 @@
                                         <li><a href="{% url 'gentelella_page' page='cal_municipio' %}">Municipio</a>
                                         </li>
                                         <li><a href="{% url 'gentelella_page' page='cal_colonia' %}">Colonia</a></li>
-                                        <li><a href="{% url 'gentelella_page' page='cal_cp' %}">Codigo postal</a>
+                                        <li><a href="{% url 'gentelella_page' page='cal_cp' %}">Código postal</a>
                                         </li>
                                         <li><a href="{% url 'gentelella_page' page='cal_estimaciones' %}">Estimaciones</a>
                                         </li>
-                                        <li><a href="{% url 'gentelella_page' page='cal_vista_usuarios' %}">Vista Alcaldias</a>
+                                        <li><a href="{% url 'gentelella_page' page='cal_vista_usuarios' %}">Vista Alcaldías</a>
                                         </li>
                                         <li><a href="{% url 'gentelella_page' page='cal_usuarios' %}">Usuarios</a>
                                         </li>
                                     </ul>
                                 </li>
-                                
-                                
-                               
-                                
                             </ul>
                         </div>
-                      
                     </div>
                     <!-- /sidebar menu -->
                     <!-- menu footer buttons -->
@@ -301,7 +310,6 @@
                             <span class="glyphicon glyphicon-off" aria-hidden="true"></span>
                         </a>
                     </div>
-                    <!-- /menu footer buttons -->
                 </div>
             </div>
             <!-- top navigation -->
@@ -315,18 +323,23 @@
                             <li class="nav-item dropdown open" style="padding-left: 15px;">
                                 <a href="javascript:;" class="user-profile dropdown-toggle" aria-haspopup="true"
                                     id="navbarDropdown" data-toggle="dropdown" aria-expanded="false">
-                                    <img src="{{ usuario.profile_picture.url }}" alt="">{{ usuario.username }}
+                                    {% if usuario.profile_picture %}
+                                        <img src="{{ usuario.profile_picture.url }}" alt="{{ usuario.username }}" class="profile_img">
+                                    {% else %}
+                                        <img src="{% static 'images/default-profile.png' %}" alt="Foto de perfil por defecto" class="profile_img">
+                                    {% endif %}
+                                    {{ usuario.username }}
                                 </a>
                                 <div class="dropdown-menu dropdown-usermenu pull-right"
                                     aria-labelledby="navbarDropdown">
-                                    <a class="dropdown-item" href="javascript:;"> Profile</a>
+                                    <a class="dropdown-item" href="javascript:;">Perfil</a>
                                     <a class="dropdown-item" href="javascript:;">
                                         <span class="badge bg-red pull-right">50%</span>
-                                        <span>Settings</span>
+                                        <span>Configuración</span>
                                     </a>
-                                    <a class="dropdown-item" href="javascript:;">Help</a>
+                                    <a class="dropdown-item" href="javascript:;">Ayuda</a>
                                     <a class="dropdown-item" href="{% url 'signin' %}"><i
-                                            class="fa fa-sign-out pull-right"></i> Log Out</a>
+                                            class="fa fa-sign-out pull-right"></i> Cerrar sesión</a>
                                 </div>
                             </li>
                             <li role="presentation" class="nav-item dropdown open">
@@ -396,7 +409,7 @@
                                     <li class="nav-item">
                                         <div class="text-center">
                                             <a class="dropdown-item">
-                                                <strong>See All Alerts</strong>
+                                                <strong>Ver todas las alertas</strong>
                                                 <i class="fa fa-angle-right"></i>
                                             </a>
                                         </div>
@@ -410,178 +423,154 @@
             <!-- /top navigation -->
 
             <!-- page content -->
-<div class="right_col" role="main">
-    <div class="container">
-        <!-- Encabezado y barra de búsqueda -->
-        <div class="row" style="margin-bottom: 15px;">
-            <div class="col-md-6 col-sm-12">
-                <h2 style="color: #003035; font-size: 24px; font-weight: 600; margin: 0;">Usuarios Registrados</h2>
+            <div class="right_col" role="main">
+                <div class="container">
+                    <!-- Encabezado y barra de búsqueda -->
+                    <div class="row" style="margin-bottom: 15px;">
+                        <div class="col-md-6 col-sm-12">
+                            <h2 style="color: #003035; font-size: 24px; font-weight: 600; margin: 0;">Usuarios Registrados</h2>
+                        </div>
+                        <div class="col-md-6 col-sm-12 text-right">
+                            <div class="search-bar">
+                                <input type="text" id="searchInput" class="form-control" placeholder="Buscar por nombre o correo...">
+                                <i class="fa fa-search"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Mostrar mensajes de éxito o error -->
+                    {% if messages %}
+                    <div class="alert alert-dismissible {% if message.tags == 'success' %}alert-success{% else %}alert-danger{% endif %}" role="alert">
+                        {% for message in messages %}
+                        <p>{{ message }}</p>
+                        {% endfor %}
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">×</span>
+                        </button>
+                    </div>
+                    {% endif %}
+
+                    <!-- Formulario para agregar nuevo Usuario -->
+                    <div class="card">
+                        <div class="collapsible-header" onclick="toggleForm('addForm')">
+                            <h3 style="color: #008a8a; font-size: 18px; font-weight: 600; margin: 0;">Agregar Nuevo Usuario</h3>
+                            <i id="addFormIcon" class="fa fa-chevron-down"></i>
+                        </div>
+                        <form method="post" id="addForm" style="display: none; margin-top: 15px;" class="form-horizontal" enctype="multipart/form-data">
+                            {% csrf_token %}
+                            <div class="mb-3 animate__animated animate__fadeInUp">
+                                <label for="nombre" class="form-label">Nombre completo</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="bi bi-person-vcard"></i></span>
+                                    <input type="text" class="form-control" id="nombre" name="nombre" placeholder="Nombre" required>
+                                </div>
+                            </div>
+
+                            <div class="mb-3 animate__animated animate__fadeInUp">
+                                <label for="username" class="form-label">Nombre de usuario</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="bi bi-person-fill"></i></span>
+                                    <input type="text" class="form-control" id="username" name="username" placeholder="Usuario" required>
+                                </div>
+                            </div>
+
+                            <div class="mb-3 animate__animated animate__fadeInUp">
+                                <label for="email" class="form-label">Correo electrónico</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="bi bi-envelope-fill"></i></span>
+                                    <input type="email" class="form-control" id="email" name="email" placeholder="ejemplo@correo.com" required>
+                                </div>
+                            </div>
+                            <div class="mb-3 animate__animated animate__fadeInUp">
+                                <label for="roles" class="form-label">Rol del usuario:</label>
+                                <select name="roles" id="roles" class="form-control" required style="border: 1px solid #bfc6c7; border-radius: 4px; padding: 10px; color: #0d1d1f; background-color: #fefcef; transition: border-color 0.3s;">
+                                    <option value="">Selecciona un rol</option>                            
+                                    <option value="Admin" {% if usuario_editar.roles == "Admin" %}selected{% endif %}>Admin</option>
+                                    <option value="Gerente" {% if usuario_editar.roles == "Gerente" %}selected{% endif %}>Gerente</option>
+                                    <option value="Asesor" {% if usuario_editar.roles == "Asesor" %}selected{% endif %}>Asesor</option>
+                                    <option value="Cliente" {% if usuario_editar.roles == "Cliente" %}selected{% endif %}>Cliente</option>
+                                </select>
+                            </div>
+
+                            <div class="mb-3 animate__animated animate__fadeInUp">
+                                <label for="password1" class="form-label">Contraseña</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="bi bi-lock-fill"></i></span>
+                                    <input type="password" class="form-control" id="password1" name="password1" placeholder="********" required>
+                                </div>
+                            </div>
+
+                            <div class="mb-3 animate__animated animate__fadeInUp">
+                                <label for="password2" class="form-label">Confirmar contraseña</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="bi bi-lock"></i></span>
+                                    <input type="password" class="form-control" id="password2" name="password2" placeholder="********" required>
+                                </div>
+                            </div>
+
+                            <div class="mb-3 animate__animated animate__fadeInUp">
+                                <label for="profile_picture" class="form-label">Foto de perfil</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="bi bi-image"></i></span>
+                                    <input type="file" class="form-control" id="profile_picture" name="profile_picture" accept="image/*">
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <button type="submit" class="btn btn-add">Agregar</button>
+                                <button type="reset" class="btn btn-cancel">Limpiar</button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <!-- Tabla de usuarios -->
+                    <div class="card table-container">
+                        <table class="table" id="usuariosTable">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Nombre</th>
+                                    <th>Rol</th>
+                                    <th>Contraseña</th>
+                                    <th>Usuario</th>
+                                    <th>Correo</th>
+                                    <th>Foto</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for usuario in usuarios %}
+                                <tr>
+                                    <td>{{ usuario.id }}</td>
+                                    <td>{{ usuario.first_name }}</td>
+                                    <td>{{ usuario.roles }}</td>
+                                    <td>{{ usuario.password }}</td>
+                                    <td>{{ usuario.username }}</td>
+                                    <td>{{ usuario.email }}</td>
+                                    <td>
+                                        {% if usuario.profile_picture %}
+                                            <img src="{{ usuario.profile_picture.url }}" alt="{{ usuario.username }}" style="width: 40px; height: 40px; object-fit: cover; border-radius: 50%;">
+                                        {% else %}
+                                            <span>Sin foto</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <a href="{% url 'gentelella_page' page='editar_usuario' %}?editar={{ usuario.id }}" class="btn btn-edit btn-sm">Editar</a>
+                                        <a href="{% url 'gentelella_page' page='cal_usuarios' %}?eliminar={{ usuario.id }}" class="btn btn-delete btn-sm" onclick="return confirm('¿Deseas eliminar este usuario?');">Eliminar</a>
+                                    </td>
+                                </tr>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="8" style="text-align: center; color: #949797;">No hay usuarios registrados.</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
-            <div class="col-md-6 col-sm-12 text-right">
-                <div class="search-bar">
-                    <input type="text" id="searchInput" class="form-control" placeholder="Buscar por nombre o correo...">
-                    <i class="fa fa-search"></i>
-                </div>
-            </div>
-        </div>
+            <!-- /page content -->
 
-        <!-- Mostrar mensajes de éxito o error -->
-        {% if messages %}
-        <div class="alert alert-dismissible {% if message.tags == 'success' %}alert-success{% else %}alert-success{% endif %}" role="alert">
-            {% for message in messages %}
-            <p>{{ message }}</p>
-            {% endfor %}
-            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-            </button>
-        </div>
-        {% endif %}
-
-        <!-- Formulario para agregar nuevo Usuario -->
-        <div class="card">
-            <div class="collapsible-header" onclick="toggleForm('addForm')">
-                <h3 style="color: #008a8a; font-size: 18px; font-weight: 600; margin: 0;">Agregar Nuevo Usuario</h3>
-                <i id="addFormIcon" class="fa fa-chevron-down"></i>
-            </div>
-            <form method="post" id="addForm" style="display: none; margin-top: 15px;" class="form-horizontal">
-                {% csrf_token %}
-                <div class="mb-3 animate__animated animate__fadeInUp">
-                    <label for="nombre" class="form-label">Nombre completo</label>
-                    <div class="input-group">
-                        <span class="input-group-text"><i class="bi bi-person-vcard"></i></span>
-                        <input type="text" class="form-control" id="nombre" name="nombre" placeholder="Nombre" required>
-                    </div>
-                </div>
-
-                <div class="mb-3 animate__animated animate__fadeInUp">
-                    <label for="username" class="form-label">Nombre de usuario</label>
-                    <div class="input-group">
-                        <span class="input-group-text"><i class="bi bi-person-fill"></i></span>
-                        <input type="text" class="form-control" id="username" name="username" placeholder="Usuario" required>
-                    </div>
-                </div>
-
-                <div class="mb-3 animate__animated animate__fadeInUp">
-                    <label for="email" class="form-label">Correo electrónico</label>
-                    <div class="input-group">
-                        <span class="input-group-text"><i class="bi bi-envelope-fill"></i></span>
-                        <input type="email" class="form-control" id="email" name="email" placeholder="ejemplo@correo.com" required>
-                    </div>
-                </div>
-               <div class="mb-3 animate__animated animate__fadeInUp">
-                        <label for="roles" class="form-label">Rol del usuario:</label>
-                        <select name="roles" id="roles" class="form-control" required style="border: 1px solid #bfc6c7; border-radius: 4px; padding: 10px; color: #0d1d1f; background-color: #fefcef; transition: border-color 0.3s;">
-                            <option value="">Selecciona un rol</option>                            
-                            <option value="Admin" {% if usuario_editar.roles == "Admin" %}selected{% endif %}>Admin</option>
-                            <option value="Gerente" {% if usuario_editar.roles == "Gerente" %}selected{% endif %}>Gerente</option>
-                            <option value="Asesor" {% if usuario_editar.roles == "Asesor" %}selected{% endif %}>Asesor</option>
-                            <option value="Cliente" {% if usuario_editar.roles == "Cliente" %}selected{% endif %}>Cliente</option>
-                        </select>
-                    </div>
-
-                <div class="mb-3 animate__animated animate__fadeInUp">
-                    <label for="password1" class="form-label">Contraseña</label>
-                    <div class="input-group">
-                        <span class="input-group-text"><i class="bi bi-lock-fill"></i></span>
-                        <input type="password" class="form-control" id="password1" name="password1" placeholder="********" required>
-                    </div>
-                </div>
-
-                <div class="mb-3 animate__animated animate__fadeInUp">
-                    <label for="password2" class="form-label">Confirmar contraseña</label>
-                    <div class="input-group">
-                        <span class="input-group-text"><i class="bi bi-lock"></i></span>
-                        <input type="password" class="form-control" id="password2" name="password2" placeholder="********" required>
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <button type="submit" class="btn btn-add">Agregar</button>
-                    <button type="reset" class="btn btn-cancel">Limpiar</button>
-                </div>
-            </form>
-        </div>
-
-        <!-- Tabla de usuarios -->
-        <div class="card table-container">
-            <table class="table" id="usuariosTable">
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Nombre</th>
-                        <th>Rol</th>
-                        <th>Contraseña</th>
-                        <th>Usuario</th>
-                        <th>Correo</th>
-                        <th>Acciones</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for usuario in usuarios %}
-                    <tr>
-                        <td>{{ usuario.id }}</td>                        
-                        <td>{{ usuario.first_name }}</td>
-                        <td>{{ usuario.roles }}</td>
-                        <td>{{ usuario.password}}</td>
-                        <td>{{ usuario.username }}</td>
-                        <td>{{ usuario.email }}</td>
-                        <td>
-                            <a href="{% url 'gentelella_page' page='editar_usuario' %}?editar={{ usuario.id }}" class="btn btn-edit btn-sm">Editar</a>
-                            <a href="{% url 'gentelella_page' page='cal_usuarios' %}?eliminar={{ usuario.id }}" class="btn btn-delete btn-sm" onclick="return confirm('¿Deseas eliminar este usuario?');">Eliminar</a>
-                        </td>
-                    </tr>
-                    {% empty %}
-                    <tr>
-                        <td colspan="5" style="text-align: center; color: #949797;">No hay usuarios registrados.</td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        </div>
-    </div>
-</div>
-<!-- /page content -->
-
-<script>
-function toggleForm(formId) {
-    var form = document.getElementById(formId);
-    var icon = document.getElementById(formId + 'Icon');
-    if (form.style.display === 'none') {
-        form.style.display = 'block';
-        icon.classList.remove('fa-chevron-down');
-        icon.classList.add('fa-chevron-up');
-    } else {
-        form.style.display = 'none';
-        icon.classList.remove('fa-chevron-up');
-        icon.classList.add('fa-chevron-down');
-    }
-}
-
-document.getElementById('searchInput').addEventListener('input', function() {
-    var input = this.value.toLowerCase();
-    var table = document.getElementById('municipioTable');
-    var rows = table.getElementsByTagName('tbody')[0].getElementsByTagName('tr');
-
-    for (var i = 0; i < rows.length; i++) {
-        var cells = rows[i].getElementsByTagName('td');
-        var match = false;
-        for (var j = 0; j < cells.length - 1; j++) { // Excluir columna de acciones
-            if (cells[j].textContent.toLowerCase().indexOf(input) > -1) {
-                match = true;
-                break;
-            }
-        }
-        rows[i].style.display = match ? '' : 'none';
-    }
-});
-</script>
-
- <!-- FIN page content -->
-
-
-
-
-            <!-- JavaScript -->
             <script>
                 function toggleForm(formId) {
                     const form = document.getElementById(formId);
@@ -593,14 +582,14 @@ document.getElementById('searchInput').addEventListener('input', function() {
 
                 document.getElementById('searchInput').addEventListener('keyup', function () {
                     let searchValue = this.value.toLowerCase();
-                    let table = document.getElementById('coloniasTable');
+                    let table = document.getElementById('usuariosTable');
                     let rows = table.getElementsByTagName('tr');
 
                     for (let i = 1; i < rows.length; i++) {
                         let cells = rows[i].getElementsByTagName('td');
                         let match = false;
 
-                        for (let j = 1; j < cells.length - 1; j++) {
+                        for (let j = 0; j < cells.length - 1; j++) {
                             if (cells[j].textContent.toLowerCase().includes(searchValue)) {
                                 match = true;
                                 break;
@@ -648,20 +637,20 @@ document.getElementById('searchInput').addEventListener('input', function() {
             <script src="{% static 'js/custom.min.js' %}"></script>
 
             <script>
-  function togglePassword(fieldId, iconContainer) {
-    const input = document.getElementById(fieldId);
-    const icon = iconContainer.querySelector('i');
-    if (input.type === "password") {
-      input.type = "text";
-      icon.classList.remove("bi-eye-fill");
-      icon.classList.add("bi-eye-slash-fill");
-    } else {
-      input.type = "password";
-      icon.classList.remove("bi-eye-slash-fill");
-      icon.classList.add("bi-eye-fill");
-    }
-  }
-</script>
+                function togglePassword(fieldId, iconContainer) {
+                    const input = document.getElementById(fieldId);
+                    const icon = iconContainer.querySelector('i');
+                    if (input.type === "password") {
+                        input.type = "text";
+                        icon.classList.remove("bi-eye-fill");
+                        icon.classList.add("bi-eye-slash-fill");
+                    } else {
+                        input.type = "password";
+                        icon.classList.remove("bi-eye-slash-fill");
+                        icon.classList.add("bi-eye-fill");
+                    }
+                }
+            </script>
         </div>
     </div>
 </body>
