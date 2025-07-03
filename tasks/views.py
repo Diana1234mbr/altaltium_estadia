@@ -20,6 +20,7 @@ import os
 import base64
 import io
 
+
 # Decorador para verificar si es admin
 @never_cache
 def admin_required(usuario):
@@ -836,7 +837,6 @@ def gentelella_view(request, page):
         if 'eliminar_individual' in request.GET and 'id_propiedad' in request.GET:
             try:
                 propiedad_id = request.GET['id_propiedad']
-                print(f"DEBUG: Intentando eliminar propiedad con ID: {propiedad_id}")  # Depuración
                 propiedad = Propiedades.objects.get(id_propiedad=propiedad_id)
                 propiedad.delete()
                 messages.success(request, f"Propiedad con ID {propiedad_id} eliminada correctamente.")
@@ -846,9 +846,8 @@ def gentelella_view(request, page):
                 messages.error(request, f"Error al eliminar la propiedad: {str(e)}")
             return redirect('gentelella_page', page='cal_estimaciones')
 
-        if 'eliminar_todas' in request.GET:  # Cambiado a 'eliminar_todas' para evitar conflicto
+        if 'eliminar_todas' in request.GET:  # Cambiado de 'eliminar' a 'eliminar_todas'
             try:
-                print(f"DEBUG: Intentando eliminar todas las propiedades")  # Depuración
                 # Eliminar todas las propiedades
                 Propiedades.objects.all().delete()
                 # Restablecer la secuencia de id_propiedad en PostgreSQL
@@ -863,23 +862,17 @@ def gentelella_view(request, page):
     elif page == "cal_usuarios":
         try:
             usuarios = Usuarios.objects.all()
-            print(f"DEBUG: Usuarios recuperados: {list(usuarios)}")
-            print(f"DEBUG: Número de usuarios: {usuarios.count()}")
         except Exception as e:
-            print(f"DEBUG: Error al recuperar usuarios: {str(e)}")
+            print(f"Error al recuperar usuarios: {str(e)}")
             usuarios = []
 
-        if 'eliminar_usuario' in request.GET:  # Cambiado a 'eliminar_usuario'
+        if 'eliminar_usuario' in request.GET:  # Cambiado de 'eliminar' a 'eliminar_usuario'
             try:
-                usuario_id = request.GET['eliminar_usuario']
-                print(f"DEBUG: Intentando eliminar usuario con ID: {usuario_id}")  # Depuración
-                usuario = Usuarios.objects.get(id=usuario_id)
+                usuario = Usuarios.objects.get(id=request.GET['eliminar_usuario'])
                 usuario.delete()
-                messages.success(request, "Usuario eliminado correctamente.")
+                messages.success(request, "Usuario eliminado correctamente.")  # Restaurado mensaje de éxito
             except Usuarios.DoesNotExist:
-                messages.error(request, f"No se encontró el usuario con ID {usuario_id}.")
-            except Exception as e:
-                messages.error(request, f"Error al eliminar usuario: {str(e)}")
+                messages.error(request, f"No se encontró el usuario con ID {request.GET['eliminar_usuario']}.")
             return redirect(reverse('gentelella_page', kwargs={'page': 'cal_usuarios'}))
 
         if request.method == 'POST' and 'editar' not in request.GET:
@@ -915,7 +908,6 @@ def gentelella_view(request, page):
         context.update({
             'usuarios': usuarios,
         })
-        print(f"DEBUG: Contexto enviado: {context}")
 
     # ================= EDITAR USUARIO ===================
     elif page == "editar_usuario":
@@ -969,10 +961,8 @@ def gentelella_view(request, page):
     elif page == "cal_vista_usuarios":
         try:
             vistas = AlcaldiaVistas.objects.all()
-            print(f"DEBUG: Alcaldias recuperadas: {list(vistas)}")
-            print(f"DEBUG: Número de vista alcaldías: {vistas.count()}")
         except Exception as e:
-            print(f"DEBUG: Error al recuperar vistas: {str(e)}")
+            print(f"Error al recuperar vistas: {str(e)}")
             vistas = []
             messages.error(request, f"Error al recuperar vistas: {str(e)}")
 
