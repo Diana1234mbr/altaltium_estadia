@@ -326,7 +326,7 @@
                                     {% if usuario.profile_picture %}
                                         <img src="{{ usuario.profile_picture.url }}" alt="{{ usuario.username }}" class="profile_img">
                                     {% else %}
-                                        <img src="{% static 'images/default-profile.png' %}" alt="Foto de perfil por defecto" class="profile_img">
+                                        <img src="{% static 'images/default_profile.png' %}" alt="Foto de perfil por defecto" class="profile_img">
                                     {% endif %}
                                     {{ usuario.username }}
                                 </a>

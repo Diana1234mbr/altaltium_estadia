@@ -587,7 +587,7 @@ def gentelella_view(request, page):
 
             return redirect('gentelella_page', page='editar_colonia') + f'?editar={id_colonia}'
 
-    # ================= ESTADOS ===================
+       # ================= ESTADOS ===================
     elif page == "cal_estado":
         estados = Estados.objects.all()
         context['estados'] = estados
@@ -605,7 +605,7 @@ def gentelella_view(request, page):
             nombre = request.POST.get('nombre', '').strip()
             if nombre:
                 try:
-                    if Estados.objects.filter(name__iexact=nombre).exists():
+                    if Estados.objects.filter(nombre__iexact=nombre).exists():  # Cambiado de name a nombre
                         messages.error(request, "Ya existe un estado con ese nombre.")
                     else:
                         Estados.objects.create(nombre=nombre)
@@ -632,7 +632,7 @@ def gentelella_view(request, page):
             try:
                 estado = Estados.objects.get(id_estado=id_estado)
                 if nombre:
-                    if Estados.objects.filter(name__iexact=nombre).exclude(id_estado=estado.id_estado).exists():
+                    if Estados.objects.filter(nombre__iexact=nombre).exclude(id_estado=estado.id_estado).exists():  # Cambiado de name a nombre
                         messages.error(request, "Ya existe un estado con ese nombre.")
                     else:
                         estado.nombre = nombre
@@ -669,7 +669,7 @@ def gentelella_view(request, page):
             if nombre and id_estado:
                 try:
                     estado = Estados.objects.get(id_estado=id_estado)
-                    if Municipios.objects.filter(name__iexact=nombre.strip(), id_estado=estado).exists():
+                    if Municipios.objects.filter(nombre__iexact=nombre.strip(), id_estado=estado).exists():  # Cambiado de name a nombre
                         messages.error(request, "Ya existe un municipio con ese nombre en el estado seleccionado.")
                     else:
                         Municipios.objects.create(nombre=nombre.strip(), id_estado=estado)
@@ -699,7 +699,7 @@ def gentelella_view(request, page):
                 municipio = Municipios.objects.get(id_municipio=id_municipio)
                 if nombre and id_estado:
                     estado = Estados.objects.get(id_estado=id_estado)
-                    if Municipios.objects.filter(name__iexact=nombre.strip(), id_estado=estado).exclude(id_municipio=municipio.id_municipio).exists():
+                    if Municipios.objects.filter(nombre__iexact=nombre.strip(), id_estado=estado).exclude(id_municipio=municipio.id_municipio).exists():  # Cambiado de name a nombre
                         messages.error(request, "Ya existe un municipio con ese nombre en el estado seleccionado.")
                     else:
                         municipio.nombre = nombre.strip()
@@ -714,6 +714,8 @@ def gentelella_view(request, page):
             except Estados.DoesNotExist:
                 messages.error(request, "Estado no encontrado.")
             return redirect('gentelella_page', page='editar_municipio') + f'?editar={id_municipio}'
+
+
 
     # ================= CÓDIGOS POSTALES ===================
     elif page == "cal_cp":
