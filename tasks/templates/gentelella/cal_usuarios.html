@@ -253,7 +253,7 @@
                             {% if usuario.profile_picture %}
                                 <img src="{{ usuario.profile_picture.url }}" alt="Foto de perfil" class="img-circle profile_img">
                             {% else %}
-                                <img src="{% static 'images/default-profile.png' %}" alt="Foto de perfil por defecto" class="img-circle profile_img">
+                                <img src="{% static 'images/default_profile.png' %}" alt="Foto de perfil por defecto" class="img-circle profile_img">
                             {% endif %}
                         </div>
                         <div class="profile_info">
@@ -440,7 +440,7 @@
 
                     <!-- Mostrar mensajes de éxito o error -->
                     {% if messages %}
-                    <div class="alert alert-dismissible {% if message.tags == 'success' %}alert-success{% else %}alert-danger{% endif %}" role="alert">
+                    <div class="alert alert-dismissible {% if message.tags == 'success' %}alert-danger{% else %}alert-success{% endif %}" role="alert">
                         {% for message in messages %}
                         <p>{{ message }}</p>
                         {% endfor %}

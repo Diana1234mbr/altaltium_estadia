@@ -827,6 +827,7 @@ def gentelella_view(request, page):
 
     # ================= PROPIEDADES ===================
 
+    # ================= PROPIEDADES ===================
     elif page == "cal_estimaciones":
         propiedades = Propiedades.objects.select_related('id_estado', 'id_municipio', 'id_colonia', 'id_codigo_postal').all()
         context['propiedades'] = propiedades
@@ -835,17 +836,17 @@ def gentelella_view(request, page):
         context['colonias'] = Colonias.objects.all()
         context['codigos_postales'] = CodigosPostales.objects.all()
 
-    if 'eliminar_individual' in request.GET and 'id_propiedad' in request.GET:
-        try:
-            propiedad_id = request.GET['id_propiedad']
-            propiedad = Propiedades.objects.get(id_propiedad=propiedad_id)
-            propiedad.delete()
-            messages.success(request, f"Propiedad con ID {propiedad_id} eliminada correctamente.")
-        except Propiedades.DoesNotExist:
-            messages.error(request, f"No se encontró la propiedad con ID {propiedad_id}.")
-        except Exception as e:
-            messages.error(request, f"Error al eliminar la propiedad: {str(e)}")
-        return redirect('gentelella_page', kwargs={'page': 'cal_estimaciones'})
+        if 'eliminar_individual' in request.GET and 'id_propiedad' in request.GET:
+            try:
+                propiedad_id = request.GET['id_propiedad']
+                propiedad = Propiedades.objects.get(id_propiedad=propiedad_id)
+                propiedad.delete()
+                messages.success(request, f"Propiedad con ID {propiedad_id} eliminada correctamente.")
+            except Propiedades.DoesNotExist:
+                messages.error(request, f"No se encontró la propiedad con ID {propiedad_id}.")
+            except Exception as e:
+                messages.error(request, f"Error al eliminar la propiedad: {str(e)}")
+            return redirect('gentelella_page', page='cal_estimaciones')
 
     if 'eliminar' in request.GET:
         try:
@@ -859,7 +860,7 @@ def gentelella_view(request, page):
             messages.success(request, "Todas las propiedades han sido eliminadas y los IDs reiniciados a 1")
         except Exception as e:
             messages.error(request, f"Error al eliminar propiedades o reiniciar IDs: {str(e)}")
-        return redirect('gentelella_page', kwargs={'page': 'cal_estimaciones'})
+        return redirect('gentelella_page', page='cal_estimaciones')
 
 # ================= USUARIOS ===================
     elif page == "cal_usuarios":
