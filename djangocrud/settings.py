@@ -142,10 +142,6 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
-# Serve media files during development
-if DEBUG:
-    from django.conf.urls.static import static
-    urlpatterns += static(MEDIA_URL, document_root=MEDIA_ROOT)
 
 # Authentication backends
 AUTHENTICATION_BACKENDS = [

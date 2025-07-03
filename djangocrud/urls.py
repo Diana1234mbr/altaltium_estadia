@@ -4,8 +4,6 @@ from tasks import views
 from django.conf import settings
 from django.conf.urls.static import static
 
- 
-
 urlpatterns = [
     # Admin y autenticación
     path('admin/', admin.site.urls),
@@ -19,8 +17,6 @@ urlpatterns = [
     path('estimaciones/', views.estimaciones, name='estimaciones'),
     path('analisis/', views.analisis, name='analisis'),
     path('resultados/<int:propiedad_id>/', views.mostrar_resultado, name='mostrar_resultado'),
-
-
 
     # Ajax para colonias y CP
     path('obtener_colonias/', views.obtener_colonias, name='obtener_colonias'),
@@ -48,14 +44,10 @@ urlpatterns = [
     # Panel admin Gentelella
     path('admin-panel/<str:page>/', views.gentelella_view, name='gentelella_page'),
 
-
-    # URL para el acceso de vista de la documentación 
+    # Vista de documentación
     path('doc/', views.vista_documentacion, name='documentacion'),
+]
 
-    
- 
-]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
-
-
+# Archivos media (imágenes)
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
