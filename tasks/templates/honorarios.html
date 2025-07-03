@@ -1,0 +1,208 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<style>
+    body {
+        background: linear-gradient(-45deg, #f4f4f9, #e0e7f0, #d1dbe4, #c0cedd);
+        background-size: 400% 400%;
+        animation: gradientBG 15s ease infinite;
+    }
+
+    @keyframes gradientBG {
+        0% { background-position: 0% 50%; }
+        50% { background-position: 100% 50%; }
+        100% { background-position: 0% 50%; }
+    }
+
+    .form-container {
+        background-color: #ffffffdd;
+        backdrop-filter: blur(10px);
+        padding: 2.5rem;
+        border-radius: 12px;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+        border-left: 6px solid #1a3c5e;
+    }
+
+    .form-title {
+        color: #1a3c5e;
+        text-align: center;
+    }
+
+    .form-label {
+        font-weight: 600;
+        color: #1a3c5e;
+    }
+
+    .required-field::after {
+        content: " *";
+        color: red;
+    }
+
+    .section-title {
+        color: #4a6a8c;
+        font-weight: bold;
+        font-size: 1.4rem;
+        margin-top: 2rem;
+        border-bottom: 2px solid #e0e0e0;
+        padding-bottom: 5px;
+    }
+
+    .btn-calculate {
+        background-color: #4a6a8c;
+        border: none;
+        color: white;
+        font-weight: bold;
+        transition: background-color 0.3s ease;
+        padding: 10px 20px;
+    }
+
+    .btn-calculate:hover {
+        background-color: #3b5b7a;
+        color: #ffffff;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        background-color: #ffffff;
+        border: 1px solid #e0e0e0;
+        border-radius: 6px;
+        overflow: hidden;
+    }
+
+    th, td {
+        padding: 12px 15px;
+        text-align: left;
+        border-bottom: 1px solid #e0e0e0;
+    }
+
+    th {
+        background-color: #4a6a8c;
+        color: #ffffff;
+        font-weight: 600;
+    }
+
+    td input {
+        width: 100%;
+        padding: 8px;
+        border: 1px solid #d0d7de;
+        border-radius: 4px;
+        box-sizing: border-box;
+    }
+
+    td span {
+        color: #1a3c5e;
+        font-weight: 600;
+    }
+
+    tr:last-child td {
+        border-bottom: none;
+    }
+
+    .highlight {
+        background-color: #e6f3ff;
+    }
+</style>
+
+<div class="full-width-container mt-5 animate__animated animate__fadeIn">
+    <div class="row">
+        <div class="col-md-12 col-no-padding">
+            <div class="form-container animate__animated animate__zoomIn">
+                <h1 class="form-title mb-4">Calculadora de Honorarios</h1>
+
+                <form method="POST" class="row g-3 needs-validation" novalidate>
+                    {% csrf_token %}
+                    <div class="col-12">
+                        <select id="calcType" name="calcType" class="form-select mb-3" onchange="this.form.submit()" aria-label="Seleccionar tipo de cálculo">
+                            <option value="adjudicada" {% if calc_type == 'adjudicada' %}selected{% endif %}>Calculadora Adjudicada</option>
+                            <option value="sentencia" {% if calc_type == 'sentencia' %}selected{% endif %}>Calculadora de Sentencia</option>
+                        </select>
+                    </div>
+
+                    <div class="col-12">
+                        <span class="section-title">Modificables</span>
+                        <table>
+                            <tr>
+                                <th>Valor comercial</th>
+                                <td><input type="number" id="valorComercial" name="valorComercial" value="{{ valor_comercial|default:0 }}" step="0.01" class="form-control" required></td>
+                                <td><span id="porcentajeValor">{{ porcentaje_valor|default:"0.00" }}%</span></td>
+                            </tr>
+                            <tr>
+                                <th>Costo cesión</th>
+                                <td><input type="number" id="costoCesion" name="costoCesion" value="{{ costo_cesion|default:0 }}" step="0.01" class="form-control" required></td>
+                            </tr>
+                        </table>
+                    </div>
+
+                    <div class="col-12">
+                        <span class="section-title">Valores de Interés</span>
+                        <table>
+                            <tr>
+                                <th>Valor judicial aproximado</th>
+                                <td><input type="number" id="valorJudicial" name="valorJudicial" value="{{ valor_judicial|default:0 }}" step="0.01" class="form-control" required></td>
+                            </tr>
+                            <tr>
+                                <th>Honorarios</th>
+                                <td><input type="number" id="honorarios" name="honorarios" value="{{ honorarios|default:0 }}" step="0.01" class="form-control" required></td>
+                            </tr>
+                            <tr>
+                                <th>Costo total</th>
+                                <td><span id="costoTotal">{{ costo_total|default:"0.00" }}</span></td>
+                            </tr>
+                        </table>
+                    </div>
+
+                    <div class="col-12">
+                        <span class="section-title">Modalidad de contrato de Honorarios</span>
+                        <table>
+                            <tr>
+                                <th>Pago Único</th>
+                                <td><input type="number" id="pagoUnico" name="pagoUnico" value="{{ pago_unico|default:0 }}" step="0.01" class="form-control"></td>
+                                <td><span id="porcentajeUnico">{{ porcentaje_unico|default:"0.00" }}%</span></td>
+                            </tr>
+                            <tr>
+                                <th>Etapa</th>
+                                <td><input type="number" id="etapa" name="etapa" value="{{ etapa|default:0 }}" step="0.01" class="form-control"></td>
+                                <td><span id="porcentajeEtapa">{{ porcentaje_etapa|default:"0.00" }}%</span></td>
+                            </tr>
+                            <tr>
+                                <th>A la entrega</th>
+                                <td><input type="number" id="entrega" name="entrega" value="{{ entrega|default:0 }}" step="0.01" class="form-control"></td>
+                                <td><span id="porcentajeEntrega">{{ porcentaje_entrega|default:"0.00" }}%</span></td>
+                            </tr>
+                            <tr class="highlight">
+                                <th>Total</th>
+                                <td><span id="totalHonorarios">{{ total_honorarios|default:"0.00" }}</span></td>
+                                <td>100%</td>
+                            </tr>
+                        </table>
+                    </div>
+
+                    <div class="col-12">
+                        <span class="section-title">Extrajudicial</span>
+                        <table>
+                            <tr>
+                                <th>Valor comercial</th>
+                                <td><input type="number" id="valorComercialExtra" name="valorComercialExtra" value="{{ valor_comercial_extra|default:0 }}" step="0.01" class="form-control"></td>
+                            </tr>
+                        </table>
+                    </div>
+
+                    <div class="col-12">
+                        <span class="section-title">Cesión de Derechos de Cobranza</span>
+                        <table>
+                            <tr>
+                                <th>Cotización</th>
+                                <td><input type="number" id="cotizacion" name="cotizacion" value="{{ cotizacion|default:0 }}" step="0.01" class="form-control"></td>
+                            </tr>
+                        </table>
+                    </div>
+
+                    <div class="col-12 text-end mt-4">
+                        <button type="submit" class="btn btn-calculate btn-lg animate__animated animate__pulse">Calcular</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}

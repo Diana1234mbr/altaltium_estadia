@@ -1128,5 +1128,43 @@ def vista_documentacion(request):
 
 #Honorarios
 
-def hon(request):
-    return render(request, 'hon.html')
+def honorarios_calculator(request):
+    context = {
+        'calc_type': request.POST.get('calcType', 'adjudicada'),
+        'valor_comercial': float(request.POST.get('valorComercial', 0)),
+        'costo_cesion': float(request.POST.get('costoCesion', 0)),
+        'valor_judicial': float(request.POST.get('valorJudicial', 0)),
+        'honorarios': float(request.POST.get('honorarios', 0)),
+        'pago_unico': float(request.POST.get('pagoUnico', 0)),
+        'etapa': float(request.POST.get('etapa', 0)),
+        'entrega': float(request.POST.get('entrega', 0)),
+        'valor_comercial_extra': float(request.POST.get('valorComercialExtra', 0)),
+        'cotizacion': float(request.POST.get('cotizacion', 0)),
+    }
+
+    if request.method == 'POST':
+        # Cálculos
+        if context['valor_comercial'] > 0:
+            context['porcentaje_valor'] = (context['costo_cesion'] / context['valor_comercial'] * 100)
+        else:
+            context['porcentaje_valor'] = 0.00
+
+        context['costo_total'] = context['valor_judicial'] + context['honorarios']
+
+        total_modalidad = context['pago_unico'] + context['etapa'] + context['entrega']
+        if total_modalidad > 0 and context['honorarios'] > 0:
+            context['porcentaje_unico'] = (context['pago_unico'] / total_modalidad * 100) if total_modalidad > 0 else 0
+            context['porcentaje_etapa'] = (context['etapa'] / total_modalidad * 100) if total_modalidad > 0 else 0
+            context['porcentaje_entrega'] = (context['entrega'] / total_modalidad * 100) if total_modalidad > 0 else 0
+            context['total_honorarios'] = total_modalidad
+        else:
+            context['porcentaje_unico'] = 0.00
+            context['porcentaje_etapa'] = 0.00
+            context['porcentaje_entrega'] = 0.00
+            context['total_honorarios'] = 0.00
+
+        # Redondear a 2 decimales
+        for key in ['porcentaje_valor', 'porcentaje_unico', 'porcentaje_etapa', 'porcentaje_entrega', 'costo_total', 'total_honorarios']:
+            context[key] = round(context.get(key, 0), 2)
+
+    return render(request, 'honorarios.html', context)
