@@ -1124,3 +1124,9 @@ def vista_documentacion(request):
         'usuario': usuario,
     }
     return render(request, 'documentacion/doc.html', context)
+
+
+#Honorarios
+
+def hon(request):
+    return render(request, 'hon.html')
