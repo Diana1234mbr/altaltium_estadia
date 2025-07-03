@@ -481,16 +481,19 @@
                                     <input type="email" class="form-control" id="email" name="email" placeholder="ejemplo@correo.com" required>
                                 </div>
                             </div>
+                          
+
                             <div class="mb-3 animate__animated animate__fadeInUp">
                                 <label for="roles" class="form-label">Rol del usuario:</label>
-                                <select name="roles" id="roles" class="form-control" required style="border: 1px solid #bfc6c7; border-radius: 4px; padding: 10px; color: #0d1d1f; background-color: #fefcef; transition: border-color 0.3s;">
+                                <select name="roles" id="roles" class="form-control"  border-radius: 4px; padding: 10px; color: #0d1d1f; background-color: #fefcef; transition: border-color 0.3s;">
                                     <option value="">Selecciona un rol</option>                            
-                                    <option value="Admin" {% if usuario_editar.roles == "Admin" %}selected{% endif %}>Admin</option>
-                                    <option value="Gerente" {% if usuario_editar.roles == "Gerente" %}selected{% endif %}>Gerente</option>
-                                    <option value="Asesor" {% if usuario_editar.roles == "Asesor" %}selected{% endif %}>Asesor</option>
+                                    <option value="Vendedor" {% if usuario_editar.roles == "Vendedor" %}selected{% endif %}>Vendedor</option>
                                     <option value="Cliente" {% if usuario_editar.roles == "Cliente" %}selected{% endif %}>Cliente</option>
+                                    <option value="Invitado" {% if usuario_editar.roles == "Invitado" %}selected{% endif %}>Invitado</option>
                                 </select>
                             </div>
+        
+        
 
                             <div class="mb-3 animate__animated animate__fadeInUp">
                                 <label for="password1" class="form-label">Contraseña</label>
