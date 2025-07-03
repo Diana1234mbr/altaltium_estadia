@@ -866,57 +866,57 @@ def gentelella_view(request, page):
 
 # ================= USUARIOS ===================
     elif page == "cal_usuarios":
-    try:
-        usuarios = Usuarios.objects.all()
-        print(f"DEBUG: Usuarios recuperados: {list(usuarios)}")
-        print(f"DEBUG: Número de usuarios: {usuarios.count()}")
-    except Exception as e:
-        print(f"DEBUG: Error al recuperar usuarios: {str(e)}")
-        usuarios = []
-
-    if 'eliminar' in request.GET:
         try:
-            usuario = Usuarios.objects.get(id=request.GET['eliminar'])
-            usuario.delete()
-            messages.success(request, "Usuario eliminado correctamente.")
-        except Usuarios.DoesNotExist:
-            messages.error(request, f"No se encontró el usuario con ID {request.GET['eliminar']}.")
-        return redirect(reverse('gentelella_page', kwargs={'page': 'cal_usuarios'}))
+            usuarios = Usuarios.objects.all()
+            print(f"DEBUG: Usuarios recuperados: {list(usuarios)}")
+            print(f"DEBUG: Número de usuarios: {usuarios.count()}")
+        except Exception as e:
+            print(f"DEBUG: Error al recuperar usuarios: {str(e)}")
+            usuarios = []
 
-    if request.method == 'POST' and 'editar' not in request.GET:
-        username = request.POST.get('username')
-        first_name = request.POST.get('nombre')
-        roles = request.POST.get('roles')
-        email = request.POST.get('email')
-        password1 = request.POST.get('password1')
-        password2 = request.POST.get('password2')
+        if 'eliminar' in request.GET:
+            try:
+                usuario = Usuarios.objects.get(id=request.GET['eliminar'])
+                usuario.delete()
+                messages.success(request, "Usuario eliminado correctamente.")
+            except Usuarios.DoesNotExist:
+                messages.error(request, f"No se encontró el usuario con ID {request.GET['eliminar']}.")
+            return redirect(reverse('gentelella_page', kwargs={'page': 'cal_usuarios'}))
 
-        if username and first_name and email and password1 and password2:
-            if password1 == password2:
-                try:
-                    Usuarios.objects.create(
-                        username=username,
-                        first_name=first_name,
-                        email=email,
-                        roles=roles,
-                        password=password1,
-                        is_active=True,
-                        date_joined=timezone.now()
-                    )
-                    messages.success(request, "Usuario creado correctamente.")
-                except IntegrityError:
-                    messages.error(request, "El nombre de usuario o correo ya existe.")
+        if request.method == 'POST' and 'editar' not in request.GET:
+            username = request.POST.get('username')
+            first_name = request.POST.get('nombre')
+            roles = request.POST.get('roles')
+            email = request.POST.get('email')
+            password1 = request.POST.get('password1')
+            password2 = request.POST.get('password2')
+
+            if username and first_name and email and password1 and password2:
+                if password1 == password2:
+                    try:
+                        Usuarios.objects.create(
+                            username=username,
+                            first_name=first_name,
+                            email=email,
+                            roles=roles,
+                            password=password1,
+                            is_active=True,
+                            date_joined=timezone.now()
+                        )
+                        messages.success(request, "Usuario creado correctamente.")
+                    except IntegrityError:
+                        messages.error(request, "El nombre de usuario o correo ya existe.")
+                else:
+                    messages.error(request, "Las contraseñas no coinciden.")
             else:
-                messages.error(request, "Las contraseñas no coinciden.")
-        else:
-            messages.error(request, "Faltan datos para crear el usuario.")
+                messages.error(request, "Faltan datos para crear el usuario.")
 
-        return redirect(reverse('gentelella_page', kwargs={'page': 'cal_usuarios'}))
+            return redirect(reverse('gentelella_page', kwargs={'page': 'cal_usuarios'}))
 
-    context.update({
-        'usuarios': usuarios,
-    })
-    print(f"DEBUG: Contexto enviado: {context}")
+        context.update({
+            'usuarios': usuarios,
+        })
+        print(f"DEBUG: Contexto enviado: {context}")
 
     # ================= EDITAR USUARIO ===================
     elif page == "editar_usuario":
