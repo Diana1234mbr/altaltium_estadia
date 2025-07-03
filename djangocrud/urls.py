@@ -15,7 +15,7 @@ urlpatterns = [
     # Página de bienvenida y estimaciones
     path('', views.welcome, name='welcome'),
     path('estimaciones/', views.estimaciones, name='estimaciones'),
-    path('analisis/', views.analisis, name='analisis'),
+    path('hon/', views.hon, name='hon'),
     path('resultados/<int:propiedad_id>/', views.mostrar_resultado, name='mostrar_resultado'),
 
     # Ajax para colonias y CP
