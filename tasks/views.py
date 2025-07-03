@@ -20,6 +20,7 @@ import os
 import base64
 import io
 
+
 # Decorador para verificar si es admin
 @never_cache
 def admin_required(usuario):
@@ -855,7 +856,8 @@ def gentelella_view(request, page):
                 messages.error(request, f"Error al eliminar propiedades o reiniciar IDs: {str(e)}")
             return redirect('gentelella_page', page='cal_estimaciones')
 
-    # ================= USUARIOS ===================
+
+# ================= USUARIOS ===================
     elif page == "cal_usuarios":
         try:
             usuarios = Usuarios.objects.all()
@@ -872,7 +874,7 @@ def gentelella_view(request, page):
                 messages.success(request, "Usuario eliminado correctamente.")
             except Usuarios.DoesNotExist:
                 messages.error(request, f"No se encontró el usuario con ID {request.GET['eliminar']}.")
-            return redirect('gentelella_page', page='cal_usuarios')
+            return redirect(reverse('gentelella_page', kwargs={'page': 'cal_usuarios'}))
 
         if request.method == 'POST' and 'editar' not in request.GET:
             username = request.POST.get('username')
@@ -902,7 +904,7 @@ def gentelella_view(request, page):
             else:
                 messages.error(request, "Faltan datos para crear el usuario.")
 
-            return redirect('gentelella_page', page='cal_usuarios')
+            return redirect(reverse('gentelella_page', kwargs={'page': 'cal_usuarios'}))
 
         context.update({
             'usuarios': usuarios,
@@ -917,7 +919,7 @@ def gentelella_view(request, page):
                 context['usuario_editar'] = usuario_editar
             except Usuarios.DoesNotExist:
                 messages.error(request, f"No se encontró el usuario con ID {request.GET['editar']}.")
-                return redirect('gentelella_page', page='cal_usuarios')
+                return redirect(reverse('gentelella_page', kwargs={'page': 'cal_usuarios'}))
 
         if request.method == 'POST':
             id_usuario = request.POST.get('id_usuario')
@@ -941,21 +943,24 @@ def gentelella_view(request, page):
                         usuario.password = password1
                     elif password1 or password2:
                         messages.error(request, "Las contraseñas no coinciden o están incompletas.")
-                        return redirect('gentelella_page', page='editar_usuario') + f'?editar={id_usuario}'
+                        return redirect('{}?editar={}'.format(reverse('gentelella_page', kwargs={'page': 'editar_usuario'}), id_usuario))
 
                     if 'profile_picture' in request.FILES:
                         usuario.profile_picture = request.FILES['profile_picture']
 
                     usuario.save()
                     messages.success(request, "Usuario actualizado correctamente.")
-                    return redirect('gentelella_page', page='cal_usuarios')
+                    return redirect(reverse('gentelella_page', kwargs={'page': 'cal_usuarios'}))
                 else:
                     messages.error(request, "Faltan datos para actualizar el usuario.")
             except Usuarios.DoesNotExist:
                 messages.error(request, f"No se encontró el usuario con ID {id_usuario}.")
             except IntegrityError:
                 messages.error(request, "El nombre de usuario o correo ya existe.")
-            return redirect('gentelella_page', page='editar_usuario') + f'?editar={id_usuario}'
+            return redirect('{}?editar={}'.format(reverse('gentelella_page', kwargs={'page': 'editar_usuario'}), id_usuario))
+
+
+
 
     # ================= VISTA ALCALDIAS ===================
     elif page == "cal_vista_usuarios":
