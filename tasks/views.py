@@ -827,7 +827,7 @@ def gentelella_view(request, page):
                 messages.error(request, "Ya existe un código con ese valor.")
             return redirect('gentelella_page', page='editar_cp') + f'?editar={id_codigo_postal}'
 
-    # ================= PROPIEDADES ===================
+   
 
     # ================= PROPIEDADES ===================
     elif page == "cal_estimaciones":
@@ -874,7 +874,7 @@ def gentelella_view(request, page):
             print(f"DEBUG: Error al recuperar usuarios: {str(e)}")
             usuarios = []
 
-        if 'eliminar' in request.GET:
+    if 'eliminar' in request.GET:
             try:
                 usuario = Usuarios.objects.get(id=request.GET['eliminar'])
                 usuario.delete()
