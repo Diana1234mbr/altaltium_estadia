@@ -20,7 +20,6 @@ import os
 import base64
 import io
 
-
 # Decorador para verificar si es admin
 @never_cache
 def admin_required(usuario):
@@ -587,7 +586,7 @@ def gentelella_view(request, page):
 
             return redirect('gentelella_page', page='editar_colonia') + f'?editar={id_colonia}'
 
-       # ================= ESTADOS ===================
+    # ================= ESTADOS ===================
     elif page == "cal_estado":
         estados = Estados.objects.all()
         context['estados'] = estados
@@ -605,7 +604,7 @@ def gentelella_view(request, page):
             nombre = request.POST.get('nombre', '').strip()
             if nombre:
                 try:
-                    if Estados.objects.filter(nombre__iexact=nombre).exists():  # Cambiado de name a nombre
+                    if Estados.objects.filter(nombre__iexact=nombre).exists():
                         messages.error(request, "Ya existe un estado con ese nombre.")
                     else:
                         Estados.objects.create(nombre=nombre)
@@ -632,7 +631,7 @@ def gentelella_view(request, page):
             try:
                 estado = Estados.objects.get(id_estado=id_estado)
                 if nombre:
-                    if Estados.objects.filter(nombre__iexact=nombre).exclude(id_estado=estado.id_estado).exists():  # Cambiado de name a nombre
+                    if Estados.objects.filter(nombre__iexact=nombre).exclude(id_estado=estado.id_estado).exists():
                         messages.error(request, "Ya existe un estado con ese nombre.")
                     else:
                         estado.nombre = nombre
@@ -669,7 +668,7 @@ def gentelella_view(request, page):
             if nombre and id_estado:
                 try:
                     estado = Estados.objects.get(id_estado=id_estado)
-                    if Municipios.objects.filter(nombre__iexact=nombre.strip(), id_estado=estado).exists():  # Cambiado de name a nombre
+                    if Municipios.objects.filter(nombre__iexact=nombre.strip(), id_estado=estado).exists():
                         messages.error(request, "Ya existe un municipio con ese nombre en el estado seleccionado.")
                     else:
                         Municipios.objects.create(nombre=nombre.strip(), id_estado=estado)
@@ -699,7 +698,7 @@ def gentelella_view(request, page):
                 municipio = Municipios.objects.get(id_municipio=id_municipio)
                 if nombre and id_estado:
                     estado = Estados.objects.get(id_estado=id_estado)
-                    if Municipios.objects.filter(nombre__iexact=nombre.strip(), id_estado=estado).exclude(id_municipio=municipio.id_municipio).exists():  # Cambiado de name a nombre
+                    if Municipios.objects.filter(nombre__iexact=nombre.strip(), id_estado=estado).exclude(id_municipio=municipio.id_municipio).exists():
                         messages.error(request, "Ya existe un municipio con ese nombre en el estado seleccionado.")
                     else:
                         municipio.nombre = nombre.strip()
@@ -714,8 +713,6 @@ def gentelella_view(request, page):
             except Estados.DoesNotExist:
                 messages.error(request, "Estado no encontrado.")
             return redirect('gentelella_page', page='editar_municipio') + f'?editar={id_municipio}'
-
-
 
     # ================= CÓDIGOS POSTALES ===================
     elif page == "cal_cp":
@@ -827,8 +824,6 @@ def gentelella_view(request, page):
                 messages.error(request, "Ya existe un código con ese valor.")
             return redirect('gentelella_page', page='editar_cp') + f'?editar={id_codigo_postal}'
 
-   
-
     # ================= PROPIEDADES ===================
     elif page == "cal_estimaciones":
         propiedades = Propiedades.objects.select_related('id_estado', 'id_municipio', 'id_colonia', 'id_codigo_postal').all()
@@ -841,6 +836,7 @@ def gentelella_view(request, page):
         if 'eliminar_individual' in request.GET and 'id_propiedad' in request.GET:
             try:
                 propiedad_id = request.GET['id_propiedad']
+                print(f"DEBUG: Intentando eliminar propiedad con ID: {propiedad_id}")  # Depuración
                 propiedad = Propiedades.objects.get(id_propiedad=propiedad_id)
                 propiedad.delete()
                 messages.success(request, f"Propiedad con ID {propiedad_id} eliminada correctamente.")
@@ -850,21 +846,20 @@ def gentelella_view(request, page):
                 messages.error(request, f"Error al eliminar la propiedad: {str(e)}")
             return redirect('gentelella_page', page='cal_estimaciones')
 
-    if 'eliminar' in request.GET:
-        try:
-            # Eliminar todas las propiedades
-            Propiedades.objects.all().delete()
-            
-            # Restablecer la secuencia de id_propiedad en PostgreSQL
-            with connection.cursor() as cursor:
-                cursor.execute("SELECT setval('propiedades_id_propiedad_seq', 1, false);")
-            
-            messages.success(request, "Todas las propiedades han sido eliminadas y los IDs reiniciados a 1")
-        except Exception as e:
-            messages.error(request, f"Error al eliminar propiedades o reiniciar IDs: {str(e)}")
-        return redirect('gentelella_page', page='cal_estimaciones')
+        if 'eliminar_todas' in request.GET:  # Cambiado a 'eliminar_todas' para evitar conflicto
+            try:
+                print(f"DEBUG: Intentando eliminar todas las propiedades")  # Depuración
+                # Eliminar todas las propiedades
+                Propiedades.objects.all().delete()
+                # Restablecer la secuencia de id_propiedad en PostgreSQL
+                with connection.cursor() as cursor:
+                    cursor.execute("SELECT setval('propiedades_id_propiedad_seq', 1, false);")
+                messages.success(request, "Todas las propiedades han sido eliminadas y los IDs reiniciados a 1")
+            except Exception as e:
+                messages.error(request, f"Error al eliminar propiedades o reiniciar IDs: {str(e)}")
+            return redirect('gentelella_page', page='cal_estimaciones')
 
-# ================= USUARIOS ===================
+    # ================= USUARIOS ===================
     elif page == "cal_usuarios":
         try:
             usuarios = Usuarios.objects.all()
@@ -874,13 +869,17 @@ def gentelella_view(request, page):
             print(f"DEBUG: Error al recuperar usuarios: {str(e)}")
             usuarios = []
 
-        if 'eliminar' in request.GET:
+        if 'eliminar_usuario' in request.GET:  # Cambiado a 'eliminar_usuario'
             try:
-                usuario = Usuarios.objects.get(id=request.GET['eliminar'])
+                usuario_id = request.GET['eliminar_usuario']
+                print(f"DEBUG: Intentando eliminar usuario con ID: {usuario_id}")  # Depuración
+                usuario = Usuarios.objects.get(id=usuario_id)
                 usuario.delete()
                 messages.success(request, "Usuario eliminado correctamente.")
             except Usuarios.DoesNotExist:
-                messages.error(request, f"No se encontró el usuario con ID {request.GET['eliminar']}.")
+                messages.error(request, f"No se encontró el usuario con ID {usuario_id}.")
+            except Exception as e:
+                messages.error(request, f"Error al eliminar usuario: {str(e)}")
             return redirect(reverse('gentelella_page', kwargs={'page': 'cal_usuarios'}))
 
         if request.method == 'POST' and 'editar' not in request.GET:
@@ -965,9 +964,6 @@ def gentelella_view(request, page):
             except IntegrityError:
                 messages.error(request, "El nombre de usuario o correo ya existe.")
             return redirect('{}?editar={}'.format(reverse('gentelella_page', kwargs={'page': 'editar_usuario'}), id_usuario))
-
-
-
 
     # ================= VISTA ALCALDIAS ===================
     elif page == "cal_vista_usuarios":
@@ -1125,9 +1121,7 @@ def vista_documentacion(request):
     }
     return render(request, 'documentacion/doc.html', context)
 
-
-#Honorarios
-
+# Honorarios
 def honorarios_calculator(request):
     context = {
         'calc_type': request.POST.get('calcType', 'adjudicada'),
