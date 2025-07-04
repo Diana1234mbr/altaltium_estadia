@@ -9,7 +9,7 @@
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 
-	<title>Inmovalor | </title>
+	<title>Inmovalor | Index </title>
 
 	<!-- Bootstrap -->
 	<link href="{% static 'vendors/bootstrap/dist/css/bootstrap.min.css' %}" rel="stylesheet">
@@ -43,7 +43,7 @@
 			<div class="col-md-3 left_col">
 				<div class="left_col scroll-view">
 					<div class="navbar nav_title" style="border: 0;">
-						<a href="{% url 'gentelella_page' page='index' %}" class="site_title">
+						<a href="{% url 'welcome' %}" class="site_title">
 							<img src="{% static 'images/icono.ico' %}" alt="Icono Inmovalor" style="width: 24px; height: 24px; vertical-align: middle;">
 							<span>Inmovalor</span>
 						</a>
@@ -75,23 +75,36 @@
 									<ul class="nav child_menu">
 										<li><a href="{% url 'gentelella_page' page='index' %}">Dashboard</a></li>
 										<li><a href="{% url 'estimaciones' %}">Calculadora de estimaciones</a></li>
+										<li><a href="{% url 'honorarios' %}">Análisis de datos</a></li>
 										
 									</ul>
 								</li>
-								<li><a><i class="fa fa-edit"></i> Formulario <span class="fa fa-chevron-down"></span></a>
+								<li><a><i class="fa fa-edit"></i> Directorio <span class="fa fa-chevron-down"></span></a>
 									<ul class="nav child_menu">
 										<li><a href="{% url 'gentelella_page' page='cal_estado' %}">Estados</a></li>
-                    <li><a href="{% url 'gentelella_page' page='cal_municipio' %}">Municipio</a>
-                    </li>
-                    <li><a href="{% url 'gentelella_page' page='cal_colonia' %}">Colonia</a></li>
-                    <li><a href="{% url 'gentelella_page' page='cal_cp' %}">Codigo postal</a>
-                    </li>
-                    <li><a href="{% url 'gentelella_page' page='cal_estimaciones' %}">Estimaciones</a>
-                    </li>
-					<li><a href="{% url 'gentelella_page' page='cal_vista_usuarios' %}">Vista Alcaldias</a>
-					</li>
-                    <li><a href="{% url 'gentelella_page' page='cal_usuarios' %}">Usuarios</a>
-                    </li>
+										<li><a href="{% url 'gentelella_page' page='cal_municipio' %}">Municipio</a>
+										</li>
+										<li><a href="{% url 'gentelella_page' page='cal_colonia' %}">Colonia</a></li>
+										<li><a href="{% url 'gentelella_page' page='cal_cp' %}">Codigo postal</a>
+										</li>
+									</ul>
+								</li>
+								<li><a><i class="fa fa-calculator"></i> Estimaciones <span class="fa fa-chevron-down"></span></a>
+									<ul class="nav child_menu">
+										<li><a href="{% url 'gentelella_page' page='cal_estimaciones' %}">Publicaciones</a>
+										</li>
+									</ul>
+								</li>
+								<li><a><i class="fa fa-eye"></i> Vistas <span class="fa fa-chevron-down"></span></a>
+									<ul class="nav child_menu">
+										<li><a href="{% url 'gentelella_page' page='cal_vista_usuarios' %}">Alcaldias</a>
+										</li>
+									</ul>
+								</li>
+								<li><a><i class="fa fa-user"></i> Usuarios <span class="fa fa-chevron-down"></span></a>
+									<ul class="nav child_menu">
+										<li><a href="{% url 'gentelella_page' page='cal_usuarios' %}">Perfiles</a>
+										</li>
 									</ul>
 								</li>
 
