@@ -555,7 +555,7 @@
                                         {% if usuario.profile_picture %}
                                             <img src="{{ usuario.profile_picture.url }}" style="width: 40px; height: 40px; object-fit: cover; border-radius: 50%;">
                                         {% else %}
-                                            <span>Sin foto</span>
+                                            <img src="{% static 'images/user.png' %}" alt="Foto de perfil por defecto" class="img-circle profile_img">
                                         {% endif %}
                                     </td>
                                     <td>
