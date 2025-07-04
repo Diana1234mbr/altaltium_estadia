@@ -226,64 +226,81 @@
 </head>
 
 <body class="nav-md">
-    <div class="container body">
-        <div class="main_container">
-            <!-- Sidebar -->
-            <div class="col-md-3 left_col">
-                <div class="left_col scroll-view">
-                    <div class="navbar nav_title" style="border: 0;">
-                        <a href="{% url 'gentelella_page' page='index' %}" class="site_title"><i class="fa fa-paw"></i>
-                            <span>Inmovalor</span></a>
-                    </div>
-                    <div class="clearfix"></div>
-                    <!-- menu profile quick info -->
-                    <div class="profile clearfix">
-                        <div class="profile_pic">
-                            <img src="{{ usuario.profile_picture.url }}" alt="Foto de perfil" class="img-circle profile_img">
-                        </div>
-                        <div class="profile_info">
+	<div class="container body">
+		<div class="main_container">
+			<div class="col-md-3 left_col">
+				<div class="left_col scroll-view">
+					<div class="navbar nav_title" style="border: 0;">
+						<a href="{% url 'welcome' %}" class="site_title">
+							<img src="{% static 'images/icono.ico' %}" alt="Icono Inmovalor" style="width: 24px; height: 24px; vertical-align: middle;">
+							<span>Inmovalor</span>
+						</a>
+					</div>
+			
+					<div class="clearfix"></div>
+			
+					<!-- menu profile quick info -->
+					<div class="profile clearfix">
+						<div class="profile_pic">
+					<img src="{{ usuario.profile_picture.url }}" alt="Foto de perfil" class="img-circle profile_img">
+					</div>
+
+						<div class="profile_info">
 							<span>Bienvenido</span>
-							{{ usuario.username }}
+							<h2>{{usuario.username}}</h2>
 						</div>
 					</div>
-                    <br />
-                    <!-- sidebar menu -->
-                    <div id="sidebar-menu" class="main_menu_side hidden-print main_menu">
-                        <div class="menu_section">
-                            <h3>General</h3>
-                            <ul class="nav side-menu">
-                                <li><a><i class="fa fa-home"></i> Home <span class="fa fa-chevron-down"></span></a>
-                                    <ul class="nav child_menu">
-                                        <li><a href="{% url 'gentelella_page' page='index' %}">Dashboard</a></li>
-                                        <li><a href="{% url 'estimaciones' %}">Calculadora de estimaciones</a></li>
-                                        
-                                    </ul>
-                                </li>
-                                <li><a><i class="fa fa-edit"></i> Formulario <span
-                                            class="fa fa-chevron-down"></span></a>
-                                    <ul class="nav child_menu">
-                                        <li><a href="{% url 'gentelella_page' page='cal_estado' %}">Estados</a></li>
-                                        <li><a href="{% url 'gentelella_page' page='cal_municipio' %}">Municipio</a>
-                                        </li>
-                                        <li><a href="{% url 'gentelella_page' page='cal_colonia' %}">Colonia</a></li>
-                                        <li><a href="{% url 'gentelella_page' page='cal_cp' %}">Codigo postal</a>
-                                        </li>
-                                        <li><a href="{% url 'gentelella_page' page='cal_estimaciones' %}">Estimaciones</a>
-                                        </li>
-                                        <li><a href="{% url 'gentelella_page' page='cal_vista_usuarios' %}">Vista Alcaldias</a>
-                                        </li>
-                                        <li><a href="{% url 'gentelella_page' page='cal_usuarios' %}">Usuarios</a>
-                                        </li>
-                                    </ul>
-                                </li>
-                               
-                              
-                               
-                            </ul>
-                        </div>
-                      
-                    </div>
-                    <!-- /sidebar menu -->
+					<!-- /menu profile quick info -->
+
+					<br />
+
+					<!-- sidebar menu -->
+					<div id="sidebar-menu" class="main_menu_side hidden-print main_menu">
+						<div class="menu_section">
+							<h3>General</h3>
+							<ul class="nav side-menu">
+								<li><a><i class="fa fa-home"></i> Home <span class="fa fa-chevron-down"></span></a>
+									<ul class="nav child_menu">
+										<li><a href="{% url 'gentelella_page' page='index' %}">Dashboard</a></li>
+										<li><a href="{% url 'estimaciones' %}">Calculadora de estimaciones</a></li>
+										<li><a href="{% url 'honorarios_calculator' %}">Análisis de datos</a></li>
+										
+									</ul>
+								</li>
+								<li><a><i class="fa fa-edit"></i> Directorio <span class="fa fa-chevron-down"></span></a>
+									<ul class="nav child_menu">
+										<li><a href="{% url 'gentelella_page' page='cal_estado' %}">Estados</a></li>
+										<li><a href="{% url 'gentelella_page' page='cal_municipio' %}">Municipio</a>
+										</li>
+										<li><a href="{% url 'gentelella_page' page='cal_colonia' %}">Colonia</a></li>
+										<li><a href="{% url 'gentelella_page' page='cal_cp' %}">Codigo postal</a>
+										</li>
+									</ul>
+								</li>
+								<li><a><i class="fa fa-calculator"></i> Estimaciones <span class="fa fa-chevron-down"></span></a>
+									<ul class="nav child_menu">
+										<li><a href="{% url 'gentelella_page' page='cal_estimaciones' %}">Publicaciones</a>
+										</li>
+									</ul>
+								</li>
+								<li><a><i class="fa fa-eye"></i> Vistas <span class="fa fa-chevron-down"></span></a>
+									<ul class="nav child_menu">
+										<li><a href="{% url 'gentelella_page' page='cal_vista_usuarios' %}">Alcaldias</a>
+										</li>
+									</ul>
+								</li>
+								<li><a><i class="fa fa-user"></i> Usuarios <span class="fa fa-chevron-down"></span></a>
+									<ul class="nav child_menu">
+										<li><a href="{% url 'gentelella_page' page='cal_usuarios' %}">Perfiles</a>
+										</li>
+									</ul>
+								</li>
+
+							</ul>
+						</div>
+
+					</div>
+					<!-- /sidebar menu -->
                     <!-- menu footer buttons -->
                     <div class="sidebar-footer hidden-small">
                         <a data-toggle="tooltip" data-placement="top" title="Settings">
