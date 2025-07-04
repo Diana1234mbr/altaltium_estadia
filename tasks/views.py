@@ -827,6 +827,7 @@ def gentelella_view(request, page):
                 messages.error(request, "Ya existe un código con ese valor.")
             return redirect('gentelella_page', page='editar_cp') + f'?editar={id_codigo_postal}'
 
+    # ================= PROPIEDADES ===================
 
     # ================= PROPIEDADES ===================
     elif page == "cal_estimaciones":
@@ -864,7 +865,7 @@ def gentelella_view(request, page):
             return redirect('gentelella_page', page='cal_estimaciones')
 
 # ================= USUARIOS ===================
-   elif page == "cal_usuarios":
+    elif page == "cal_usuarios":
         try:
             usuarios = Usuarios.objects.all()
             print(f"DEBUG: Usuarios recuperados: {list(usuarios)}")
@@ -901,24 +902,18 @@ def gentelella_view(request, page):
                             if width is None or height is None:
                                 messages.error(request, "El archivo subido no es una imagen válida.")
                                 return redirect(reverse('gentelella_page', kwargs={'page': 'cal_usuarios'}))
-
-                        usuario = Usuarios(
+                        Usuarios.objects.create(
                             username=username,
                             first_name=first_name,
                             email=email,
                             roles=roles,
+                            password=password1,
                             is_active=True,
                             date_joined=timezone.now()
                         )
-                        if profile_picture:
-                            usuario.profile_picture = profile_picture
-                        usuario.set_password(password1)  # Hashear la contraseña
-                        usuario.save()
                         messages.success(request, "Usuario creado correctamente.")
                     except IntegrityError:
                         messages.error(request, "El nombre de usuario o correo ya existe.")
-                    except Exception as e:
-                        messages.error(request, f"Error al crear el usuario: {str(e)}")
                 else:
                     messages.error(request, "Las contraseñas no coinciden.")
             else:
