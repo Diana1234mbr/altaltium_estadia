@@ -519,7 +519,7 @@
                                 <div class="input-group">
                                     <span class="input-group-text"><i class="bi bi-lock-fill"></i></span>
                                     <input type="password" class="form-control" id="password1" name="password1" placeholder="********" required>
-                                    <button class="input-group-text" type="button" onclick="togglePassword('password1', this)">
+                                    <button class="input-group-text" type="button" onclick="var pwd1 = document.getElementById('password1'); var icon1 = this.querySelector('i'); if (pwd1.type === 'password') { pwd1.type = 'text'; icon1.classList.remove('bi-eye-slash'); icon1.classList.add('bi-eye'); } else { pwd1.type = 'password'; icon1.classList.remove('bi-eye'); icon1.classList.add('bi-eye-slash'); }">
                                         <i class="bi bi-eye-slash" id="toggleIcon1"></i>
                                     </button>
                                 </div>
@@ -530,27 +530,11 @@
                                 <div class="input-group">
                                     <span class="input-group-text"><i class="bi bi-lock"></i></span>
                                     <input type="password" class="form-control" id="password2" name="password2" placeholder="********" required>
-                                    <button class="input-group-text" type="button" onclick="togglePassword('password2', this)">
+                                    <button class="input-group-text" type="button" onclick="var pwd2 = document.getElementById('password2'); var icon2 = this.querySelector('i'); if (pwd2.type === 'password') { pwd2.type = 'text'; icon2.classList.remove('bi-eye-slash'); icon2.classList.add('bi-eye'); } else { pwd2.type = 'password'; icon2.classList.remove('bi-eye'); icon2.classList.add('bi-eye-slash'); }">
                                         <i class="bi bi-eye-slash" id="toggleIcon2"></i>
                                     </button>
                                 </div>
                             </div>
-                            
-                            <script>
-                            function togglePassword(inputId, button) {
-                                const input = document.getElementById(inputId);
-                                const icon = button.querySelector('i');
-                                if (input.type === 'password') {
-                                    input.type = 'text';
-                                    icon.classList.remove('bi-eye-slash');
-                                    icon.classList.add('bi-eye');
-                                } else {
-                                    input.type = 'password';
-                                    icon.classList.remove('bi-eye');
-                                    icon.classList.add('bi-eye-slash');
-                                }
-                            }
-                            </script>
 
                             <div class="mb-3 animate__animated animate__fadeInUp">
                                 <label for="profile_picture" class="form-label">Foto de perfil</label>

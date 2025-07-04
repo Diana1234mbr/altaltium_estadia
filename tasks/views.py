@@ -1072,7 +1072,6 @@ def gentelella_view(request, page):
         total_colonias = Colonias.objects.count()
         total_cp = CodigosPostales.objects.count()
         total_propiedades = Propiedades.objects.count()
-        total_vistas = AlcaldiaVistas.objects.count()
 
         estados_municipios = Estados.objects.annotate(
             total=Count('municipios')
