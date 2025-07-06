@@ -1136,43 +1136,78 @@ def vista_documentacion(request):
 
 #Honorarios
 
+# honorarios
+
+def format_currency(value):
+    try:
+        return "${:,.2f}".format(float(value))
+    except (ValueError, TypeError):
+        return "$0.00"
+
+def safe_divide(a, b):
+    return a / b * 100 if b > 0 else 0.0
+
+def calcular_honorarios(calc_type, valor_comercial, precio_de_sesion):
+    pendiente = 0.06
+    constants = {
+        'sentencia': {'hm': 435000.00, 'pc': 3000000.00},
+        'adjudicado': {'hm': 390000.00, 'pc': 5060000.00}
+    }
+    calc_type = calc_type if calc_type in constants else 'sentencia'
+    hm = constants[calc_type]['hm']
+    pc = constants[calc_type]['pc']
+    return hm if valor_comercial <= pc else pendiente * (valor_comercial - pc) + precio_de_sesion
+
 def honorarios_calculator(request):
     context = {
-        'calc_type': request.POST.get('calcType', 'adjudicada'),
-        'valor_comercial': float(request.POST.get('valorComercial', 0)),
-        'costo_cesion': float(request.POST.get('costoCesion', 0)),
-        'valor_judicial': float(request.POST.get('valorJudicial', 0)),
-        'honorarios': float(request.POST.get('honorarios', 0)),
-        'pago_unico': float(request.POST.get('pagoUnico', 0)),
-        'etapa': float(request.POST.get('etapa', 0)),
-        'entrega': float(request.POST.get('entrega', 0)),
-        'valor_comercial_extra': float(request.POST.get('valorComercialExtra', 0)),
-        'cotizacion': float(request.POST.get('cotizacion', 0)),
+        'calc_type': request.POST.get('calcType', 'sentencia'),
+        'valor_comercial': 0.0,
+        'precio_de_sesion': 0.0,
+        'honorarios': 0.0,
+        'pago_unico': 0.0,
+        'firma': 0.0,
+        'entrega': 0.0,
+        'total': 0.0,
+        'valor_ext': 0.0,
+        'cotizacion': 0.0,
+        'costo_total': 0.0,
+        'porcentaje_vc': 0.0,
+        'ganancia': 0.0,
+        'valor_judicial': 0.0,  # Nueva clave para valor_judicial
     }
 
     if request.method == 'POST':
+        # Obtener y validar datos
+        try:
+            valor_comercial = float(request.POST.get('valorComercial', 0.0))
+            precio_de_sesion = float(request.POST.get('precioDeSesion', 0.0))
+        except (ValueError, TypeError):
+            valor_comercial = 0.0
+            precio_de_sesion = 0.0
+
         # Cálculos
-        if context['valor_comercial'] > 0:
-            context['porcentaje_valor'] = (context['costo_cesion'] / context['valor_comercial'] * 100)
-        else:
-            context['porcentaje_valor'] = 0.00
+        context['valor_comercial'] = valor_comercial
+        context['precio_de_sesion'] = precio_de_sesion
+        context['honorarios'] = calcular_honorarios(context['calc_type'], valor_comercial, precio_de_sesion)
+        context['pago_unico'] = context['honorarios'] * 0.9
+        context['firma'] = context['honorarios'] * 0.75
+        context['entrega'] = context['honorarios'] * 0.25
+        context['total'] = context['honorarios']
+        context['valor_ext'] = valor_comercial
+        context['cotizacion'] = context['valor_ext'] * 0.5
+        context['costo_total'] = precio_de_sesion + context['honorarios']
+        context['porcentaje_vc'] = safe_divide(context['costo_total'], valor_comercial)
+        context['ganancia'] = safe_divide(valor_comercial - context['costo_total'], valor_comercial)
+        context['valor_judicial'] = (2 / 3) * valor_comercial  # Nuevo cálculo
 
-        context['costo_total'] = context['valor_judicial'] + context['honorarios']
+        # Formatear valores
+        for key in ['valor_comercial', 'precio_de_sesion', 'honorarios', 'pago_unico', 'firma', 'entrega', 'total', 'valor_ext', 'cotizacion', 'costo_total', 'valor_judicial']:  # Agregar valor_judicial
+            context[key] = format_currency(context[key])
+        for key in ['porcentaje_vc', 'ganancia']:
+            context[key] = "{:.2f}%".format(context[key])
 
-        total_modalidad = context['pago_unico'] + context['etapa'] + context['entrega']
-        if total_modalidad > 0 and context['honorarios'] > 0:
-            context['porcentaje_unico'] = (context['pago_unico'] / total_modalidad * 100) if total_modalidad > 0 else 0
-            context['porcentaje_etapa'] = (context['etapa'] / total_modalidad * 100) if total_modalidad > 0 else 0
-            context['porcentaje_entrega'] = (context['entrega'] / total_modalidad * 100) if total_modalidad > 0 else 0
-            context['total_honorarios'] = total_modalidad
-        else:
-            context['porcentaje_unico'] = 0.00
-            context['porcentaje_etapa'] = 0.00
-            context['porcentaje_entrega'] = 0.00
-            context['total_honorarios'] = 0.00
-
-        # Redondear a 2 decimales
-        for key in ['porcentaje_valor', 'porcentaje_unico', 'porcentaje_etapa', 'porcentaje_entrega', 'costo_total', 'total_honorarios']:
-            context[key] = round(context.get(key, 0), 2)
+        # Si es una solicitud AJAX, devolver JSON
+        if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+            return JsonResponse(context)
 
     return render(request, 'honorarios.html', context)
