@@ -663,11 +663,13 @@
             </div>
             <div>
               <label for="valorComercial" class="form-label required-field">Valor comercial $</label>
-              <input type="number" step="0.01" id="valorComercial" name="valorComercial" value="{{ propiedad.valor_comercial|default_if_none:'' }}" class="form-control" required placeholder="Ingresa el precio">
+              <input type="text" id="valorComercial" name="valorComercialDisplay" class="form-control" placeholder="Ingresa el precio" value="{{ propiedad.valor_comercial|default_if_none:'0.00'|floatformat:2 }}">
+              <input type="hidden" id="valorComercialHidden" name="valorComercial" value="{{ propiedad.valor_comercial|default_if_none:'0.00' }}">
             </div>
             <div>
               <label for="precioDeSesion" class="form-label required-field">Precio de cesión $</label>
-              <input type="number" step="0.01" id="precioDeSesion" name="precioDeSesion" value="{{ precio_de_sesion|default:'0' }}" class="form-control" required placeholder="Ingresa el precio">
+              <input type="text" id="precioDeSesion" name="precioDeSesionDisplay" class="form-control" placeholder="Ingresa el precio">
+              <input type="hidden" id="precioDeSesionHidden" name="precioDeSesion">
             </div>
           </form>
 
@@ -930,7 +932,12 @@
       // Script para calcular honorarios
       function calculateResults() {
         const form = document.getElementById("calculator-form");
+        const valorComercialHidden = document.getElementById("valorComercialHidden");
+        const precioDeSesionHidden = document.getElementById("precioDeSesionHidden");
+
         const formData = new FormData(form);
+        formData.set("valorComercial", valorComercialHidden.value);
+        formData.set("precioDeSesion", precioDeSesionHidden.value);
 
         fetch("{% url 'honorarios_calculator' %}", {
           method: "POST",
@@ -959,11 +966,79 @@
           .catch((error) => console.error("Error:", error));
       }
 
-      // Script para alternar visibilidad de honorarios y desplazarse
+      // Script para formateo de inputs y cálculos
+      function cleanNumber(value) {
+        if (!value) return '0.00';
+        return value.replace(/[^0-9.]/g, '');
+      }
+
+      function formatNumberInput(input, hiddenInput) {
+        input.addEventListener('input', function (e) {
+          let value = input.value.replace(/[^0-9.]/g, ''); // Permitir solo números y punto
+
+          // Si el valor está vacío, limpiar ambos inputs y calcular
+          if (value === '') {
+            input.value = '';
+            hiddenInput.value = '';
+            calculateResults();
+            return;
+          }
+
+          // Dividir el valor en parte entera y decimal (si existe)
+          let parts = value.split('.');
+          let integerPart = parts[0];
+
+          // Agregar comas a la parte entera
+          integerPart = integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+
+          // Formatear el valor visible
+          if (parts.length > 1) {
+            // Si hay parte decimal, limitarla a 2 dígitos
+            input.value = `${integerPart}.${parts[1].slice(0, 2)}`;
+          } else {
+            // Si no hay parte decimal, no añadir ".00"
+            input.value = integerPart;
+          }
+
+          // Actualizar el hidden input con el valor limpio
+          hiddenInput.value = cleanNumber(input.value);
+          calculateResults();
+        });
+      }
+
+// Asumiendo que cleanNumber elimina comas y devuelve el valor numérico
+function cleanNumber(value) {
+  return value.replace(/,/g, '');
+}
+      
+
+      // Inicializar al cargar la página
       document.addEventListener("DOMContentLoaded", function () {
         const toggleHonorariosButton = document.getElementById("toggle-honorarios");
         const honorariosSection = document.getElementById("honorarios");
+        const valorComercialInput = document.getElementById("valorComercial");
+        const precioDeSesionInput = document.getElementById("precioDeSesion");
+        const valorComercialHidden = document.getElementById("valorComercialHidden");
+        const precioDeSesionHidden = document.getElementById("precioDeSesionHidden");
+        const calcTypeInput = document.getElementById("calcType");
 
+        // Formatear valores iniciales
+        const valorComercialValue = valorComercialInput.value || '0.00';
+        valorComercialInput.value = valorComercialValue.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+        valorComercialHidden.value = cleanNumber(valorComercialValue);
+        precioDeSesionInput.value = '0.00';
+        precioDeSesionHidden.value = '0.00';
+
+        // Aplicar formateo en tiempo real
+        formatNumberInput(valorComercialInput, valorComercialHidden);
+        formatNumberInput(precioDeSesionInput, precioDeSesionHidden);
+
+        // Disparar cálculo inicial
+        if (!honorariosSection.classList.contains("hidden")) {
+          calculateResults();
+        }
+
+        // Alternar visibilidad de honorarios y desplazarse
         toggleHonorariosButton.addEventListener("click", function () {
           honorariosSection.classList.toggle("hidden");
           const isHidden = honorariosSection.classList.contains("hidden");
@@ -973,18 +1048,14 @@
           toggleHonorariosButton.setAttribute("aria-expanded", !isHidden);
           if (!isHidden) {
             calculateResults();
-            // Desplazarse a la sección de honorarios
             honorariosSection.scrollIntoView({ behavior: "smooth", block: "start" });
           }
         });
 
-        if (!honorariosSection.classList.contains("hidden")) {
-          calculateResults();
-        }
-
-        document.getElementById("valorComercial").addEventListener("input", calculateResults);
-        document.getElementById("precioDeSesion").addEventListener("input", calculateResults);
-        document.getElementById("calcType").addEventListener("change", calculateResults);
+        // Disparar cálculos en cambios
+        valorComercialInput.addEventListener("input", calculateResults);
+        precioDeSesionInput.addEventListener("input", calculateResults);
+        calcTypeInput.addEventListener("change", calculateResults);
       });
     </script>
     <script

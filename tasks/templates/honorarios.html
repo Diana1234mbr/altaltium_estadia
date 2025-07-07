@@ -246,12 +246,13 @@
             </div>
             <div class="col-12 col-md-4">
               <label for="valorComercial" class="form-label required-field">Valor comercial $</label>
-              <input type="number" step="0.01" id="valorComercial" name="valorComercial" value="{{ valor_comercial|default_if_none:'' }}" class="form-control" required placeholder="Ingresa el precio">
+              <input type="text" id="valorComercial" name="valorComercial" value="{{ valor_comercial|default_if_none:'' }}" class="form-control" required placeholder="Ingresa el precio">
             </div>
             <div class="col-12 col-md-4">
               <label for="precioDeSesion" class="form-label required-field">Precio de cesión $</label>
-              <input type="number" step="0.01" id="precioDeSesion" name="precioDeSesion" value="{{ precio_de_sesion|default:'0' }}" class="form-control" required placeholder="Ingresa el precio">
+              <input type="text" id="precioDeSesion" name="precioDeSesion" value="{{ precio_de_sesion|default:'0' }}" class="form-control" required placeholder="Ingresa el precio">
             </div>
+            
           </div>
         </form>
 
@@ -398,7 +399,6 @@
     </div>
   </div>
 </div>
-
 <script>
   function copyToClipboard(elementId) {
     const element = document.getElementById(elementId);
@@ -413,11 +413,30 @@
       console.error('Error al copiar: ', err);
     });
   }
-
+  
+  function getCleanNumber(value) {
+    return value.replace(/,/g, '');
+  }
+  
   function calculateResults() {
     const form = document.getElementById('calculator-form');
+  
+    // Limpiar valores con comas antes de enviar
+    const valorComercialInput = document.getElementById('valorComercial');
+    const precioDeSesionInput = document.getElementById('precioDeSesion');
+  
+    const valorComercialClean = getCleanNumber(valorComercialInput.value);
+    const precioDeSesionClean = getCleanNumber(precioDeSesionInput.value);
+  
+    // Insertar temporalmente los valores limpios en inputs hidden o ajustar value temporalmente
+    valorComercialInput.dataset.original = valorComercialInput.value; // Guarda valor formateado
+    precioDeSesionInput.dataset.original = precioDeSesionInput.value;
+  
+    valorComercialInput.value = valorComercialClean;
+    precioDeSesionInput.value = precioDeSesionClean;
+  
     const formData = new FormData(form);
-
+  
     fetch('{% url "honorarios_calculator" %}', {
       method: 'POST',
       body: formData,
@@ -442,14 +461,49 @@
       document.getElementById('displayValorJudicial').textContent = data.valor_judicial;
       document.getElementById('displayValorExt').textContent = data.valor_ext;
     })
-    .catch(error => console.error('Error:', error));
+    .catch(error => console.error('Error:', error))
+    .finally(() => {
+      // Restaurar el valor con comas después de enviar
+      valorComercialInput.value = valorComercialInput.dataset.original;
+      precioDeSesionInput.value = precioDeSesionInput.dataset.original;
+    });
   }
-
+  
+  function formatNumberInput(input) {
+    input.addEventListener('input', function(e) {
+      let cursorPosition = input.selectionStart;
+      let value = input.value.replace(/,/g, '');
+      if (value === '' || isNaN(value)) return;
+  
+      let parts = value.split('.');
+      parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+      input.value = parts.join('.');
+  
+      // Ajuste de cursor para evitar saltos
+      let newLength = input.value.length;
+      input.setSelectionRange(newLength, newLength);
+  
+      // Disparar cálculo en vivo tras formateo
+      calculateResults();
+    });
+  }
+  
   document.addEventListener("DOMContentLoaded", function () {
+    const valorComercialInput = document.getElementById('valorComercial');
+    const precioDeSesionInput = document.getElementById('precioDeSesion');
+    const calcTypeInput = document.getElementById('calcType');
+  
+    formatNumberInput(valorComercialInput);
+    formatNumberInput(precioDeSesionInput);
+  
     calculateResults();
-    document.getElementById('valorComercial').addEventListener('input', calculateResults);
-    document.getElementById('precioDeSesion').addEventListener('input', calculateResults);
-    document.getElementById('calcType').addEventListener('change', calculateResults);
+  
+    // Disparo de cálculo al cambiar tipo de cálculo
+    if (calcTypeInput) {
+      calcTypeInput.addEventListener('change', calculateResults);
+    }
   });
-</script>
+  </script>
+  
+  
 {% endblock %}
