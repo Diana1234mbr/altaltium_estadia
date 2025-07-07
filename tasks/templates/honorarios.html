@@ -240,8 +240,8 @@
             <div class="col-12 col-md-4">
               <label for="calcType" class="form-label required-field">Tipo de Cálculo</label>
               <select id="calcType" name="calcType" class="form-select" required>
-                <option value="adjudicado" {% if not calc_type or calc_type == 'adjudicado' %}selected{% endif %}>Adjudicado</option>
-                <option value="sentencia" {% if calc_type == 'sentencia' %}selected{% endif %}>Sentencia</option>
+                <option value="sentencia" {% if not calc_type or calc_type == 'sentencia' %}selected{% endif %}>Sentencia</option>
+                <option value="adjudicado" {% if calc_type == 'adjudicado' %}selected{% endif %}>Adjudicado</option>
               </select>
             </div>
             <div class="col-12 col-md-4">

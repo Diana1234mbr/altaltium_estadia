@@ -1143,8 +1143,8 @@ def vista_documentacion(request):
 
 #Honorarios
 
-# honorarios
 
+# honorarios
 def format_currency(value):
     try:
         return "${:,.2f}".format(float(value))
@@ -1163,14 +1163,16 @@ def calcular_honorarios(calc_type, valor_comercial, precio_de_sesion):
     calc_type = calc_type if calc_type in constants else 'sentencia'
     hm = constants[calc_type]['hm']
     pc = constants[calc_type]['pc']
-    return hm if valor_comercial <= pc else pendiente * (valor_comercial - pc) + precio_de_sesion
+    return hm if valor_comercial <= pc else pendiente * (valor_comercial - pc) + hm
 
 def honorarios_calculator(request):
-    # Obtener usuario si existe en sesión
-    usuario = Usuarios.objects.filter(id=request.session.get('usuario_id')).first()
+    # Obtener usuario si existe en sesión de forma aislada
+    usuario_id = request.session.get('usuario_id')
+    usuario = Usuarios.objects.filter(id=usuario_id).first() if usuario_id else None
 
+    # Inicializar contexto con valores por defecto
     context = {
-        'usuario': usuario,  # Disponible para usar en plantilla
+        'usuario': usuario,  # Puede ser None si no hay usuario
         'calc_type': request.POST.get('calcType', 'sentencia'),
         'valor_comercial': 0.0,
         'precio_de_sesion': 0.0,
@@ -1201,7 +1203,7 @@ def honorarios_calculator(request):
         context['pago_unico'] = context['honorarios'] * 0.9
         context['firma'] = context['honorarios'] * 0.75
         context['entrega'] = context['honorarios'] * 0.25
-        context['total'] = context['honorarios']
+        context['total'] = context['firma'] + context['entrega']
         context['valor_ext'] = valor_comercial
         context['cotizacion'] = context['valor_ext'] * 0.5
         context['costo_total'] = precio_de_sesion + context['honorarios']
