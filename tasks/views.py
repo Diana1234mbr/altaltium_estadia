@@ -227,9 +227,12 @@ def estimaciones(request):
             pdf.cell(50, 10, 'Valor Aproximado', 1, 0, 'L')
             pdf.cell(150, 10, f'{propiedad.valor_aprox or "N/A"}', 1, 1, 'L')
 
-            # ✅ USO CORRECTO SEGÚN TU ENTORNO:
-            pdf_bytes = pdf.output(dest='S')  # ya devuelve bytearray
-            response = HttpResponse(pdf_bytes, content_type='application/pdf')
+            # ✅ Guardar PDF en BytesIO
+            buffer = BytesIO()
+            pdf.output(buffer)
+            buffer.seek(0)
+
+            response = HttpResponse(buffer, content_type='application/pdf')
             response['Content-Disposition'] = f'attachment; filename="reporte_propiedad_{propiedad_id}.pdf"'
 
             print(f"Reporte individual generado para ID: {propiedad_id}")
