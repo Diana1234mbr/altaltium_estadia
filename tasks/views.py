@@ -213,11 +213,11 @@ def estimaciones(request):
             pdf.cell(50, 10, 'Calle', 1, 0, 'L')
             pdf.cell(150, 10, f'{propiedad.calle or "N/A"}', 1, 1, 'L')
             pdf.cell(50, 10, 'Colonia', 1, 0, 'L')
-            pdf.cell(150, 10, f'{propiedad.id_colonia or "N/A"}', 1, 1, 'L')
+            pdf.cell(150, 10, f'{propiedad.id_colonia.nombre if propiedad.id_colonia else "N/A"}', 1, 1, 'L')
             pdf.cell(50, 10, 'Municipio', 1, 0, 'L')
-            pdf.cell(150, 10, f'{propiedad.id_municipio or "N/A"}', 1, 1, 'L')
+            pdf.cell(150, 10, f'{propiedad.id_municipio.nombre if propiedad.id_municipio else "N/A"}', 1, 1, 'L')
             pdf.cell(50, 10, 'Estado', 1, 0, 'L')
-            pdf.cell(150, 10, f'{propiedad.id_estado or "N/A"}', 1, 1, 'L')
+            pdf.cell(150, 10, f'{propiedad.id_estado.nombre if propiedad.id_estado else "N/A"}', 1, 1, 'L')
             pdf.cell(50, 10, 'Recámaras', 1, 0, 'L')
             pdf.cell(150, 10, f'{propiedad.recamaras or "N/A"}', 1, 1, 'L')
             pdf.cell(50, 10, 'Tipo de Propiedad', 1, 0, 'L')
@@ -227,17 +227,21 @@ def estimaciones(request):
             pdf.cell(50, 10, 'Valor Aproximado', 1, 0, 'L')
             pdf.cell(150, 10, f'{propiedad.valor_aprox or "N/A"}', 1, 1, 'L')
 
-            pdf_output = pdf.output(dest='S')
-            response = HttpResponse(pdf_output, content_type='application/pdf')
+            # 🔹 CORRECCIÓN:
+            pdf_bytes = pdf.output(dest='S').encode('latin-1')
+            response = HttpResponse(pdf_bytes, content_type='application/pdf')
             response['Content-Disposition'] = f'attachment; filename="reporte_propiedad_{propiedad_id}.pdf"'
+
             print(f"Reporte individual generado para ID: {propiedad_id}")
             return response
+
         except Propiedades.DoesNotExist:
             print(f"No se encontró la propiedad con ID: {propiedad_id}")
             return HttpResponse("Propiedad no encontrada", status=404)
         except Exception as e:
             print(f"Error al generar el reporte: {str(e)}")
             return HttpResponse(f"Error: {str(e)}", status=500)
+
 
     context = {
         'estados': Estados.objects.all(),
