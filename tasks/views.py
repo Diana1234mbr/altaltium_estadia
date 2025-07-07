@@ -1159,7 +1159,11 @@ def calcular_honorarios(calc_type, valor_comercial, precio_de_sesion):
     return hm if valor_comercial <= pc else pendiente * (valor_comercial - pc) + precio_de_sesion
 
 def honorarios_calculator(request):
+    # Obtener usuario si existe en sesión
+    usuario = Usuarios.objects.filter(id=request.session.get('usuario_id')).first()
+
     context = {
+        'usuario': usuario,  # Disponible para usar en plantilla
         'calc_type': request.POST.get('calcType', 'sentencia'),
         'valor_comercial': 0.0,
         'precio_de_sesion': 0.0,
@@ -1173,11 +1177,10 @@ def honorarios_calculator(request):
         'costo_total': 0.0,
         'porcentaje_vc': 0.0,
         'ganancia': 0.0,
-        'valor_judicial': 0.0,  # Nueva clave para valor_judicial
+        'valor_judicial': 0.0,
     }
 
     if request.method == 'POST':
-        # Obtener y validar datos
         try:
             valor_comercial = float(request.POST.get('valorComercial', 0.0))
             precio_de_sesion = float(request.POST.get('precioDeSesion', 0.0))
@@ -1185,7 +1188,6 @@ def honorarios_calculator(request):
             valor_comercial = 0.0
             precio_de_sesion = 0.0
 
-        # Cálculos
         context['valor_comercial'] = valor_comercial
         context['precio_de_sesion'] = precio_de_sesion
         context['honorarios'] = calcular_honorarios(context['calc_type'], valor_comercial, precio_de_sesion)
@@ -1198,16 +1200,21 @@ def honorarios_calculator(request):
         context['costo_total'] = precio_de_sesion + context['honorarios']
         context['porcentaje_vc'] = safe_divide(context['costo_total'], valor_comercial)
         context['ganancia'] = safe_divide(valor_comercial - context['costo_total'], valor_comercial)
-        context['valor_judicial'] = (2 / 3) * valor_comercial  # Nuevo cálculo
+        context['valor_judicial'] = (2 / 3) * valor_comercial
 
-        # Formatear valores
-        for key in ['valor_comercial', 'precio_de_sesion', 'honorarios', 'pago_unico', 'firma', 'entrega', 'total', 'valor_ext', 'cotizacion', 'costo_total', 'valor_judicial']:  # Agregar valor_judicial
+        # Formatear valores para mostrar en plantilla y JSON
+        for key in ['valor_comercial', 'precio_de_sesion', 'honorarios', 'pago_unico',
+                    'firma', 'entrega', 'total', 'valor_ext', 'cotizacion',
+                    'costo_total', 'valor_judicial']:
             context[key] = format_currency(context[key])
+
         for key in ['porcentaje_vc', 'ganancia']:
             context[key] = "{:.2f}%".format(context[key])
 
-        # Si es una solicitud AJAX, devolver JSON
+        # Devolver JSON solo con valores serializables
         if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
-            return JsonResponse(context)
+            context_json = context.copy()
+            context_json.pop('usuario', None)  # Remover el objeto no serializable
+            return JsonResponse(context_json)
 
     return render(request, 'honorarios.html', context)
