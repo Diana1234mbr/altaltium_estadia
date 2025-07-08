@@ -515,6 +515,7 @@ def gentelella_view(request, page):
             id_municipio = request.POST.get('id_municipio')
             id_estado = request.POST.get('id_estado')
             promedio_precio = request.POST.get('promedio_precio', None)
+            zona = request.POST.get('zona')
 
             if nombre and id_municipio and id_estado:
                 try:
@@ -528,7 +529,8 @@ def gentelella_view(request, page):
                             nombre=nombre,
                             id_municipio=municipio,
                             id_estado=estado,
-                            promedio_precio=promedio_precio
+                            promedio_precio=promedio_precio,
+                            zona=zona
                         )
                         messages.success(request, "Colonia creada correctamente.")
                 except Municipios.DoesNotExist:
@@ -566,6 +568,7 @@ def gentelella_view(request, page):
                 id_municipio = request.POST.get('id_municipio')
                 id_estado = request.POST.get('id_estado')
                 promedio_precio = request.POST.get('promedio_precio', None)
+                zona = request.POST.get('zona', None)
 
                 if nombre and id_municipio and id_estado:
                     municipio = Municipios.objects.get(id_municipio=id_municipio)
@@ -578,6 +581,7 @@ def gentelella_view(request, page):
                         colonia.id_municipio = municipio
                         colonia.id_estado = estado
                         colonia.promedio_precio = promedio_precio if promedio_precio else None
+                        colonia.zona = zona if zona else None
                         colonia.save()
                         messages.success(request, "Colonia actualizada correctamente.")
                         return redirect('gentelella_page', page='cal_colonia')
@@ -1139,9 +1143,6 @@ def vista_documentacion(request):
         'usuario': usuario,
     }
     return render(request, 'documentacion/doc.html', context)
-
-
-#Honorarios
 
 
 # honorarios

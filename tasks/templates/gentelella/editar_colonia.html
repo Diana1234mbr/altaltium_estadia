@@ -58,6 +58,15 @@
                         <label style="color: #003035; font-weight: 600; margin-bottom: 8px;">Promedio Precio (m²)</label>
                         <input type="number" name="promedio_precio" class="form-control" value="{{ colonia_editar.promedio_precio|default_if_none:'' }}" step="0.01" style="border: 1px solid #bfc6c7; border-radius: 4px; padding: 10px; color: #0d1d1f; background-color: #fefcef; transition: border-color 0.3s;">
                     </div>
+                    <div class="form-group" style="flex: 1; min-width: 300px;">
+                        <label for="zona" style="color: #003035; font-weight: 600; margin-bottom: 8px;">Tipo de zona</label>
+                        <select name="zona" id="zona" class="form-control" required style="border: 1px solid #bfc6c7; border-radius: 4px; padding: 10px; color: #0d1d1f; background-color: #fefcef; transition: border-color 0.3s;">
+                            <option value="">Selecciona un tipo de zona</option>                            
+                            <option value="Caliente" {% if usuario_editar.zona == "Caliente" %}selected{% endif %}>Caliente</option>
+                            <option value="Tibia" {% if usuario_editar.zona == "Tibia" %}selected{% endif %}>Tibia</option>
+                            <option value="Fria" {% if usuario_editar.zona == "Fria" %}selected{% endif %}>Fria</option>
+                        </select>
+                    </div>
                     <div class="form-group" style="flex: 1; min-width: 300px; display: flex; gap: 10px;">
                         <button type="submit" class="btn btn-edit" style="background-color: #00cccc; color: #0d1d1f; border: none; padding: 10px 20px; font-weight: 600; border-radius: 4px; transition: background-color 0.3s;">
                             <i class="fa fa-save" style="margin-right: 5px;"></i> Actualizar

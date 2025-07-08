@@ -79,6 +79,7 @@ class Colonias(models.Model):
     id_municipio = models.ForeignKey(Municipios, models.DO_NOTHING, db_column='id_municipio')
     id_estado = models.ForeignKey(Estados, models.DO_NOTHING, db_column='id_estado', null=True, blank=True)
     promedio_precio = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    zona = models.CharField(max_length=50)
 
     class Meta:
         db_table = 'colonias'

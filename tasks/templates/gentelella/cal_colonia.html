@@ -497,6 +497,15 @@
                                     <input type="number" name="promedio_precio" class="form-control" required
                                         placeholder="Precio por m²">
                                 </div>
+                                <div class="form-group" style="flex: 1; min-width: 300px;">
+                                    <label for="zona" style="color: #003035; font-weight: 600; margin-bottom: 8px;">Tipo de zona</label>
+                                    <select name="zona" id="zona" class="form-control" required style="border: 1px solid #bfc6c7; border-radius: 4px; padding: 10px; color: #0d1d1f; background-color: #fefcef; transition: border-color 0.3s;">
+                                        <option value="">Selecciona un tipo de zona</option>                            
+                                        <option value="Caliente" {% if usuario_editar.zona == "Caliente" %}selected{% endif %}>Caliente</option>
+                                        <option value="Tibia" {% if usuario_editar.zona == "Tibia" %}selected{% endif %}>Tibia</option>
+                                        <option value="Fria" {% if usuario_editar.zona == "Fria" %}selected{% endif %}>Fria</option>
+                                    </select>
+                                </div>
                                 <div class="form-group">
                                     <button type="submit" class="btn btn-add">Agregar</button>
                                     <button type="reset" class="btn btn-cancel">Limpiar</button>
@@ -514,7 +523,8 @@
                                     <th>Nombre</th>
                                     <th>Municipio</th>
                                     <th>Estado</th>
-                                    <th>Promedio Precio (m²)</th>            
+                                    <th>Promedio Precio (m²)</th>  
+                                    <th>Zona</th>           
                                     <th>Acciones</th>
                                 </tr>
                             </thead>
@@ -538,6 +548,7 @@
                                         {% endif %}
                                     </td>
                                     <td>{{ colonia.promedio_precio|default:'-' }}</td>
+                                    <td>{{ colonia.zona }}</td>
                                     <td>
                                         <a href="{% url 'gentelella_page' page='editar_colonia' %}?editar={{ colonia.id_colonia }}"
                                             class="btn btn-edit btn-sm">Editar</a>
