@@ -589,91 +589,120 @@
             </div>
             
             <h2 class="section-title">Datos de Propiedades</h2>
-            <div class="search-container">
-                <input type="text" id="searchInput" class="search-input" placeholder="Buscar por estado, alcaldía, colonia o zona...">
+            <div class="search-container" style="display: flex; align-items: center; gap: 10px;">
+              <input
+                type="text"
+                id="searchInput"
+                class="search-input"
+                placeholder="Buscar por estado, colonia o zona..."
+                style="flex: 1;"
+              />
+              <select id="zoneFilter" class="search-input" style="width: 200px;">
+                <option value="">Todas las Zonas</option>
+                <option value="Caliente">Caliente</option>
+                <option value="Tibia">Tibia</option>
+                <option value="Fría">Fría</option>
+              </select>
             </div>
             <table class="data-table" id="dataTable">
-                <thead>
-                    <tr>
-                        <th>Estado</th>
-                        <th>Alcaldía</th>
-                        <th>Colonia</th>
-                        <th>Promedio (MXN)</th>
-                        <th>Zona</th>
-                    </tr>
-                </thead>
-                <tbody id="tableBody">
-                    {% for item in datos %}
-                       <tr>
-                            <td>{{ item.estado }}</td>
-                            <td>{{ item.alcaldia }}</td>
-                            <td>{{ item.colonia }}</td>
-                            <td>{{ item.promedio_mxn }}</td>
-                            <td>{{ item.zona }}</td>
-                        </tr>
-                    {% empty %}
-                        <tr>
-                            <td colspan="5" class="data-placeholder">No hay datos disponibles.</td>
-                        </tr>
-                    {% endfor %}
-                   
-                </tbody>
+              <thead>
+                <tr>
+                  <th>Estado</th>
+                  <th>Alcaldía</th>
+                  <th>Colonia</th>
+                  <th>Promedio (MXN)</th>
+                  <th>Zona</th>
+                </tr>
+              </thead>
+              <tbody id="tableBody">
+                {% for item in datos %}
+                <tr>
+                  <td>{{ item.estado }}</td>
+                  <td>{{ item.alcaldia }}</td>
+                  <td>{{ item.colonia }}</td>
+                  <td>{{ item.promedio_mxn }}</td>
+                  <td>{{ item.zona }}</td>
+                </tr>
+                {% empty %}
+                <tr id="noDataRow">
+                  <td colspan="5" class="data-placeholder">
+                    No hay datos disponibles.
+                  </td>
+                </tr>
+                {% endfor %}
+                <!-- Fila para mensaje dinámico de no resultados -->
+                <tr id="noResultsRow" style="display: none;">
+                  <td colspan="5" class="data-placeholder">
+                    No hay datos que coincidan con la búsqueda o filtro.
+                  </td>
+                </tr>
+              </tbody>
             </table>
-        </div>
-    </div>
-
-    <script>
-        // Efecto de scroll para la barra y el hero
-        window.addEventListener('scroll', () => {
-            const navbar = document.querySelector('.navbar');
-            const hero = document.querySelector('.hero');
-            if (window.scrollY > 50) {
-                navbar.classList.add('visible');
-                navbar.classList.add('scrolled');
-                hero.classList.add('scrolled');
-            } else {
-                navbar.classList.remove('visible');
-                navbar.classList.remove('scrolled');
-                hero.classList.remove('scrolled');
-            }
-        });
-
-        // Función para filtrar la tabla
-        function filterTable() {
-            const searchInput = document.getElementById("searchInput").value.toLowerCase();
-            const tableBody = document.getElementById("tableBody");
-            const rows = tableBody.getElementsByTagName("tr");
-
-            let hasResults = false;
-            for (let row of rows) {
-                const cells = row.getElementsByTagName("td");
-                if (cells.length === 0) continue; // Ignorar la fila de "No hay datos"
-                const estado = cells[0].textContent.toLowerCase();
-                const alcaldia = cells[1].textContent.toLowerCase();
-                const colonia = cells[2].textContent.toLowerCase();
-                const zona = cells[4].textContent.toLowerCase();
-                if (
-                    estado.includes(searchInput) ||
-                    alcaldia.includes(searchInput) ||
-                    colonia.includes(searchInput) ||
-                    zona.includes(searchInput)
-                ) {
+            </div>
+            </div>
+            
+            <script>
+              // Efecto de scroll para la barra y el hero
+              window.addEventListener("scroll", () => {
+                const navbar = document.querySelector(".navbar");
+                const hero = document.querySelector(".hero");
+                if (window.scrollY > 50) {
+                  navbar.classList.add("visible");
+                  navbar.classList.add("scrolled");
+                  hero.classList.add("scrolled");
+                } else {
+                  navbar.classList.remove("visible");
+                  navbar.classList.remove("scrolled");
+                  hero.classList.remove("scrolled");
+                }
+              });
+            
+              // Función para filtrar la tabla
+              function filterTable() {
+                const searchInput = document.getElementById("searchInput").value.toLowerCase();
+                const zoneFilter = document.getElementById("zoneFilter").value.toLowerCase();
+                const tableBody = document.getElementById("tableBody");
+                const rows = tableBody.getElementsByTagName("tr");
+                const noDataRow = document.getElementById("noDataRow");
+                const noResultsRow = document.getElementById("noResultsRow");
+            
+                let hasResults = false;
+                for (let row of rows) {
+                  const cells = row.getElementsByTagName("td");
+                  if (cells.length === 0 || row.id === "noDataRow" || row.id === "noResultsRow") continue; // Ignorar filas sin datos o mensajes
+                  const estado = cells[0].textContent.toLowerCase();
+                  const alcaldia = cells[1].textContent.toLowerCase();
+                  const colonia = cells[2].textContent.toLowerCase();
+                  const zona = cells[4].textContent.toLowerCase();
+            
+                  const matchesSearch = searchInput
+                    ? estado.includes(searchInput) ||
+                      alcaldia.includes(searchInput) ||
+                      colonia.includes(searchInput) ||
+                      zona.includes(searchInput)
+                    : true;
+                  const matchesZone = zoneFilter ? zona === zoneFilter : true;
+            
+                  if (matchesSearch && matchesZone) {
                     row.style.display = "";
                     hasResults = true;
-                } else {
+                  } else {
                     row.style.display = "none";
+                  }
                 }
-            }
-
-            // Mostrar mensaje si no hay resultados
-            const noDataRow = tableBody.querySelector("tr td.data-placeholder");
-            if (noDataRow) {
-                noDataRow.parentElement.style.display = hasResults ? "none" : "";
-            }
-        }
-
-        // Escuchar cambios en el campo de búsqueda
-        document.getElementById("searchInput").addEventListener("input", filterTable);
-    </script>
-</body>
+            
+                // Mostrar mensaje si no hay resultados
+                if (noDataRow) {
+                  noDataRow.style.display = hasResults || rows.length > 1 ? "none" : "";
+                }
+                if (noResultsRow) {
+                  noResultsRow.style.display = !hasResults && rows.length > 1 ? "" : "none";
+                }
+              }
+            
+              // Escuchar cambios en el campo de búsqueda y el filtro de zona
+              document.getElementById("searchInput").addEventListener("input", filterTable);
+              document.getElementById("zoneFilter").addEventListener("change", filterTable);
+            </script>
+    </body>
 </html>
